@@ -66,7 +66,7 @@ coro_func_noyield(void *data, Eina_Bool canceled, Eina_Coro *coro EINA_UNUSED)
 {
    struct ctx *ctx = data;
 
-   ck_assert_ptr_nonnull(ctx);
+   ck_assert_ptr_ne(ctx, NULL);
    ck_assert_int_eq(ctx->a, VAL_A);
 
    if (canceled) return CANCELVAL;
@@ -89,14 +89,14 @@ START_TEST(coro_noyield)
    eina_init();
 
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    while (eina_coro_run(&coro, &result, NULL))
      {
         i++;
         ck_assert_int_le(i, 1);
      }
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    ck_assert_int_eq(ctx.b, VAL_B);
    ck_assert_ptr_eq(result, RETVAL);
@@ -112,7 +112,7 @@ coro_func_yield(void *data, Eina_Bool canceled, Eina_Coro *coro)
    char buf[256] = "hi there";
    int i;
 
-   ck_assert_ptr_nonnull(ctx);
+   ck_assert_ptr_ne(ctx, NULL);
    ck_assert_int_eq(ctx->a, VAL_A);
 
    if (canceled) return CANCELVAL;
@@ -151,7 +151,7 @@ START_TEST(coro_yield)
    eina_init();
 
    coro = eina_coro_new(coro_func_yield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    r = eina_coro_run(&coro, NULL, NULL);
    ck_assert_int_eq(r, EINA_TRUE);
@@ -171,7 +171,7 @@ START_TEST(coro_yield)
          */
         memset(alloca(10), 0xff, 10);
      }
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
    ck_assert_int_eq(i, COUNT);
 
    ck_assert_int_eq(ctx.b, VAL_B);
@@ -194,21 +194,21 @@ START_TEST(coro_cancel)
 
    // cancel before it runs
    coro = eina_coro_new(coro_func_yield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    ck_assert_ptr_eq(eina_coro_cancel(&coro), CANCELVAL);
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    // cancel after single run
    coro = eina_coro_new(coro_func_yield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    r = eina_coro_run(&coro, NULL, NULL);
    ck_assert_int_eq(r, EINA_TRUE);
    ck_assert_int_eq(ctx.b, 1);
 
    ck_assert_ptr_eq(eina_coro_cancel(&coro), CANCELVAL);
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
    ck_assert_int_eq(ctx.b, 1); // it's yielding after setting b=1
 
    eina_shutdown();
@@ -264,14 +264,14 @@ START_TEST(coro_hook)
                                   &hooks_result));
 
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    while (eina_coro_run(&coro, &result, NULL))
      {
         i++;
         ck_assert_int_le(i, 1);
      }
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    ck_assert_int_eq(ctx.b, VAL_B);
    ck_assert_ptr_eq(result, RETVAL);
@@ -312,7 +312,7 @@ START_TEST(coro_new_null)
    TEST_MAGIC_SAFETY("eina_coro_new", "safety check failed: func == NULL");
 
    coro = eina_coro_new(NULL, NULL, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    fail_unless(lctx.did);
 
@@ -350,7 +350,7 @@ START_TEST(coro_yield_incorrect)
    eina_log_print_cb_set(_eina_test_safety_print_cb, &lctx);
 
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    TEST_MAGIC_SAFETY("eina_coro_yield", "must be called from coroutine! coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
    fail_if(eina_coro_yield(coro));
@@ -364,7 +364,7 @@ START_TEST(coro_yield_incorrect)
         i++;
         ck_assert_int_le(i, 1);
      }
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    ck_assert_int_eq(ctx.b, VAL_B);
    ck_assert_ptr_eq(result, RETVAL);
@@ -413,14 +413,14 @@ START_TEST(coro_run_incorrect)
    eina_init();
 
    coro = eina_coro_new(coro_func_run_incorrect, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    while (eina_coro_run(&coro, &result, NULL))
      {
         i++;
         ck_assert_int_le(i, 1);
      }
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    ck_assert_int_eq(ctx.b, VAL_B);
    ck_assert_ptr_eq(result, RETVAL);
@@ -478,7 +478,7 @@ START_TEST(coro_hook_failed)
                                   &hooks_result));
 
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    TEST_MAGIC_SAFETY("_eina_coro_hooks_coro_enter", "failed hook enter=%p data=%p for coroutine coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
 
@@ -487,7 +487,7 @@ START_TEST(coro_hook_failed)
         i++;
         ck_assert_int_le(i, 1);
      }
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    ck_assert_int_eq(ctx.b, 0);
    ck_assert_ptr_eq(result, CANCELVAL);
@@ -512,7 +512,7 @@ START_TEST(coro_hook_failed)
                                   &hooks_result));
 
    coro = eina_coro_new(coro_func_noyield, &ctx, EINA_CORO_STACK_SIZE_DEFAULT);
-   ck_assert_ptr_nonnull(coro);
+   ck_assert_ptr_ne(coro, NULL);
 
    TEST_MAGIC_SAFETY("_eina_coro_hooks_main_exit", "failed hook exit=%p data=%p for main routine coro=%p {func=%p data=%p turn=%s threads={%p%c %p%c} awaiting=%p}");
 
@@ -521,7 +521,7 @@ START_TEST(coro_hook_failed)
         i++;
         ck_assert_int_le(i, 1);
      }
-   ck_assert_ptr_null(coro);
+   ck_assert_ptr_eq(coro, NULL);
 
    ck_assert_int_eq(ctx.b, 0);
    ck_assert_ptr_eq(result, CANCELVAL);

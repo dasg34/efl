@@ -38,7 +38,7 @@ START_TEST(eo_coro)
    fail_if(eina_coro_run(&coro, &result, NULL)); // doesn't yield, so should finish
    ck_assert_ptr_eq(result, RETVAL);
 
-   ck_assert_int_eq(efl_ref_get(obj), 2);
+   ck_assert_int_eq(efl_ref_count(obj), 2);
    efl_unref(obj);
    efl_unref(obj);
 
