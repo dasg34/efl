@@ -1349,38 +1349,40 @@ _coro(void *data, Eina_Coro *coro, Efl_Loop *loop EINA_UNUSED)
    return eina_future_as_value(_str_future_get());
 }
 
-static Eina_Bool
-_timer_test(void *data)
+static void
+_timer_test(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    int *pi = data;
    (*pi)++;
-
-   return EINA_TRUE;
 }
 
-START_TEST(efl_test_coro)
+EFL_START_TEST(efl_test_coro)
 {
    Eina_Future *f;
+   Eo *t;
    int coro_count = 0;
    int timer_count = 0;
 
    fail_if(!ecore_init());
-   f = eina_future_then(efl_loop_coro(ecore_main_loop_get(),
+   f = eina_future_then(efl_loop_coro(efl_main_loop_get(),
                                       EFL_LOOP_CORO_PRIO_IDLE,
                                       &coro_count, _coro, NULL),
                         .cb = _simple_ok);
    fail_if(!f);
 
    // timer is 2x faster so it will always expire
-   ecore_timer_add(CORO_SLEEP / 2, _timer_test, &timer_count);
+   t = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
+          efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _timer_test, &timer_count),
+          efl_loop_timer_interval_set(efl_added, CORO_SLEEP / 2));
 
    ecore_main_loop_begin();
+   efl_del(t);
    ecore_shutdown();
 
    ck_assert_int_eq(coro_count, CORO_COUNT);
    ck_assert_int_ge(timer_count, CORO_COUNT);
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Value
 _await(void *data, Eina_Coro *coro, Efl_Loop *loop)
@@ -1389,7 +1391,7 @@ _await(void *data, Eina_Coro *coro, Efl_Loop *loop)
 
    for (; *pi < CORO_COUNT; (*pi)++)
      {
-        Eina_Future *f = eina_future_chain(efl_loop_Eina_FutureXXX_timeout(loop, CORO_SLEEP),
+        Eina_Future *f = eina_future_chain(efl_loop_timeout(loop, CORO_SLEEP),
                                            // convert to string so we don't get dummy EMPTY...
                                            // happened to me during development :-)
                                            eina_future_cb_convert_to(EINA_VALUE_TYPE_STRING));
@@ -1403,29 +1405,33 @@ _await(void *data, Eina_Coro *coro, Efl_Loop *loop)
    return eina_future_as_value(_str_future_get());
 }
 
-START_TEST(efl_test_promise_future_await)
+EFL_START_TEST(efl_test_promise_future_await)
 {
    Eina_Future *f;
+   Eo *t;
    int coro_count = 0;
    int timer_count = 0;
 
    fail_if(!ecore_init());
-   f = eina_future_then(efl_loop_coro(ecore_main_loop_get(),
+   f = eina_future_then(efl_loop_coro(efl_main_loop_get(),
                                       EFL_LOOP_CORO_PRIO_IDLE,
                                       &coro_count, _await, NULL),
                         .cb = _simple_ok);
    fail_if(!f);
 
    // timer is 2x faster so it will always expire
-   ecore_timer_add(CORO_SLEEP / 2, _timer_test, &timer_count);
+   t = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
+           efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _timer_test, &timer_count),
+           efl_loop_timer_interval_set(efl_added, CORO_SLEEP / 2));
 
    ecore_main_loop_begin();
+   efl_del(t);
    ecore_shutdown();
 
    ck_assert_int_eq(coro_count, CORO_COUNT);
    ck_assert_int_ge(timer_count, CORO_COUNT);
 }
-END_TEST
+EFL_END_TEST
 
 
 void efl_app_test_promise(TCase *tc)

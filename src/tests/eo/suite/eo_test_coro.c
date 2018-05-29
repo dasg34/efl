@@ -29,7 +29,7 @@ START_TEST(eo_coro)
 
    efl_object_init();
 
-   obj = efl_add(SIMPLE_CLASS, NULL);
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
    fail_unless(obj);
 
    coro = eina_coro_new(func, obj, EINA_CORO_STACK_SIZE_DEFAULT);

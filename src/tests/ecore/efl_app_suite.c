@@ -54,6 +54,7 @@ static const Efl_Test_Case etc[] = {
   { "Promise", efl_app_test_promise_2 },
   { "Promise", efl_app_test_promise_3 },
   { "Promise", efl_app_test_promise_safety },
+  { "Coroutines", efl_app_test_coro },
   { NULL, NULL }
 };
 
