@@ -2429,12 +2429,15 @@ efl_object_init(void)
 
    _efl_add_fallback_init();
 
+#if USE_CORO_THREAD
+   // We only have to deal with domain adoption when using the thread coroutine implementation.
    eina_lock_new(&_eo_coro_hook_data_lock);
    eina_coro_hook_add(_eo_coro_hook_coro_enter,
                       _eo_coro_hook_coro_exit,
                       _eo_coro_hook_main_enter,
                       _eo_coro_hook_main_exit,
                       NULL);
+#endif
 
    eina_log_timing(_eo_log_dom,
                    EINA_LOG_STATE_STOP,
@@ -2477,12 +2480,14 @@ efl_object_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
+#if USE_CORO_THREAD
    eina_coro_hook_del(_eo_coro_hook_coro_enter,
                       _eo_coro_hook_coro_exit,
                       _eo_coro_hook_main_enter,
                       _eo_coro_hook_main_exit,
                       NULL);
    eina_lock_free(&_eo_coro_hook_data_lock);
+#endif
 
    _efl_add_fallback_shutdown();
 
