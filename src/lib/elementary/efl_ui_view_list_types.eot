@@ -1,4 +1,4 @@
-struct Efl.Ui.View.List.LayoutItem {
+struct Efl.Ui.View_List_LayoutItem {
    layout: Efl.Ui.Layout.Object;
    children: Efl.Model;
    index_offset: int;
@@ -8,4 +8,4 @@ struct Efl.Ui.View.List.LayoutItem {
    pos: Eina.Position2D;
 }
 
-struct @extern Efl.Ui.View.List.SegArray.Node; [[ ]]
+struct @extern Efl.Ui.View_List_SegArray_Node; [[ ]]

@@ -8,7 +8,7 @@ class Efl.Ui.View_List_SegArray (Efl.Object)
             [[ Get a SegArray List items accessor ]]
          }
          values {
-             acc: accessor<ptr(Efl.Ui.View.List.LayoutItem)>;
+             acc: accessor<ptr(Efl.Ui.View_List_LayoutItem)>;
          }
       }
       @property node_accessor {
@@ -16,7 +16,7 @@ class Efl.Ui.View_List_SegArray (Efl.Object)
             [[ Get a SegArray node accessor ]]
          }
          values {
-             acc: accessor<ptr(Efl.Ui.View.List.SegArray.Node)>;
+             acc: accessor<ptr(Efl.Ui.View_List_SegArray_Node)>;
          }
       }
       insert_value {
@@ -51,7 +51,7 @@ class Efl.Ui.View_List_SegArray (Efl.Object)
           params {
               @in index: int;
           }
-          return: ptr(Efl.Ui.View.List.LayoutItem) @owned;
+          return: ptr(Efl.Ui.View_List_LayoutItem) @owned;
       }
    }
    implements {
