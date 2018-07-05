@@ -34,7 +34,7 @@ library_context::actual_library_name(const std::string& filename) const
     // TODO What about references from outside efl (not present in the efl.Libs class?)
     auto ref = references.find(filename);
     if (ref != references.end())
-      return "efl.Libs." + ref->second;
+      return "Efl.Libs." + ref->second;
 
     // Fallback to original behaviour with explicit library name
     return '"' + library_name + '"';

@@ -169,7 +169,7 @@ void reorder_verb(std::vector<std::string> &names)
 
 inline std::string managed_namespace(std::string const& ns)
 {
-  return utils::to_lowercase(escape_keyword(ns));
+  return escape_keyword(ns);
 }
 
 inline std::string managed_method_name(attributes::function_def const& f)

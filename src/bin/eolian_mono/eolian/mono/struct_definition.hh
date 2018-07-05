@@ -195,7 +195,7 @@ struct to_internal_field_convert_generator
       else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = Eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -209,14 +209,14 @@ struct to_internal_field_convert_generator
       else if (regular && (regular->base_type == "string" || regular->base_type == "mstring"))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = eina.MemoryNative.StrDup(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = Eina.MemoryNative.StrDup(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (regular && regular->base_type == "stringshare")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = eina.Stringshare.eina_stringshare_add(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = Eina.Stringshare.eina_stringshare_add(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -307,7 +307,7 @@ struct to_external_field_convert_generator
       else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = Eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
@@ -321,7 +321,7 @@ struct to_external_field_convert_generator
       else if (regular && (regular->base_type == "string" || regular->base_type == "mstring" || regular->base_type == "stringshare"))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = eina.StringConversion.NativeUtf8ToManagedString(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = Eina.StringConversion.NativeUtf8ToManagedString(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -338,14 +338,14 @@ struct to_external_field_convert_generator
       else if (field.type.c_type == "Eina_Value" || field.type.c_type == "const Eina_Value")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ");\n"
+                 scope_tab << scope_tab << "_external_struct." << string << " = new Eina.Value(_internal_struct." << string << ");\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ", eina.Ownership.Unmanaged);\n"
+                 scope_tab << scope_tab << "_external_struct." << string << " = new Eina.Value(_internal_struct." << string << ", Eina.Ownership.Unmanaged);\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }

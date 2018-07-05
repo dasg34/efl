@@ -71,10 +71,10 @@ struct marshall_annotation_visitor_generate
                 return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareKeepOwnershipMarshaler))]";
           }},
           {"any_value_ptr", true, [&] {
-                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.ValueMarshalerOwn))]";
+                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshalerOwn))]";
           }},
           {"any_value_ptr", false, [&] {
-                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.ValueMarshaler))]";
+                    return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshaler))]";
           }},
           {"strbuf", true, [&] {
                 return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufPassOwnershipMarshaler))]";
@@ -106,10 +106,10 @@ struct marshall_annotation_visitor_generate
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StringshareKeepOwnershipMarshaler))]";
           }},
           {"any_value_ptr", true, [&] {
-                    return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.ValueMarshalerOwn))]";
+                    return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshalerOwn))]";
           }},
           {"any_value_ptr", false, [&] {
-                    return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.ValueMarshaler))]";
+                    return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshaler))]";
           }},
           {"strbuf", true, [&] {
                 return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(efl.eo.StrbufPassOwnershipMarshaler))]";
@@ -154,7 +154,7 @@ struct marshall_annotation_visitor_generate
      if (c.outer.base_type == "future")
        {
           std::string prefix = is_return ? "return: " : "";
-          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.FutureMarshaler))]").generate(sink, nullptr, *context);
+          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.FutureMarshaler))]").generate(sink, nullptr, *context);
        }
      return true;
    }
@@ -264,7 +264,7 @@ struct marshall_native_annotation_visitor_generate
      if (c.outer.base_type == "future")
        {
           std::string prefix = is_return ? "return: " : "";
-          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(eina.FutureMarshaler))]").generate(sink, nullptr, *context);
+          return as_generator("[" << prefix << "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.FutureMarshaler))]").generate(sink, nullptr, *context);
        }
      return true;
    }

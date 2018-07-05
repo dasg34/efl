@@ -83,7 +83,7 @@ struct native_function_definition_generator
         << ")\n"
         << scope_tab << "{\n"
         /****/
-        << scope_tab << scope_tab << "eina.Log.Debug(\"function " << string << " was called\");\n"
+        << scope_tab << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
         /****/
         << scope_tab << scope_tab << "efl.eo.IWrapper wrapper = efl.eo.Globals.data_get(pd);\n"
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
@@ -92,8 +92,8 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "_ret_var = " : "") << "((" << klass_inherit_name << ")wrapper)." << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.EFL_ERROR);\n"
         << scope_tab << scope_tab << scope_tab << "}\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"

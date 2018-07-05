@@ -41,8 +41,8 @@ struct unpack_event_args_visitor
            {"bool", [&arg] { return arg + " != IntPtr.Zero"; }}
            , {"int", [&arg] { return arg + ".ToInt32()"; }}
            , {"uint", [&arg] { return "(uint)" + arg + ".ToInt32()";}}
-           , {"string", [&arg] { return "eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
-           , {"Eina.Error", [&arg] { return "(eina.Error)Marshal.PtrToStructure(" + arg + ", typeof(eina.Error))"; }}
+           , {"string", [&arg] { return "Eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
+           , {"Eina.Error", [&arg] { return "(Eina.Error)Marshal.PtrToStructure(" + arg + ", typeof(Eina.Error))"; }}
         };
 
       std::string full_type_name = name_helpers::type_full_eolian_name(regular);
@@ -134,7 +134,7 @@ struct event_registration_generator
             wrapper_event_name = name_helpers::managed_event_name(evt.name);
 
        return as_generator(scope_tab << scope_tab << "evt_" << wrapper_event_name << "_delegate = "
-                        << "new efl.Event_Cb(on_" << wrapper_event_name << "_NativeCallback);\n"
+                        << "new Efl.Event_Cb(on_" << wrapper_event_name << "_NativeCallback);\n"
                 ).generate(sink, attributes::unused, context);
    }
 };
@@ -211,17 +211,17 @@ struct event_definition_generator
             << scope_tab << scope_tab << "}\n"
             << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
             << scope_tab << "}\n"
-            << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
+            << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref Efl.Event evt)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << event_args
             << scope_tab << scope_tab << "try {\n"
             << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
             << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
-            << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.ToString());\n"
-            << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error(e.ToString());\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.EFL_ERROR);\n"
             << scope_tab << scope_tab << "}\n"
             << scope_tab << "}\n"
-            << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
+            << scope_tab << "Efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
             << scope_tab << "event EventHandler" << wrapper_args_template << " " << klass_name << "." << managed_evt_name << "{\n")
               .generate(sink, NULL, context))
           return false;
@@ -233,7 +233,7 @@ struct event_definition_generator
                    << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
                    << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " += value;\n"
                    << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                   << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error adding proxy for event {key}\");\n"
+                   << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Error adding proxy for event {key}\");\n"
                    << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                    << scope_tab << scope_tab << "}\n"
                    << scope_tab << scope_tab << "remove {\n"
@@ -242,7 +242,7 @@ struct event_definition_generator
                    << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
                    << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << wrapper_evt_name << " -= value;\n"
                    << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
-                   << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error removing proxy for event {key}\");\n"
+                   << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Error removing proxy for event {key}\");\n"
                    << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
                    << scope_tab << scope_tab << "}\n"
                    << scope_tab << "}\n")
