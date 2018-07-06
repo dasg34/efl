@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace eina {
+namespace Eina {
 
 public struct Error : IComparable<Error>
 {
@@ -36,7 +36,7 @@ public struct Error : IComparable<Error>
     }
     public override string ToString()
     {
-        return "eina.Error(" + code + ")";
+        return "Eina.Error(" + code + ")";
     }
 
     internal static void Init()
@@ -44,10 +44,10 @@ public struct Error : IComparable<Error>
         EFL_ERROR = eina_error_msg_register("Managed Code Error");
     }
 
-    [DllImport(efl.Libs.Eina)] static extern Error eina_error_msg_register(string msg);
-    [DllImport(efl.Libs.Eina)] static extern Error eina_error_get();
-    [DllImport(efl.Libs.Eina)] static extern void eina_error_set(Error error);
-    [DllImport(efl.Libs.Eina)] static extern IntPtr eina_error_msg_get(Error error);
+    [DllImport(Efl.Libs.Eina)] static extern Error eina_error_msg_register(string msg);
+    [DllImport(Efl.Libs.Eina)] static extern Error eina_error_get();
+    [DllImport(Efl.Libs.Eina)] static extern void eina_error_set(Error error);
+    [DllImport(Efl.Libs.Eina)] static extern IntPtr eina_error_msg_get(Error error);
 
     public static void Set(Error error)
     {
@@ -62,7 +62,7 @@ public struct Error : IComparable<Error>
     public static String MsgGet(Error error)
     {
         IntPtr cstr = eina_error_msg_get(error);
-        return eina.StringConversion.NativeUtf8ToManagedString(cstr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(cstr);
     }
 
     public static void RaiseIfOccurred()
@@ -75,7 +75,7 @@ public struct Error : IComparable<Error>
     public static void Raise(Error e)
     {
         if (e != 0)
-            throw (new efl.EflException(MsgGet(e)));
+            throw (new Efl.EflException(MsgGet(e)));
     }
 
     public static void Clear()

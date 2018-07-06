@@ -4,78 +4,78 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.InlistNativeFunctions;
-using eina.Callbacks;
+using static Eina.TraitFunctions;
+using static Eina.InlistNativeFunctions;
+using Eina.Callbacks;
 
-namespace eina {
+namespace Eina {
 
 public static class InlistNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_append(IntPtr in_list, IntPtr in_item);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_prepend(IntPtr in_list, IntPtr in_item);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_append_relative(IntPtr in_list, IntPtr in_item, IntPtr in_relative);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_prepend_relative(IntPtr in_list, IntPtr in_item, IntPtr in_relative);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_remove(IntPtr in_list, IntPtr in_item);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_find(IntPtr in_list, IntPtr in_item);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_promote(IntPtr list, IntPtr item);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_demote(IntPtr list, IntPtr item);
 
-    [DllImport(efl.Libs.Eina)] public static extern uint
+    [DllImport(Efl.Libs.Eina)] public static extern uint
         eina_inlist_count(IntPtr list);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_iterator_new(IntPtr in_list);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_accessor_new(IntPtr in_list);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_sorted_insert(IntPtr list, IntPtr item, IntPtr func);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_sorted_state_new();
 
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(Efl.Libs.Eina)] public static extern int
         eina_inlist_sorted_state_init(IntPtr state, IntPtr list);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_inlist_sorted_state_free(IntPtr state);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_sorted_state_insert(IntPtr list, IntPtr item, IntPtr func, IntPtr state);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_inlist_sort(IntPtr head, IntPtr func);
 
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         eina_inlist_first_custom_export_mono(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         eina_inlist_last_custom_export_mono(IntPtr list);
 
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         eina_inlist_next_custom_export_mono(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         eina_inlist_prev_custom_export_mono(IntPtr list);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         eina_inlist_iterator_wrapper_new_custom_export_mono(IntPtr in_list);
 }
 
@@ -296,9 +296,9 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     }
 
 
-    public eina.Iterator<T> GetIterator()
+    public Eina.Iterator<T> GetIterator()
     {
-        return new eina.Iterator<T>(eina_inlist_iterator_wrapper_new_custom_export_mono(Handle), true, false);
+        return new Eina.Iterator<T>(eina_inlist_iterator_wrapper_new_custom_export_mono(Handle), true, false);
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -315,9 +315,9 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary> Gets an Accessor for this List.</summary>
-    public eina.Accessor<T> GetAccessor()
+    public Eina.Accessor<T> GetAccessor()
     {
-        return new eina.AccessorInList<T>(eina_inlist_accessor_new(Handle), Ownership.Managed);
+        return new Eina.AccessorInList<T>(eina_inlist_accessor_new(Handle), Ownership.Managed);
     }
 }
 

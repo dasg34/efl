@@ -6,13 +6,13 @@ using System.Threading;
 
 public class EcoreEvas
 {
-    [DllImport(efl.Libs.EcoreEvas)] static extern void ecore_evas_init();
-    // [DllImport(efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_new([MarshalAs(UnmanagedType.LPStr)] String engine_name, int x, int y, int w, int h
+    [DllImport(Efl.Libs.EcoreEvas)] static extern void ecore_evas_init();
+    // [DllImport(Efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_new([MarshalAs(UnmanagedType.LPStr)] String engine_name, int x, int y, int w, int h
     //                                                               , [MarshalAs(UnmanagedType.LPStr)] String extra_options);
-    [DllImport(efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_new(IntPtr engine_name, int x, int y, int w, int h
+    [DllImport(Efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_new(IntPtr engine_name, int x, int y, int w, int h
                                                                   , IntPtr extra_options);
-    [DllImport(efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_get(IntPtr ecore_evas);
-    [DllImport(efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_show(IntPtr ecore_evas);
+    [DllImport(Efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_get(IntPtr ecore_evas);
+    [DllImport(Efl.Libs.EcoreEvas)] static extern IntPtr ecore_evas_show(IntPtr ecore_evas);
 
     IntPtr handle;
     public EcoreEvas()
@@ -29,9 +29,9 @@ public class EcoreEvas
         ecore_evas_show(handle);
     }
 
-    public efl.canvas.IObject canvas
+    public Efl.Canvas.IObject canvas
     {
-        get { return new efl.canvas.Object(ecore_evas_get(handle)); }
+        get { return new Efl.Canvas.Object(ecore_evas_get(handle)); }
     }
     
 }

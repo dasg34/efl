@@ -4,7 +4,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace eina
+namespace Eina
 {
 namespace Callbacks
 {
@@ -16,27 +16,27 @@ public delegate void Eina_Free_Cb(IntPtr data);
 
 internal static class NativeCustomExportFunctions
 {
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(Efl.Libs.CustomExports)] public static extern void
         efl_mono_native_free(IntPtr ptr);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(Efl.Libs.CustomExports)] public static extern void
         efl_mono_native_free_ref(IntPtr ptr);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_alloc(uint count);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_memset(IntPtr ptr, uint fill, uint count);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_alloc_copy(IntPtr val, uint size);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_strdup(string str);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_ptr_compare_addr_get();
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_str_compare_addr_get();
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_free_addr_get();
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_efl_unref_addr_get();
 }
 
@@ -107,11 +107,11 @@ public static class PrimitiveConversion
    {
        if (nat == IntPtr.Zero)
        {
-           eina.Log.Error("Null pointer for primitive type.");
+           Eina.Log.Error("Null pointer for primitive type.");
            return default(T);
        }
 
-       var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
+       var w = Marshal.PtrToStructure<Eina.ConvertWrapper<T> >(nat);
        return w.val;
    }
 

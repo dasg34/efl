@@ -3,40 +3,40 @@
 using System;
 using System.Runtime.InteropServices;
 
-using static eldbus.EldbusPendingNativeFunctions;
+using static Eldbus.EldbusPendingNativeFunctions;
 
-namespace eldbus {
+namespace Eldbus {
 
 public static class EldbusPendingNativeFunctions
 {
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_pending_data_set(IntPtr pending, string key, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_pending_data_get(IntPtr pending, string key);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_pending_data_del(IntPtr pending, string key);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_pending_cancel(IntPtr pending);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_pending_destination_get(IntPtr pending);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_pending_path_get(IntPtr pending);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_pending_interface_get(IntPtr pending);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_pending_method_get(IntPtr pending);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_pending_free_cb_add(IntPtr pending, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_pending_free_cb_del(IntPtr pending, IntPtr cb, IntPtr data);
 }
 
@@ -56,7 +56,7 @@ public class Pending
     {
         if (Handle == IntPtr.Zero)
         {
-            eldbus.Common.RaiseNullHandle();
+            Eldbus.Common.RaiseNullHandle();
         }
     }
 

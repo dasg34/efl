@@ -5,14 +5,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using eina.Callbacks;
-using static eina.HashNativeFunctions;
-using static eina.InarrayNativeFunctions;
-using static eina.InlistNativeFunctions;
-using static eina.NativeCustomExportFunctions;
-using static eina.ContainerCommonData;
+using Eina.Callbacks;
+using static Eina.HashNativeFunctions;
+using static Eina.InarrayNativeFunctions;
+using static Eina.InlistNativeFunctions;
+using static Eina.NativeCustomExportFunctions;
+using static Eina.ContainerCommonData;
 
-namespace eina {
+namespace Eina {
 
 public enum ElementType { NumericType, StringType, ObjectType };
 
@@ -150,7 +150,7 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer for Inlist node.");
+            Eina.Log.Error("Null pointer for Inlist node.");
             return default(T);
         }
         var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
@@ -290,7 +290,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer for Inlist node.");
+            Eina.Log.Error("Null pointer for Inlist node.");
             return default(T);
         }
         var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
@@ -384,7 +384,7 @@ public abstract class PrimitiveElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer on primitive/struct container.");
+            Eina.Log.Error("Null pointer on primitive/struct container.");
             return default(T);
         }
         return PrimitiveConversion.PointerToManaged<T>(nat);
@@ -399,7 +399,7 @@ public abstract class PrimitiveElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer for Inlist node.");
+            Eina.Log.Error("Null pointer for Inlist node.");
             return default(T);
         }
         var w = Marshal.PtrToStructure< InlistNode<T> >(nat);
@@ -511,7 +511,7 @@ public static class TraitFunctions
         return type == typeof(string);
     }
 
-    public static eina.ElementType GetElementTypeCode(System.Type type)
+    public static Eina.ElementType GetElementTypeCode(System.Type type)
     {
         if (IsEflObject(type))
             return ElementType.ObjectType;

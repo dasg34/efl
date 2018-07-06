@@ -66,11 +66,11 @@ public struct Evas_Object_Box_Option {
     IntPtr obj;
     [MarshalAsAttribute(UnmanagedType.U1)] bool max_reached;
     [MarshalAsAttribute(UnmanagedType.U1)] bool min_reached;
-    evas.Coord alloc_size;
+    Evas.Coord alloc_size;
 };
 #pragma warning restore 0169
 
-namespace efl {
+namespace Efl {
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Event_Description {
@@ -88,7 +88,7 @@ public struct Event_Description {
             IntPtr data = efl.eo.Globals.dlsym(efl.eo.Globals.RTLD_DEFAULT, name);
 
             if (data == IntPtr.Zero) {
-                string error = eina.StringConversion.NativeUtf8ToManagedString(efl.eo.Globals.dlerror());
+                string error = Eina.StringConversion.NativeUtf8ToManagedString(efl.eo.Globals.dlerror());
                 throw new Exception(error);
             }
             descriptions.Add(name, data);
@@ -129,7 +129,7 @@ public struct Text_Annotate_Annotation {
 
 public delegate void Signal_Cb(IntPtr data, IntPtr obj, IntPtr emission, IntPtr source);
 
-namespace access {
+namespace Access {
 
 public struct Action_Data {
     public IntPtr name;
@@ -142,10 +142,7 @@ public struct Action_Data {
 
 } // namespace efl
 
-namespace evas { namespace font {
-
-}
-
+namespace Evas {
 
 // C# does not allow typedefs, so we use these implicit conversions.
 public struct Modifier_Mask {
@@ -188,7 +185,7 @@ public struct Efl_Font_Size {
     }
 }
 
-namespace eina {
+namespace Eina {
 
 [StructLayout(LayoutKind.Sequential)]
 public struct Rectangle {
@@ -200,7 +197,7 @@ public struct Rectangle {
 
 }
 
-namespace evas {
+namespace Evas {
 
 /* Copied from Evas_Legacy.h */
 public enum Text_Style_Type
@@ -333,9 +330,9 @@ public enum Callback_Type
 
 }
 
-namespace elm {
+namespace Elm {
 
-namespace atspi {
+namespace Atspi {
 public struct State_Set {
     private ulong val;
 
@@ -356,7 +353,7 @@ public struct Relation_Set
 }
 } // namespace atspi
 
-namespace gengrid { namespace item {
+namespace Gengrid { namespace Item {
 [StructLayout(LayoutKind.Sequential)]
 public struct Class
 {
@@ -413,7 +410,7 @@ public delegate void Elm_Interface_Scrollable_Cb(IntPtr obj, IntPtr data);
 public delegate void Elm_Interface_Scrollable_Min_Limit_Cb(IntPtr obj,
                                                      [MarshalAsAttribute(UnmanagedType.U1)]bool w,
                                                      [MarshalAsAttribute(UnmanagedType.U1)]bool h);
-public delegate void Elm_Interface_Scrollable_Resize_Cb(IntPtr obj, evas.Coord w, evas.Coord h);
+public delegate void Elm_Interface_Scrollable_Resize_Cb(IntPtr obj, Evas.Coord w, Evas.Coord h);
 public delegate void Elm_Entry_Item_Provider_Cb(IntPtr data, IntPtr obj, IntPtr item);
 public delegate void Elm_Entry_Filter_Cb(IntPtr data, IntPtr obj, IntPtr text);
 [return: MarshalAsAttribute(UnmanagedType.U1)]

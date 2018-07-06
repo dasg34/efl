@@ -3,9 +3,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using static eldbus.EldbusMessageNativeFunctions;
+using static Eldbus.EldbusMessageNativeFunctions;
 
-namespace eldbus {
+namespace Eldbus {
 
 public static class Timeout
 {
@@ -132,28 +132,28 @@ public static class Argument
 
 public abstract class BasicMessageArgument
 {
-    public void AppendTo(eldbus.Message msg)
+    public void AppendTo(Eldbus.Message msg)
     {
         if (!InternalAppendTo(msg))
         {
-            eina.Error.RaiseIfOccurred();
-            throw new SEHException("Eldbus: could not append basic type to eldbus.Message");
+            Eina.Error.RaiseIfOccurred();
+            throw new SEHException("Eldbus: could not append basic type to Eldbus.Message");
         }
     }
 
-    public void AppendTo(eldbus.MessageIterator iter)
+    public void AppendTo(Eldbus.MessageIterator iter)
     {
         if (!InternalAppendTo(iter))
         {
-            eina.Error.RaiseIfOccurred();
-            throw new SEHException("Eldbus: could not append basic type to eldbus.MessageIterator");
+            Eina.Error.RaiseIfOccurred();
+            throw new SEHException("Eldbus: could not append basic type to Eldbus.MessageIterator");
         }
     }
 
     public abstract char TypeCode {get;}
     public abstract string Signature {get;}
-    protected abstract bool InternalAppendTo(eldbus.Message msg);
-    protected abstract bool InternalAppendTo(eldbus.MessageIterator iter);
+    protected abstract bool InternalAppendTo(Eldbus.Message msg);
+    protected abstract bool InternalAppendTo(Eldbus.MessageIterator iter);
 
     public static implicit operator BasicMessageArgument(byte arg)
     {
@@ -228,12 +228,12 @@ public class ByteMessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.ByteType.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -251,12 +251,12 @@ public class BoolMessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.BooleanType.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -274,12 +274,12 @@ public class Int16MessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.Int16Type.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -297,12 +297,12 @@ public class UInt16MessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.UInt16Type.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -320,12 +320,12 @@ public class Int32MessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.Int32Type.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -343,12 +343,12 @@ public class UInt32MessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.UInt32Type.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -366,12 +366,12 @@ public class Int64MessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.Int64Type.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -389,12 +389,12 @@ public class UInt64MessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.UInt64Type.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -412,12 +412,12 @@ public class DoubleMessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.DoubleType.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -432,12 +432,12 @@ public abstract class StringLikeMessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
@@ -485,26 +485,26 @@ public class UnixFdMessageArgument : BasicMessageArgument
     public override char TypeCode { get { return Argument.UnixFdType.Code; } }
     public override string Signature { get { return Argument.ByteType.Signature; } }
 
-    protected override bool InternalAppendTo(eldbus.Message msg)
+    protected override bool InternalAppendTo(Eldbus.Message msg)
     {
         return eldbus_message_arguments_append(msg.Handle, Signature, value);
     }
 
-    protected override bool InternalAppendTo(eldbus.MessageIterator iter)
+    protected override bool InternalAppendTo(Eldbus.MessageIterator iter)
     {
         return eldbus_message_iter_basic_append(iter.Handle, TypeCode, value);
     }
 }
 
-public delegate void MessageDelegate(eldbus.Message msg, eldbus.Pending pending);
+public delegate void MessageDelegate(Eldbus.Message msg, Eldbus.Pending pending);
 
 public static class Common
 {
     public static void RaiseNullHandle()
     {
         if (NullHandleError == 0)
-            NullHandleError = eina.Error.Register("Eldbus: null handle");
-        eina.Error.Raise(NullHandleError);
+            NullHandleError = Eina.Error.Register("Eldbus: null handle");
+        Eina.Error.Raise(NullHandleError);
     }
 
     public delegate void Eldbus_Message_Cb(IntPtr data, IntPtr msg, IntPtr pending);
@@ -526,21 +526,21 @@ public static class Common
         MessageDelegate dlgt = Marshal.GetDelegateForFunctionPointer(data, typeof(MessageDelegate)) as MessageDelegate;
         if (dlgt == null)
         {
-            eina.Log.Error("Eldbus: invalid delegate pointer from Eldbus_Message_Cb");
+            Eina.Log.Error("Eldbus: invalid delegate pointer from Eldbus_Message_Cb");
             return;
         }
 
-        eldbus.Message msg;
-        eldbus.Pending pending;
+        Eldbus.Message msg;
+        Eldbus.Pending pending;
 
         try
         {
-            msg = new eldbus.Message(msg_hdl, false);
-            pending = new eldbus.Pending(pending_hdl, false);
+            msg = new Eldbus.Message(msg_hdl, false);
+            pending = new Eldbus.Pending(pending_hdl, false);
         }
         catch(Exception e)
         {
-            eina.Log.Error("Eldbus: could not convert Eldbus_Message_Cb parameters. Exception: " + e.ToString());
+            Eina.Log.Error("Eldbus: could not convert Eldbus_Message_Cb parameters. Exception: " + e.ToString());
             return;
         }
 
@@ -550,12 +550,12 @@ public static class Common
         }
         catch(Exception e)
         {
-            eina.Log.Error("Eldbus: Eldbus_Message_Cb delegate error. Exception: " + e.ToString());
+            Eina.Log.Error("Eldbus: Eldbus_Message_Cb delegate error. Exception: " + e.ToString());
         }
     }
 
     private static Eldbus_Message_Cb message_cb_wrapper = null;
-    private static eina.Error NullHandleError = 0;
+    private static Eina.Error NullHandleError = 0;
 }
 
 }

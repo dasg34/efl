@@ -3,64 +3,64 @@
 using System;
 using System.Runtime.InteropServices;
 
-using static eldbus.EldbusProxyNativeFunctions;
+using static Eldbus.EldbusProxyNativeFunctions;
 
-namespace eldbus {
+namespace Eldbus {
 
 public static class EldbusProxyNativeFunctions
 {
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_get(IntPtr obj, string _interface);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_ref(IntPtr proxy);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_proxy_unref(IntPtr proxy);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_object_get(IntPtr proxy);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_interface_get(IntPtr proxy);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_proxy_data_set(IntPtr proxy, string key, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_data_get(IntPtr proxy, string key);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_data_del(IntPtr proxy, string key);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_proxy_free_cb_add(IntPtr proxy, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_proxy_free_cb_del(IntPtr proxy, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_method_call_new(IntPtr proxy, string member);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_send(IntPtr proxy, IntPtr msg, IntPtr cb, IntPtr cb_data, double timeout);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_send_and_block(IntPtr proxy, IntPtr msg, double timeout);
 
-//     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+//     [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
 //         eldbus_proxy_call(IntPtr proxy, string member, IntPtr cb, IntPtr cb_data, double timeout, string signature, ...);
 //
-//     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+//     [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
 //         eldbus_proxy_vcall(IntPtr proxy, string member, IntPtr cb, IntPtr cb_data, double timeout, string signature, va_list ap);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_proxy_signal_handler_add(IntPtr proxy, string member, IntPtr cb, IntPtr cb_data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_proxy_event_callback_add(IntPtr proxy, int type, IntPtr cb, IntPtr cb_data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_proxy_event_callback_del(IntPtr proxy, int type, IntPtr cb, IntPtr cb_data);
 }
 
@@ -80,7 +80,7 @@ public class Proxy : IDisposable
     {
         if (Handle == IntPtr.Zero)
         {
-            eldbus.Common.RaiseNullHandle();
+            Eldbus.Common.RaiseNullHandle();
         }
     }
 
@@ -89,7 +89,7 @@ public class Proxy : IDisposable
         InitNew(handle, own);
     }
 
-    public Proxy(eldbus.Object obj, string _interface)
+    public Proxy(Eldbus.Object obj, string _interface)
     {
         InitNew(eldbus_proxy_get(obj.Handle, _interface), true);
     }
@@ -128,16 +128,16 @@ public class Proxy : IDisposable
         return h;
     }
 
-    eldbus.Object GetObject()
+    Eldbus.Object GetObject()
     {
         CheckHandle();
         var ptr = eldbus_proxy_object_get(Handle);
         if (ptr == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Object' object from eldbus_proxy_object_get");
         }
-        return new eldbus.Object(ptr, false);
+        return new Eldbus.Object(ptr, false);
     }
 
     string GetInterface()
@@ -147,7 +147,7 @@ public class Proxy : IDisposable
         return Marshal.PtrToStringAuto(ptr);
     }
 
-    eldbus.Message NewMethodCall(string member)
+    Eldbus.Message NewMethodCall(string member)
     {
         CheckHandle();
 
@@ -157,46 +157,46 @@ public class Proxy : IDisposable
         var ptr = eldbus_proxy_method_call_new(Handle, member);
         if (ptr == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_proxy_method_call_new");
         }
-        return new eldbus.Message(ptr, false);
+        return new Eldbus.Message(ptr, false);
     }
 
-    eldbus.Pending Send(eldbus.Message msg, eldbus.MessageDelegate dlgt = null, double timeout = -1)
+    Eldbus.Pending Send(Eldbus.Message msg, Eldbus.MessageDelegate dlgt = null, double timeout = -1)
     {
         CheckHandle();
 
         if (msg == null)
             throw new ArgumentNullException("msg");
 
-        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
+        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : Eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
         var pending_hdl = eldbus_proxy_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
         if (pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_proxy_send");
         }
 
-        return new eldbus.Pending(pending_hdl, false);
+        return new Eldbus.Pending(pending_hdl, false);
     }
 
-    eldbus.Message SendAndBlock(eldbus.Message msg, double timeout = -1)
+    Eldbus.Message SendAndBlock(Eldbus.Message msg, double timeout = -1)
     {
         CheckHandle();
         var ptr = eldbus_proxy_send_and_block(Handle, msg.Handle, timeout);
         if (ptr == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_proxy_send_and_block");
         }
-        return new eldbus.Message(ptr, true);
+        return new Eldbus.Message(ptr, true);
     }
 
-    eldbus.Pending Call(string member, eldbus.MessageDelegate dlgt, double timeout, params BasicMessageArgument[] args)
+    Eldbus.Pending Call(string member, Eldbus.MessageDelegate dlgt, double timeout, params BasicMessageArgument[] args)
     {
         CheckHandle();
 
@@ -210,7 +210,7 @@ public class Proxy : IDisposable
         return Send(msg, dlgt, timeout);
     }
 
-    eldbus.Pending Call(string member, params BasicMessageArgument[] args)
+    Eldbus.Pending Call(string member, params BasicMessageArgument[] args)
     {
         return Call(member, null, -1.0, args);
     }

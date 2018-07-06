@@ -3,28 +3,28 @@
 
 using System.Runtime.InteropServices;
 
-using static eldbus.EldbusObjectNativeFunctions;
+using static Eldbus.EldbusObjectNativeFunctions;
 
 using IntPtr = System.IntPtr;
 
-namespace eldbus {
+namespace Eldbus {
 
 
 public static class EldbusObjectNativeFunctions
 {
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_get(IntPtr conn, string bus, string path);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_ref(IntPtr obj);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_object_unref(IntPtr obj);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_object_free_cb_add(IntPtr obj, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern void
+    [DllImport(Efl.Libs.Eldbus)] public static extern void
         eldbus_object_free_cb_del(IntPtr obj, IntPtr cb, IntPtr data);
 
 // typedef enum
@@ -37,48 +37,48 @@ public static class EldbusObjectNativeFunctions
 //    ELDBUS_OBJECT_EVENT_LAST    /**< sentinel, not a real event type */
 // } Eldbus_Object_Event_Type;
 //
-//     [DllImport(efl.Libs.Eldbus)] public static extern void
+//     [DllImport(Efl.Libs.Eldbus)] public static extern void
 //         eldbus_object_event_callback_add(IntPtr obj, Eldbus_Object_Event_Type type, IntPtr cb, IntPtr cb_data);
 //
-//     [DllImport(efl.Libs.Eldbus)] public static extern void
+//     [DllImport(Efl.Libs.Eldbus)] public static extern void
 //         eldbus_object_event_callback_del(IntPtr obj, Eldbus_Object_Event_Type type, IntPtr cb, IntPtr cb_data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_connection_get(IntPtr obj);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_bus_name_get(IntPtr obj);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_path_get(IntPtr obj);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_send(IntPtr obj, IntPtr msg, IntPtr cb, IntPtr cb_data, double timeout);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_signal_handler_add(IntPtr obj, string _interface, string member, IntPtr cb, IntPtr cb_data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_method_call_new(IntPtr obj, string _interface, string member);
 
     // FreeDesktop.Org Methods
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_peer_ping(IntPtr obj, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_peer_machine_id_get(IntPtr obj, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_introspect(IntPtr obj, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
         eldbus_object_managed_objects_get(IntPtr obj, IntPtr cb, IntPtr data);
 
-//     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+//     [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
 //         eldbus_object_manager_interfaces_added(IntPtr obj, Eldbus_Signal_Cb cb, IntPtr cb_data);
 //
-//     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
+//     [DllImport(Efl.Libs.Eldbus)] public static extern IntPtr
 //         eldbus_object_manager_interfaces_removed(IntPtr obj, Eldbus_Signal_Cb cb, IntPtr cb_data);
 }
 
@@ -100,7 +100,7 @@ public class Object : System.IDisposable
     {
         if (Handle == IntPtr.Zero)
         {
-            eldbus.Common.RaiseNullHandle();
+            Eldbus.Common.RaiseNullHandle();
         }
     }
 
@@ -109,7 +109,7 @@ public class Object : System.IDisposable
         InitNew(handle, own);
     }
 
-    public Object(eldbus.Connection conn, string bus, string path)
+    public Object(Eldbus.Connection conn, string bus, string path)
     {
         if (conn == null)
             throw new System.ArgumentNullException("conn");
@@ -122,7 +122,7 @@ public class Object : System.IDisposable
 
         if (handle == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Object' object from eldbus_object_get");
         }
 
@@ -163,18 +163,18 @@ public class Object : System.IDisposable
         return h;
     }
 
-    public eldbus.Connection GetConnection()
+    public Eldbus.Connection GetConnection()
     {
         CheckHandle();
         var conn = eldbus_object_connection_get(Handle);
 
         if (conn == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Connection' object from eldbus_object_connection_get");
         }
 
-        return new eldbus.Connection(conn, false);
+        return new Eldbus.Connection(conn, false);
     }
 
     public string GetBusName()
@@ -203,28 +203,28 @@ public class Object : System.IDisposable
         eldbus_object_unref(Handle);
     }
 
-    public eldbus.Pending Send(eldbus.Message msg, eldbus.MessageDelegate dlgt = null, double timeout = -1)
+    public Eldbus.Pending Send(Eldbus.Message msg, Eldbus.MessageDelegate dlgt = null, double timeout = -1)
     {
         CheckHandle();
 
         if (msg == null)
             throw new System.ArgumentNullException("msg");
 
-        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
+        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : Eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
         var pending_hdl = eldbus_object_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
         if (pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_send");
         }
 
-        return new eldbus.Pending(pending_hdl, false);
+        return new Eldbus.Pending(pending_hdl, false);
     }
 
-    public eldbus.Message NewMethodCall(string _interface, string member)
+    public Eldbus.Message NewMethodCall(string _interface, string member)
     {
         CheckHandle();
 
@@ -232,83 +232,83 @@ public class Object : System.IDisposable
 
         if (hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_object_method_call_new");
         }
 
-        return new eldbus.Message(hdl, false);
+        return new Eldbus.Message(hdl, false);
     }
 
-    public eldbus.Pending PeerPing(eldbus.MessageDelegate dlgt = null)
+    public Eldbus.Pending PeerPing(Eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
 
-        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
+        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : Eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
         var pending_hdl = eldbus_object_peer_ping(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_peer_ping");
         }
 
-        return new eldbus.Pending(pending_hdl, false);
+        return new Eldbus.Pending(pending_hdl, false);
     }
 
-    public eldbus.Pending GetPeerMachineId(eldbus.MessageDelegate dlgt = null)
+    public Eldbus.Pending GetPeerMachineId(Eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
 
-        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
+        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : Eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
         var pending_hdl = eldbus_object_peer_machine_id_get(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_peer_machine_id_get");
         }
 
-        return new eldbus.Pending(pending_hdl, false);
+        return new Eldbus.Pending(pending_hdl, false);
     }
 
-    public eldbus.Pending Introspect(eldbus.MessageDelegate dlgt = null)
+    public Eldbus.Pending Introspect(Eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
 
-        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
+        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : Eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
         var pending_hdl = eldbus_object_introspect(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_introspect");
         }
 
-        return new eldbus.Pending(pending_hdl, false);
+        return new Eldbus.Pending(pending_hdl, false);
     }
 
-    public eldbus.Pending GetManagedObjects(eldbus.MessageDelegate dlgt = null)
+    public Eldbus.Pending GetManagedObjects(Eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
 
-        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
+        IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : Eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
 
         var pending_hdl = eldbus_object_managed_objects_get(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_managed_objects_get");
         }
 
-        return new eldbus.Pending(pending_hdl, false);
+        return new Eldbus.Pending(pending_hdl, false);
     }
 
 }

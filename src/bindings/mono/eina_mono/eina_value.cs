@@ -10,11 +10,11 @@ using System.Security;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
-using static eina.EinaNative.UnsafeNativeMethods;
-using static eina.TraitFunctions;
+using static Eina.EinaNative.UnsafeNativeMethods;
+using static Eina.TraitFunctions;
 
 
-namespace eina {
+namespace Eina {
 
 namespace EinaNative {
 
@@ -38,350 +38,350 @@ struct Value_List
 [SuppressUnmanagedCodeSecurityAttribute]
 static internal class UnsafeNativeMethods {
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_convert(IntPtr handle, IntPtr convert);
 
     // Wrapped and helper methods
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern int eina_value_sizeof();
 
-    [DllImport(efl.Libs.CustomExports, CharSet=CharSet.Ansi)]
+    [DllImport(Efl.Libs.CustomExports, CharSet=CharSet.Ansi)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_string(IntPtr handle, string value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_uchar(IntPtr handle, byte value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_char(IntPtr handle, sbyte value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_short(IntPtr handle, short value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_ushort(IntPtr handle, ushort value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_int(IntPtr handle, int value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_uint(IntPtr handle, uint value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_long(IntPtr handle, long value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_ulong(IntPtr handle, ulong value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_float(IntPtr handle, float value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_double(IntPtr handle, double value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_set_wrapper_ptr(IntPtr handle, IntPtr value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_setup_wrapper(IntPtr handle, IntPtr type);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern void eina_value_flush_wrapper(IntPtr handle);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr eina_value_type_get_wrapper(IntPtr handle);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out IntPtr output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out Value_List output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out Value_Array output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out byte output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out sbyte output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out short output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out ushort output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out int output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out uint output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out long output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out ulong output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out float output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_get_wrapper(IntPtr handle, out double output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern int eina_value_compare_wrapper(IntPtr handle, IntPtr other);
 
-    [DllImport(efl.Libs.Eina, CharSet=CharSet.Ansi)]
+    [DllImport(Efl.Libs.Eina, CharSet=CharSet.Ansi)]
     internal static extern IntPtr eina_value_to_string(IntPtr handle); // We take ownership of the returned string.
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_array_setup_wrapper(IntPtr handle, IntPtr subtype, uint step);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_list_setup_wrapper(IntPtr handle, IntPtr subtype);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_array_append_wrapper(IntPtr handle, IntPtr data);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_list_append_wrapper(IntPtr handle, IntPtr data);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_array_get_wrapper(IntPtr handle, int index, out IntPtr output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_list_get_wrapper(IntPtr handle, int index, out IntPtr output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_array_set_wrapper(IntPtr handle, int index, IntPtr value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_list_set_wrapper(IntPtr handle, int index, IntPtr value);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr eina_value_array_subtype_get_wrapper(IntPtr handle);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr eina_value_list_subtype_get_wrapper(IntPtr handle);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern uint eina_value_array_count_wrapper(IntPtr handle);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern uint eina_value_list_count_wrapper(IntPtr handle);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_empty_is_wrapper(IntPtr handle, [MarshalAsAttribute(UnmanagedType.U1)] out bool empty);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref byte value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref sbyte value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref short value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref ushort value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref int value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref uint value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref long value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref ulong value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref float value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref double value);
 
-    [DllImport(efl.Libs.Eina, CharSet=CharSet.Ansi)]
+    [DllImport(Efl.Libs.Eina, CharSet=CharSet.Ansi)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, ref string value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pset(IntPtr handle, IntPtr subtype, IntPtr value);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_reset(IntPtr handle);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_optional_pget(IntPtr handle, out eina.EinaNative.Value_Array output);
+    internal static extern bool eina_value_optional_pget(IntPtr handle, out Eina.EinaNative.Value_Array output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_optional_pget(IntPtr handle, out eina.EinaNative.Value_List output);
+    internal static extern bool eina_value_optional_pget(IntPtr handle, out Eina.EinaNative.Value_List output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out IntPtr output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out byte output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out sbyte output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out short output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out ushort output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out int output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out uint output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out long output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out ulong output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out float output);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_optional_pget(IntPtr handle, out double output);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr eina_value_optional_type_get_wrapper(IntPtr handle);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref eina.EinaNative.Value_Array ptr);
+    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref Eina.EinaNative.Value_Array ptr);
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref eina.EinaNative.Value_List ptr);
+    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref Eina.EinaNative.Value_List ptr);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_copy(IntPtr src, IntPtr dest);
 
     // Supported types
 
     // 8 bits byte
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_byte();
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_sbyte();
 
     // 16 bits short
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_short();
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_ushort();
 
     // 32 bits ints
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_int32();
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_uint32();
 
     // 64 bit longs
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_long();
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_ulong();
 
     // In C# long and int 64 are synonyms, but in Eina Value they are separate types.
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_int64();
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_uint64();
 
     // Floating point
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_float();
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_double();
 
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_string();
 
     // Collections
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_array();
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_list();
 
     // Optional
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_optional();
 
     // Error
-    [DllImport(efl.Libs.CustomExports)]
+    [DllImport(Efl.Libs.CustomExports)]
     internal static extern IntPtr type_error();
 }
 }
@@ -571,7 +571,7 @@ static class ValueTypeBridge
 
     private static void LoadTypes()
     {
-        eina.Config.Init(); // Make sure eina is initialized.
+        Eina.Config.Init(); // Make sure eina is initialized.
 
         ManagedToNative.Add(ValueType.SByte, type_sbyte());
         NativeToManaged.Add(type_sbyte(), ValueType.SByte);
@@ -675,7 +675,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary> Whether this is an Optional value (meaning it can have a value or not). </summary>
     public bool Optional {
         get {
-            return GetValueType() == eina.ValueType.Optional;
+            return GetValueType() == Eina.ValueType.Optional;
         }
         /* protected set {
             // Should we expose this?
@@ -689,7 +689,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public bool Empty {
         get {
             SanityChecks();
-            return GetValueType() == eina.ValueType.Empty;
+            return GetValueType() == Eina.ValueType.Empty;
         }
     }
 
@@ -724,7 +724,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         this.Handle = MemoryNative.Alloc(eina_value_sizeof());
         if (this.Handle == IntPtr.Zero)
-            throw new OutOfMemoryException("Failed to allocate memory for eina.Value");
+            throw new OutOfMemoryException("Failed to allocate memory for Eina.Value");
 
         // Initialize to EINA_VALUE_EMPTY before performing any other operation on this value.
         MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
@@ -787,7 +787,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Creates an Value instance from a given array description.</summary>
-    private static Value FromArrayDesc(eina.EinaNative.Value_Array arrayDesc)
+    private static Value FromArrayDesc(Eina.EinaNative.Value_Array arrayDesc)
     {
         Value value = new Value();
         value.Setup(ValueType.Array, ValueType.String); // Placeholder values to be overwritten by the following pset call.
@@ -797,7 +797,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Creates an Value instance from a given array description.</summary>
-    private static Value FromListDesc(eina.EinaNative.Value_List listDesc)
+    private static Value FromListDesc(Eina.EinaNative.Value_List listDesc)
     {
         Value value = new Value();
         value.Setup(ValueType.List, ValueType.String); // Placeholder values to be overwritten by the following pset call.
@@ -864,7 +864,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             throw new ObjectDisposedException(base.GetType().Name);
 
         // Can't call setup with Empty value type (would give an eina error)
-        if (type == eina.ValueType.Empty)
+        if (type == Eina.ValueType.Empty)
         {
             // Need to cleanup as it may point to payload outside the underlying Eina_Value (like arrays and strings).
             if (!Empty)
@@ -955,7 +955,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         Flushed = true;
     }
 
-    /// <summary>Get a Value_Native struct with the *value* pointed by this eina.Value.</summary>
+    /// <summary>Get a Value_Native struct with the *value* pointed by this Eina.Value.</summary>
     public Value_Native GetNative()
     {
         Value_Native value = (Value_Native)Marshal.PtrToStructure(this.Handle, typeof(Value_Native));
@@ -973,7 +973,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_uchar(this.Handle, value);
     }
 
@@ -988,7 +988,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_char(this.Handle, value);
     }
 
@@ -1003,7 +1003,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_short(this.Handle, value);
     }
 
@@ -1018,7 +1018,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_ushort(this.Handle, value);
     }
 
@@ -1034,7 +1034,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_uint(this.Handle, value);
     }
 
@@ -1050,7 +1050,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_int(this.Handle, value);
     }
 
@@ -1066,7 +1066,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_ulong(this.Handle, value);
     }
 
@@ -1082,7 +1082,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_long(this.Handle, value);
     }
 
@@ -1098,7 +1098,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
 
         return eina_value_set_wrapper_float(this.Handle, value);
     }
@@ -1115,7 +1115,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_double(this.Handle, value);
     }
 
@@ -1131,13 +1131,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsString())
             throw (new ArgumentException(
-                        "Trying to set non-string value on a string eina.Value"));
+                        "Trying to set non-string value on a string Eina.Value"));
         // No need to worry about ownership as eina_value_set will copy the passed string.
         return eina_value_set_wrapper_string(this.Handle, value);
     }
 
     /// <summary>Stores the given error value.</summary>
-    public bool Set(eina.Error value)
+    public bool Set(Eina.Error value)
     {
         SanityChecks();
 
@@ -1177,7 +1177,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     Marshal.StructureToPtr(value_list, ptr_val, false);
                     break;
                 default:
-                    throw new InvalidValueTypeException("Only containers can be passed as raw eina.Values");
+                    throw new InvalidValueTypeException("Only containers can be passed as raw Eina.Values");
             }
 
             return eina_value_optional_pset(this.Handle, native_type, ptr_val);
@@ -1304,8 +1304,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return true;
     }
 
-    /// <summary>Gets the currently stored value as an eina.Error.</summary>
-    public bool Get(out eina.Error value)
+    /// <summary>Gets the currently stored value as an Eina.Error.</summary>
+    public bool Get(out Eina.Error value)
     {
         SanityChecks();
         bool ret;
@@ -1320,7 +1320,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return ret;
     }
 
-    /// <summary>Gets the currently stored value as an complex (e.g. container) eina.Value.</summary>
+    /// <summary>Gets the currently stored value as an complex (e.g. container) Eina.Value.</summary>
     public bool Get(out Value value)
     {
         SanityChecks();
@@ -1334,14 +1334,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         switch (managedType) {
             case ValueType.Array:
-                eina.EinaNative.Value_Array array_desc;
+                Eina.EinaNative.Value_Array array_desc;
 
                 if (!eina_value_optional_pget(this.Handle, out array_desc))
                     return false;
                 value = Value.FromArrayDesc(array_desc);
                 break;
             case ValueType.List:
-                eina.EinaNative.Value_List list_desc;
+                Eina.EinaNative.Value_List list_desc;
 
                 if (!eina_value_optional_pget(this.Handle, out list_desc))
                     return false;
@@ -1456,7 +1456,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return str;
     }
 
-    /// <summary>Empties an optional eina.Value, freeing what was previously contained.</summary>
+    /// <summary>Empties an optional Eina.Value, freeing what was previously contained.</summary>
     public bool Reset()
     {
         OptionalSanityChecks();

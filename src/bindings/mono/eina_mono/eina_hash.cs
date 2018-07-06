@@ -4,12 +4,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.IteratorNativeFunctions;
-using static eina.HashNativeFunctions;
-using eina.Callbacks;
+using static Eina.TraitFunctions;
+using static Eina.IteratorNativeFunctions;
+using static Eina.HashNativeFunctions;
+using Eina.Callbacks;
 
-namespace eina
+namespace Eina
 {
 
 [StructLayout(LayoutKind.Sequential)]
@@ -22,111 +22,111 @@ public struct HashTupleNative
 
 public static class HashNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_new(IntPtr key_length_cb, IntPtr key_cmp_cb, IntPtr key_hash_cb, IntPtr data_free_cb, int buckets_power_size);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_hash_free_cb_set(IntPtr hash, IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_string_djb2_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_string_superfast_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_string_small_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_int32_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_int64_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_pointer_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_stringshared_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_add(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_direct_add(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_del(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_find(IntPtr hash, IntPtr key);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_modify(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_set(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_move(IntPtr hash, IntPtr old_key, IntPtr new_key);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_hash_free(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_hash_free_buckets(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(Efl.Libs.Eina)] public static extern int
         eina_hash_population(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_add_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_direct_add_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_del_by_key_hash(IntPtr hash, IntPtr key, int key_length, int key_hash);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_del_by_key(IntPtr hash, IntPtr key);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_del_by_data(IntPtr hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_hash_del_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_find_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_modify_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_iterator_key_new(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_iterator_data_new(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(Efl.Libs.Eina)] public static extern IntPtr
         eina_hash_iterator_tuple_new(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_hash_foreach(IntPtr hash, IntPtr func, IntPtr fdata);
 
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_hash_list_append(IntPtr hash, IntPtr key, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_hash_list_prepend(IntPtr hash, IntPtr key, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_hash_list_remove(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(Efl.Libs.Eina)] public static extern int
         eina_hash_superfast(string key, int len);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(Efl.Libs.CustomExports)] public static extern IntPtr
         eina_hash_iterator_ptr_key_wrapper_new_custom_export_mono(IntPtr hash);
 }
 
@@ -365,14 +365,14 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return eina_hash_population(Handle);
     }
 
-    public eina.Iterator<TKey> Keys()
+    public Eina.Iterator<TKey> Keys()
     {
-        return new eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true, false);
+        return new Eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true, false);
     }
 
-    public eina.Iterator<TValue> Values()
+    public Eina.Iterator<TValue> Values()
     {
-        return new eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true, false);
+        return new Eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true, false);
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -382,7 +382,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         {
             for (IntPtr tuplePtr; eina_iterator_next(itr, out tuplePtr);)
             {
-                var tuple = Marshal.PtrToStructure<eina.HashTupleNative>(tuplePtr);
+                var tuple = Marshal.PtrToStructure<Eina.HashTupleNative>(tuplePtr);
                 var key = NativeToManagedRef<TKey>(tuple.key);
                 var val = NativeToManaged<TValue>(tuple.data);
                 yield return new KeyValuePair<TKey, TValue>(key, val);

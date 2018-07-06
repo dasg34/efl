@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using static eina.TraitFunctions;
+using static Eina.TraitFunctions;
 
-using static eina.AccessorNativeFunctions;
+using static Eina.AccessorNativeFunctions;
 
-namespace eina {
+namespace Eina {
 
 internal class AccessorNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(Efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         eina_accessor_data_get(IntPtr accessor, uint position, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(Efl.Libs.Eina)] public static extern void
         eina_accessor_free(IntPtr accessor);
 }
 

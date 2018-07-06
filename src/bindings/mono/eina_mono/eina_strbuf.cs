@@ -1,39 +1,39 @@
 using System;
 using System.Runtime.InteropServices;
 
-using static eina.EinaNative.StrbufNativeMethods;
+using static Eina.EinaNative.StrbufNativeMethods;
 
-namespace eina
+namespace Eina
 {
 namespace EinaNative
 {
 static internal class StrbufNativeMethods
 {
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     internal static extern IntPtr eina_strbuf_new();
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     internal static extern void eina_strbuf_free(IntPtr buf);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     internal static extern void eina_strbuf_reset(IntPtr buf);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_strbuf_append(IntPtr buf, string str);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_strbuf_append_escaped(IntPtr buf, string str);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_strbuf_append_char(IntPtr buf, char c);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     internal static extern string eina_strbuf_string_steal(IntPtr buf);
 
-    [DllImport(efl.Libs.Eina)]
+    [DllImport(Efl.Libs.Eina)]
     internal static extern IntPtr eina_strbuf_length_get(IntPtr buf); // Uses IntPtr as wrapper for size_t
 }
 

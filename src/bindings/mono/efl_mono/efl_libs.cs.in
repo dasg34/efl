@@ -1,6 +1,6 @@
 #pragma warning disable 1591
 
-namespace efl {
+namespace Efl {
 
 /// <summary>
 /// Define the name of the libraries to be passed to DllImport statements.

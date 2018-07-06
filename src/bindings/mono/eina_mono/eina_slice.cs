@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace eina {
+namespace Eina {
 
 public interface ISliceBase
 {
@@ -77,7 +77,7 @@ public struct Rw_Slice : ISliceBase
 
 public static class Eina_SliceUtils
 {
-    public static byte[] GetBytes(this eina.ISliceBase slc)
+    public static byte[] GetBytes(this Eina.ISliceBase slc)
     {
         var size = (int)(slc.Len);
         byte[] mArray = new byte[size];
