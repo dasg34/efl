@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-public class MyBox : evas.BoxInherit
+public class MyBox : Evas.BoxInherit
 {
-    public MyBox(efl.Object parent) : base(parent) {}
+    public MyBox(Efl.Object parent) : base(parent) {}
 
     [DllImport("evas")] static extern void evas_obj_box_layout_vertical(IntPtr obj, IntPtr data, IntPtr privdata);
     [DllImport("evas")] static extern void evas_obj_box_layout_horizontal(IntPtr obj, IntPtr data, IntPtr privdata);
@@ -17,7 +17,7 @@ public class MyBox : evas.BoxInherit
     {
         IntPtr evas = evas_object_evas_get(raw_handle);
         evas_event_freeze(evas);
-        eina.Log.Debug("called group_calculate");
+        Eina.Log.Debug("called group_calculate");
         // slayouting_set(true);
         evas_obj_box_layout_vertical(raw_handle, IntPtr.Zero, IntPtr.Zero);
         // layouting_set(false);

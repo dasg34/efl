@@ -24,14 +24,14 @@ public static class EldbusTestUtil
         return _ecore_loop_close;
     }
 
-    [DllImport(efl.Libs.Ecore)] public static extern IntPtr
+    [DllImport(Efl.Libs.Ecore)] public static extern IntPtr
         ecore_timer_add(double _in, Ecore_Task_Cb func, IntPtr data);
-    [DllImport(efl.Libs.Ecore)] public static extern IntPtr
+    [DllImport(Efl.Libs.Ecore)] public static extern IntPtr
         ecore_timer_del(IntPtr timer);
 
-    [DllImport(efl.Libs.Ecore)] public static extern void
+    [DllImport(Efl.Libs.Ecore)] public static extern void
         ecore_main_loop_begin();
-    [DllImport(efl.Libs.Ecore)] public static extern void
+    [DllImport(Efl.Libs.Ecore)] public static extern void
         ecore_main_loop_quit();
 
 
@@ -50,43 +50,43 @@ class TestEldbusConnection
 {
     public static void eldbus_connection_new_session()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.Session);
         conn.Dispose();
     }
 
     public static void eldbus_connection_new_system()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.System);
         conn.Dispose();
     }
 
     public static void eldbus_connection_new_starter()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.Starter);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.Starter);
         conn.Dispose();
     }
 
     public static void eldbus_connection_new_private_session()
     {
-        var conn = eldbus.Connection.GetPrivate(eldbus.Connection.Type.Session);
+        var conn = Eldbus.Connection.GetPrivate(Eldbus.Connection.Type.Session);
         conn.Dispose();
     }
 
     public static void eldbus_connection_new_private_system()
     {
-        var conn = eldbus.Connection.GetPrivate(eldbus.Connection.Type.System);
+        var conn = Eldbus.Connection.GetPrivate(Eldbus.Connection.Type.System);
         conn.Dispose();
     }
 
     public static void eldbus_connection_new_private_starter()
     {
-        var conn = eldbus.Connection.GetPrivate(eldbus.Connection.Type.Starter);
+        var conn = Eldbus.Connection.GetPrivate(Eldbus.Connection.Type.Starter);
         conn.Dispose();
     }
 
     public static void eldbus_connection_get_unique_name()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.Session);
         Console.WriteLine(conn.GetUniqueName());
         conn.Dispose();
     }
@@ -96,9 +96,9 @@ class TestEldbusObject
 {
     public static void utc_eldbus_object_send_info_get_p()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.System);
 
-        var obj = new eldbus.Object(conn, DBusBus, DBusPath);
+        var obj = new Eldbus.Object(conn, DBusBus, DBusPath);
 
         string busFromObject = obj.GetBusName();
 
@@ -121,7 +121,7 @@ class TestEldbusObject
         int messageCapture = 0;
         bool isSuccess = false;
 
-        eldbus.MessageDelegate objectMessageCb = delegate(eldbus.Message msg, eldbus.Pending p)
+        Eldbus.MessageDelegate objectMessageCb = delegate(Eldbus.Message msg, Eldbus.Pending p)
         {
             try
             {
@@ -156,7 +156,7 @@ class TestEldbusObject
         var methodName = "GetId";
         var message = obj.NewMethodCall(DBusInterface, methodName);
 
-        eldbus.Pending pending = obj.Send(message, objectMessageCb, -1);
+        Eldbus.Pending pending = obj.Send(message, objectMessageCb, -1);
 
         AssertEquals(pending.GetMethod(), methodName);
 
@@ -176,15 +176,15 @@ class TestEldbusObject
 
     public static void utc_eldbus_introspect_p()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.System);
 
-        var obj = new eldbus.Object(conn, DBusBus, DBusPath);
+        var obj = new Eldbus.Object(conn, DBusBus, DBusPath);
 
         IntPtr timeout = IntPtr.Zero;
         int messageCapture = 0;
         bool isSuccess = false;
 
-        eldbus.MessageDelegate objectMessageCb = delegate(eldbus.Message msg, eldbus.Pending p)
+        Eldbus.MessageDelegate objectMessageCb = delegate(Eldbus.Message msg, Eldbus.Pending p)
         {
             try
             {
@@ -216,7 +216,7 @@ class TestEldbusObject
             }
         };
 
-        eldbus.Pending pending = obj.Introspect(objectMessageCb);
+        Eldbus.Pending pending = obj.Introspect(objectMessageCb);
 
         AssertEquals(pending.GetMethod(), "Introspect");
 
@@ -240,13 +240,13 @@ class TestEldbusMessage
     private static bool isSuccess = false;
 
 
-    private static void ActivatableList(eldbus.MessageDelegate messageCb)
+    private static void ActivatableList(Eldbus.MessageDelegate messageCb)
     {
         isSuccess = false;
 
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.System);
 
-        eldbus.Pending pending = conn.ActivatableList(messageCb);
+        Eldbus.Pending pending = conn.ActivatableList(messageCb);
 
         AssertEquals(pending.GetMethod(), "ListActivatableNames");
 
@@ -262,7 +262,7 @@ class TestEldbusMessage
 
     public static void utc_eldbus_message_iterator_activatable_list_p()
     {
-        eldbus.MessageDelegate responseMessageCb = delegate(eldbus.Message msg, eldbus.Pending p)
+        Eldbus.MessageDelegate responseMessageCb = delegate(Eldbus.Message msg, Eldbus.Pending p)
         {
             try
             {
@@ -278,7 +278,7 @@ class TestEldbusMessage
                     return;
                 }
 
-                eldbus.MessageIterator iterMain = msg.GetMessageIterator();
+                Eldbus.MessageIterator iterMain = msg.GetMessageIterator();
 
                 string signature = iterMain.GetSignature();
                 if (String.IsNullOrEmpty(signature))
@@ -286,7 +286,7 @@ class TestEldbusMessage
                     return;
                 }
 
-                eldbus.MessageIterator iterator;
+                Eldbus.MessageIterator iterator;
                 iterMain.Get(out iterator, signature);
 
                 string bus_name;
@@ -316,10 +316,10 @@ class TestEldbusMessage
     {
         isSuccess = false;
 
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.System);
 
         string methodName = "GetId";
-        eldbus.Message msg = eldbus.Message.NewMethodCall(DBusBus, DBusPath, DBusInterface, methodName);
+        Eldbus.Message msg = Eldbus.Message.NewMethodCall(DBusBus, DBusPath, DBusInterface, methodName);
 
         string interfaceMsg = msg.GetInterface();
         AssertEquals(DBusInterface, interfaceMsg);
@@ -330,7 +330,7 @@ class TestEldbusMessage
         string pathMsg = msg.GetPath();
         AssertEquals(DBusPath, pathMsg);
 
-        eldbus.MessageDelegate messageMethodCb = delegate(eldbus.Message m, eldbus.Pending p)
+        Eldbus.MessageDelegate messageMethodCb = delegate(Eldbus.Message m, Eldbus.Pending p)
         {
             try
             {
@@ -364,7 +364,7 @@ class TestEldbusMessage
         };
 
         const int timeoutSendMs = 1000;
-        eldbus.Pending pending = conn.Send(msg, messageMethodCb, timeoutSendMs);
+        Eldbus.Pending pending = conn.Send(msg, messageMethodCb, timeoutSendMs);
 
         AssertEquals(pending.GetMethod(), methodName);
 
@@ -381,9 +381,9 @@ class TestEldbusMessage
 
     public static void utc_eldbus_message_ref_unref_p()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new Eldbus.Connection(Eldbus.Connection.Type.System);
 
-        eldbus.Message msg = eldbus.Message.NewMethodCall(DBusBus, DBusPath, DBusInterface, "GetId");
+        Eldbus.Message msg = Eldbus.Message.NewMethodCall(DBusBus, DBusPath, DBusInterface, "GetId");
 
         msg.Ref();
         msg.Unref();
@@ -400,7 +400,7 @@ class TestEldbusMessage
 
     public static void utc_eldbus_message_iter_next_p()
     {
-        eldbus.MessageDelegate activatableListResponseCb = delegate(eldbus.Message msg, eldbus.Pending p)
+        Eldbus.MessageDelegate activatableListResponseCb = delegate(Eldbus.Message msg, Eldbus.Pending p)
         {
             try
             {
@@ -416,7 +416,7 @@ class TestEldbusMessage
                     return;
                 }
 
-                eldbus.MessageIterator iterMain = msg.GetMessageIterator();
+                Eldbus.MessageIterator iterMain = msg.GetMessageIterator();
 
                 string signature = iterMain.GetSignature();
                 if (String.IsNullOrEmpty(signature))
@@ -424,7 +424,7 @@ class TestEldbusMessage
                     return;
                 }
 
-                eldbus.MessageIterator iterator;
+                Eldbus.MessageIterator iterator;
                 iterMain.Get(out iterator, signature);
 
                 bool isHasData = false;

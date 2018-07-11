@@ -1,6 +1,6 @@
 using System;
 
-using static test.Testing; // For the event args
+using static Dummy.Test_Object; // For the event args
 
 namespace TestSuite
 {
@@ -9,17 +9,17 @@ class TestEoEvents
 {
     public bool called = false;
     public bool correct_sender = false;
-    public efl.ILoop loop { get; set; }
+    public Efl.ILoop loop { get; set; }
     protected void callback(object sender, EventArgs e) {
         called = true;
-        efl.IObject obj = sender as efl.IObject;
+        Efl.IObject obj = sender as Efl.IObject;
         if (obj != null)
         {
             obj.SetName("loop_called");
             correct_sender = true;
         }
 
-        eina.Value v = new eina.Value(eina.ValueType.Int32);
+        Eina.Value v = new Eina.Value(Eina.ValueType.Int32);
         v.Set(0);
         loop.Quit(v);
     }
@@ -27,7 +27,7 @@ class TestEoEvents
 
     public static void idle_event()
     {
-        efl.ILoop loop = new efl.Loop();
+        Efl.ILoop loop = new Efl.Loop();
         loop.SetName("loop");
         TestEoEvents listener = new TestEoEvents();
         listener.loop = loop;
@@ -44,7 +44,7 @@ class TestEoEvents
 
     public static void event_with_string_payload()
     {
-        test.ITesting obj = new test.Testing();
+        Dummy.ITest_Object obj = new Dummy.Test_Object();
         string received_string = null;
 
         obj.EvtWithStringEvt += (object sender, EvtWithStringEvt_Args e) => {
@@ -58,7 +58,7 @@ class TestEoEvents
 
     public static void event_with_int_payload()
     {
-        test.ITesting obj = new test.Testing();
+        Dummy.ITest_Object obj = new Dummy.Test_Object();
         int received_int= 0;
 
         obj.EvtWithIntEvt += (object sender, EvtWithIntEvt_Args e) => {
@@ -72,7 +72,7 @@ class TestEoEvents
 
     public static void event_with_bool_payload()
     {
-        test.ITesting obj = new test.Testing();
+        Dummy.ITest_Object obj = new Dummy.Test_Object();
         bool received_bool = false;
 
         obj.EvtWithBoolEvt += (object sender, EvtWithBoolEvt_Args e) => {
@@ -90,7 +90,7 @@ class TestEoEvents
 
     public static void event_with_uint_payload()
     {
-        test.ITesting obj = new test.Testing();
+        Dummy.ITest_Object obj = new Dummy.Test_Object();
         uint received_uint = 0;
         obj.EvtWithUintEvt += (object sender, EvtWithUintEvt_Args e) => {
             received_uint = e.arg;
@@ -103,14 +103,14 @@ class TestEoEvents
 
     public static void event_with_object_payload()
     {
-        test.ITesting obj = new test.Testing();
-        test.ITesting received_obj = null;
+        Dummy.ITest_Object obj = new Dummy.Test_Object();
+        Dummy.ITest_Object received_obj = null;
 
         obj.EvtWithObjEvt += (object sender, EvtWithObjEvt_Args e) => {
             received_obj = e.arg;
         };
 
-        test.ITesting sent_obj = new test.Testing();
+        Dummy.ITest_Object sent_obj = new Dummy.Test_Object();
 
         obj.EmitEventWithObj(sent_obj);
 
@@ -119,14 +119,14 @@ class TestEoEvents
 
     public static void event_with_error_payload()
     {
-        test.ITesting obj = new test.Testing();
-        eina.Error received_error = 0;
+        Dummy.ITest_Object obj = new Dummy.Test_Object();
+        Eina.Error received_error = 0;
 
         obj.EvtWithErrorEvt += (object sender, EvtWithErrorEvt_Args e) => {
             received_error = e.arg;
         };
 
-        eina.Error sent_error = -2001;
+        Eina.Error sent_error = -2001;
 
         obj.EmitEventWithError(sent_error);
 
@@ -135,14 +135,14 @@ class TestEoEvents
 
     public static void event_with_struct_payload()
     {
-        test.ITesting obj = new test.Testing();
-        test.StructSimple received_struct = default(test.StructSimple);
+        Dummy.ITest_Object obj = new Dummy.Test_Object();
+        Dummy.StructSimple received_struct = default(Dummy.StructSimple);
 
         obj.EvtWithStructEvt += (object sender, EvtWithStructEvt_Args e) => {
             received_struct = e.arg;
         };
 
-        test.StructSimple sent_struct = default(test.StructSimple);
+        Dummy.StructSimple sent_struct = default(Dummy.StructSimple);
         sent_struct.Fstring = "Struct Event";
 
         obj.EmitEventWithStruct(sent_struct);

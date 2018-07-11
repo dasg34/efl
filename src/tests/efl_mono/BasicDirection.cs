@@ -11,7 +11,7 @@ class TestIntDirections
     {
         int original = 1984;
         int received;
-        test.ITesting t = new test.Testing();
+        Dummy.ITest_Object t = new Dummy.Test_Object();
 
         t.IntOut(original, out received);
 
@@ -22,7 +22,7 @@ class TestIntDirections
     {
         int original = 1984;
         int received;
-        test.ITesting t = new test.Testing();
+        Dummy.ITest_Object t = new Dummy.Test_Object();
 
         t.IntPtrOut(original, out received);
 
