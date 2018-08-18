@@ -58,6 +58,7 @@ dir_lib       = join_paths(dir_prefix, get_option('libdir'))
 
 #local paths
 local_lib = join_paths('src', 'lib')
+local_bindings = join_paths('src', 'bindings')
 local_bin = join_paths('src', 'bin')
 local_module = join_paths('src', 'modules')
 local_tests = join_paths('src', 'tests')
@@ -65,17 +66,16 @@ local_benchmark = join_paths('src', 'benchmarks')
 local_examples = join_paths('src', 'examples')
 local_scripts = join_paths('src', 'scripts')
 
-add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
-add_global_arguments('-D_GNU_SOURCE=1', language: 'c')
+foreach lang : ['c', 'objc', 'cpp']
+  add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
+  add_global_arguments('-D_GNU_SOURCE=1', language: lang)
+  add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: lang)
+  add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: lang)
+  add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
+  add_global_arguments('-DEFL_BUILD=1', language: lang)
+  add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
+endforeach
 
-add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'c')
-add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'c')
-add_global_arguments('-DNEED_RUN_IN_TREE=1', language: 'c')
-add_global_arguments('-DEFL_BUILD=1', language: 'c')
-add_global_arguments('-DEFL_BUILD=1', language: 'objc')
-add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'objc')
-add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'objc')
-add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: 'c')
 
 config_h = configuration_data()
 config_h.set_quoted('MODULE_ARCH', module_arch)
@@ -96,7 +96,6 @@ config_h.set_quoted('PACKAGE_SYSCONF_DIR', dir_sysconf)
 config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
 config_h.set10('EFL_HAVE_THREADS', true)
-config_h.set('NEED_RUN_IN_TREE', '1')
 
 config_dir = [include_directories('.')]
 eolian_include_directories = []
@@ -179,6 +178,9 @@ subprojects = [
 ['ethumb'           ,  true,  true,  true, false, false, false, []],
 ['ethumb_client'    , false,  true,  true, false, false,  true, []],
 ['elementary'       ,  true,  true,  true, false,  true, false, ['atspi']],
+['eina_cxx'         , false,  true, false, false, false, false, []],
+['eolian_cxx'       , false,  true,  true, false,  true, false, []],
+['eo_cxx'           , false,  true, false, false, false, false, []],
 ]
 
 # We generate Efl_Config.h and config.h later, they will be available here
@@ -187,6 +189,9 @@ config_dir += include_directories('.')
 #we have to do that first, eina modules are required by eina
 #the other modules require theire package
 subdir(join_paths(local_module, 'eina'))
+
+#bindings libraries cxx
+bindings_cxx = ['eina_cxx', 'eo_cxx']
 
 test_dirs = []
 example_dirs = []
@@ -213,7 +218,11 @@ foreach package : subprojects
     endforeach
 
     if (package[2])
-       subdir(join_paths(local_lib, package_name))
+      if (bindings_cxx.contains(package_name))
+        subdir(join_paths(local_bindings, 'cxx', package_name))
+      else
+        subdir(join_paths(local_lib, package_name))
+      endif
     endif
     if (package[1])
        subdir(join_paths(local_module, package_name))
@@ -234,7 +243,7 @@ foreach package : subprojects
     set_variable('build_'+package_name, true)
 
     if package_name != 'evas'
-      tmp = get_variable(package_name+'_lib')
+      tmp = get_variable(package_name+'_lib', false)
       pkgconfig.generate(tmp,
         subdirs : dir_package_include
       )

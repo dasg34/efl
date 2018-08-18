@@ -232,6 +232,24 @@ option('elementary',
   description : 'build evas'
 )
 
+option('eina_cxx',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('eolian_cxx',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('eo_cxx',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
 option('build-id',
   type : 'string',
   value : 'none',
