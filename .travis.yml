@@ -24,6 +24,7 @@ env:
     - DISTRO=Fedora28 CI_BUILD_TYPE=misc
     - DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
     - DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
+    - DISTRO=Fedora28 CI_BUILD_TYPE=mingw
     - DISTRO=Debian91
     - DISTRO=Archlinux
 
@@ -52,6 +53,10 @@ matrix:
       env:
         DISTRO=Fedora28
         CI_BUILD_TYPE=release-ready
+    - os: osx
+      env:
+        DISTRO=Fedora28
+        CI_BUILD_TYPE=mingw
     - os: osx
       env:
         DISTRO=Debian91
@@ -88,7 +93,10 @@ before_script:
        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
          cp $HOME/cachedir/config.cache . || true
        fi
-
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "mingw" ]]; then
+        .ci/ci-mingw-deps.sh
+      fi
 
 script:
   - .ci/ci-configure.sh "$CI_BUILD_TYPE"
