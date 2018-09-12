@@ -204,6 +204,8 @@ CLEANFILES += $(efl_mono_files_gen) $(efl_mono_blacklisted_files) \
 	      $(builddir)/lib/efl_mono/libefl_mono.xml \
 	      $(builddir)/lib/efl_mono/libefl_mono.dll.config
 
+MCSFLAGS += -debug+
+
 if HAVE_WIN32
 
 MCSFLAGS ?=
