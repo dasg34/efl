@@ -272,7 +272,7 @@ struct to_external_field_convert_generator
            if (!as_generator(
                  "\n"
                  << scope_tab << scope_tab << "_external_struct." << string
-                 << " = (" << interface_name << ") System.Activator.CreateInstance(typeof("
+                 << " = (" << concrete_name << ") System.Activator.CreateInstance(typeof("
                  << concrete_name << "), new System.Object[] {_internal_struct." << string << "});\n"
                  << scope_tab << scope_tab << "efl.eo.Globals.efl_ref(_internal_struct." << string << ");\n\n")
                .generate(sink, std::make_tuple(field_name, field_name, field_name), context))

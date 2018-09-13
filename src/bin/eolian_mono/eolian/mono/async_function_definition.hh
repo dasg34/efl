@@ -89,7 +89,7 @@ struct async_function_definition_generator
     std::transform(f.parameters.begin(), f.parameters.end(), std::back_inserter(param_forwarding), parameter_forwarding);
 
     if(!as_generator(
-            scope_tab << "public System.Threading.Tasks.Task<eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") << " System.Threading.CancellationToken token)\n"
+            scope_tab << "public System.Threading.Tasks.Task<eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") << " System.Threading.CancellationToken token" << (is_inherit_context(context) ? "=default(System.Threading.CancellationToken)" : "") << ")\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ",") << ");\n"
             << scope_tab << scope_tab << "return efl.eo.Globals.WrapAsync(future, token);\n"

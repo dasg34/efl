@@ -227,34 +227,96 @@ inline std::string to_field_name(std::string const& in)
 }
 
 // Class name translation (interface/concrete/inherit/etc)
-template<typename T>
-inline std::string klass_interface_name(T const& klass)
+struct klass_interface_name_generator
 {
-  return "I" + klass.eolian_name;
-}
 
-template<typename T>
-inline std::string klass_full_interface_name(T const& klass)
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    if (klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
+      return "I" + klass.eolian_name;
+    return klass.eolian_name;
+  }
+    
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} klass_interface_name;
+  
+struct klass_full_interface_name_generator
 {
-  return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_interface_name(klass);
-}
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_interface_name(klass);
+  }
+    
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} klass_full_interface_name;
 
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-  return klass.eolian_name;
+  if (klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
+    return klass.eolian_name;
+  return klass.eolian_name + "Concrete";
 }
 
-template<typename T>
-inline std::string klass_full_concrete_name(T const& klass)
+struct klass_full_concrete_name_generator
 {
-  return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_concrete_name(klass);
-}
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_concrete_name(klass);
+  }
+    
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} klass_full_concrete_name;
+
+struct klass_full_concrete_or_interface_name_generator
+{
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    switch(klass.type)
+    {
+    case attributes::class_type::abstract_:
+    case attributes::class_type::regular:
+      return klass_full_concrete_name(klass);
+    default:
+      return klass_full_interface_name(klass);
+    }
+
+    return "abc";
+  }
+
+  template <typename OutputIterator, typename Context>
+  bool generate(OutputIterator, attributes::unused_type, Context const&) const
+  {
+    return true;
+  }
+
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} klass_full_concrete_or_interface_name;
 
 template<typename T>
 inline std::string klass_inherit_name(T const& klass)
 {
-  return klass.eolian_name + "Inherit";
+  return klass.eolian_name;
 }
 
 template<typename T>
@@ -293,6 +355,7 @@ inline std::string managed_event_args_name(attributes::event_def evt)
 inline std::string translate_inherited_event_name(const attributes::event_def &evt, const attributes::klass_def &klass)
 {
    return join_namespaces(klass.namespaces, '_') + klass.cxx_name + "_" + managed_event_name(evt.name);
+   /* return klass_full_concrete_or_interface_name(klass) + "." + managed_event_name(evt.name); */
 }
 
 // Open/close namespaces
@@ -318,4 +381,34 @@ bool close_namespaces(OutputIterator sink, std::vector<std::string> const& names
 
 } // namespace eolian_mono
 
+
+namespace efl { namespace eolian { namespace grammar {
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_interface_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_interface_name_generator> : std::true_type {};
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_full_interface_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_full_interface_name_generator> : std::true_type {};
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::true_type {};
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_full_concrete_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_full_concrete_name_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed<struct ::eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::integral_constant<int, 1> {};
+}
+      
+} } }
+      
 #endif

@@ -125,7 +125,7 @@ run(options_type const& opts)
          }
      }()};
 
-   if (!as_generator("using System;\nusing System.Runtime.InteropServices;\nusing System.Collections.Generic;\n")
+   if (!as_generator("using System;\nusing System.Runtime.InteropServices;\nusing System.Collections.Generic;\n#pragma warning disable CS0114\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {
         throw std::runtime_error("Failed to generate file preamble");

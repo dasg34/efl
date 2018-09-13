@@ -18,14 +18,15 @@ struct part_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::part_def const& part, Context const& context) const
   {
-     auto part_interface_name = name_helpers::klass_full_interface_name(part.klass);
-     auto part_klass_name = name_helpers::klass_full_concrete_name(part.klass);
+     /* auto part_interface_name = name_helpers::klass_full_interface_name(part.klass); */
+     auto part_klass_name = name_helpers::klass_full_concrete_or_interface_name(part.klass);
+     /* EINA_LOG_ERR("Part name is %s", part_klass_name.c_str()); */
      return as_generator(scope_tab << documentation
-                       << scope_tab << "public " << part_interface_name << " " << utils::capitalize(part.name) << "\n"
+                       << scope_tab << "public " << part_klass_name << " " << utils::capitalize(part.name) << "\n"
                        << scope_tab << "{\n"
                        << scope_tab << scope_tab << "get\n"
                        << scope_tab << scope_tab << "{\n"
-                       << scope_tab << scope_tab << scope_tab << "efl.IObject obj = efl_part_get(raw_handle, \"" << part.name << "\");\n"
+                       << scope_tab << scope_tab << scope_tab << "efl.Object obj = efl_part_get(raw_handle, \"" << part.name << "\");\n"
                        << scope_tab << scope_tab << scope_tab << "return " << part_klass_name << ".static_cast(obj);\n"
                        << scope_tab << scope_tab << "}\n"
                        << scope_tab << "}\n"

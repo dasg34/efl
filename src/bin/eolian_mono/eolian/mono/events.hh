@@ -123,6 +123,7 @@ struct event_declaration_generator
 struct event_registration_generator
 {
    attributes::klass_def const* klass;
+   bool is_inherited_event;
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::event_def const& evt, Context const& context) const
    {
@@ -141,9 +142,9 @@ struct event_registration_generator
 
 struct event_registration_parameterized
 {
-   event_registration_generator operator()(attributes::klass_def const* klass=NULL) const
+   event_registration_generator operator()(attributes::klass_def const* klass=NULL, bool is_inherited_event=false) const
    {
-      return {klass};
+      return {klass, is_inherited_event};
    }
 } const event_registration;
 
@@ -157,24 +158,28 @@ struct event_definition_generator
    {
       std::string managed_evt_name = name_helpers::managed_event_name(evt.name);
 
+      /* if (is_inherited_event) // FIXME Check inherited events. */
+      /*     return true; */
       std::string wrapper_evt_name;
       if (is_inherited_event)
         wrapper_evt_name = name_helpers::translate_inherited_event_name(evt, klass);
       else
         wrapper_evt_name = managed_evt_name;
 
+      std::string implement_evt_name = "_impl" + wrapper_evt_name;
+
       std::string klass_name;
       if (is_inherited_event)
         klass_name = name_helpers::klass_full_interface_name(klass);
       else
-        klass_name = name_helpers::klass_interface_name(klass);
+        klass_name = name_helpers::klass_interface_name(klass); // FIXME Fix non-interface events.
 
 
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
       std::string wrapper_args_type = "EventArgs";
       std::string wrapper_args_template = "";
       std::string event_args = "EventArgs args = EventArgs.Empty;\n";
-      std::string visibility = is_inherit_context(context) ? "protected" : "private";
+      std::string visibility = (is_inherit_context(context) || true) ? "public" : "private"; // FIXME Review visibility
 
       efl::eina::optional<grammar::attributes::type_def> etype = evt.type;
 
@@ -200,6 +205,8 @@ struct event_definition_generator
       if(!as_generator(documentation(1)).generate(sink, evt, context))
         return false;
 
+      if (klass.type == attributes::class_type::interface_ || klass.type == attributes::class_type::mixin)
+      {
       if(!as_generator(
             scope_tab << visibility << " event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
             << scope_tab << "///<summary>Method to raise event "<< wrapper_evt_name << ".</summary>\n"
@@ -221,13 +228,13 @@ struct event_definition_generator
             << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
             << scope_tab << scope_tab << "}\n"
             << scope_tab << "}\n"
-            << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
-            << scope_tab << "event EventHandler" << wrapper_args_template << " " << klass_name << "." << managed_evt_name << "{\n")
+            << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n")
               .generate(sink, NULL, context))
           return false;
 
        if (!as_generator(
-                   scope_tab << scope_tab << "add {\n"
+                   scope_tab << " event EventHandler" << wrapper_args_template << " " << klass_name << "." << managed_evt_name << "{\n"
+                   << scope_tab << scope_tab << "add {\n"
                    << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
                    << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
                    << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
@@ -249,6 +256,57 @@ struct event_definition_generator
                .generate(sink, NULL, context))
            return false;
 
+      }
+      else // For inheritable classes event handling.
+      {
+      if (!as_generator(
+            scope_tab << "private event EventHandler" << wrapper_args_template << " " << implement_evt_name << ";\n"
+            << scope_tab << visibility << " event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << "{\n"
+            << scope_tab << scope_tab << "add {\n"
+            << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << implement_evt_name << " += value;\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error adding proxy for event {key}\");\n"
+            << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
+            << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << "remove {\n"
+            << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << wrapper_evt_name << "_delegate))\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << implement_evt_name << " -= value;\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "else\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Error removing proxy for event {key}\");\n"
+            << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
+            << scope_tab << scope_tab << "}\n"
+
+            << scope_tab << "}\n"
+            << scope_tab << "///<summary>Method to raise event "<< wrapper_evt_name << ".</summary>\n"
+            << scope_tab << visibility << " void On_" << wrapper_evt_name << "(" << wrapper_args_type << " e)\n"
+            << scope_tab << "{\n"
+            /* << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n" */
+            /* << scope_tab << scope_tab << "lock (eventLock) {\n" */
+            /* << scope_tab << scope_tab << scope_tab << "evt = " << wrapper_evt_name << ";\n" */
+            /* << scope_tab << scope_tab << "}\n" */
+            /* << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n" */
+            << scope_tab << scope_tab << implement_evt_name << "(this, e);\n"
+            << scope_tab << "}\n"
+            << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
+            << scope_tab << "{\n"
+            << scope_tab << scope_tab << event_args
+            << scope_tab << scope_tab << "try {\n"
+            << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
+            << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
+            << scope_tab << scope_tab << scope_tab << "eina.Log.Error(e.ToString());\n"
+            << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+            << scope_tab << scope_tab << "}\n"
+            << scope_tab << "}\n"
+            << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
+          ).generate(sink, nullptr, context))
+          return false;
+
+      }
       return true;
    }
 };

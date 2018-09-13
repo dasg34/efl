@@ -129,6 +129,7 @@ lib/evas/canvas/efl_vg_root_node.eo.cs \
 lib/evas/canvas/efl_vg_shape.eo.cs
 
 efl_eolian_blacklisted_files = \
+lib/efl/interfaces/efl_text_markup_util.eo.cs \
 lib/efl/interfaces/efl_io_buffer.eo.cs \
 lib/efl/interfaces/efl_io_positioner.eo.cs \
 lib/efl/interfaces/efl_io_queue.eo.cs \

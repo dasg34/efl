@@ -137,7 +137,7 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
-    if(do_super && f.is_static) // Static methods goes only on Concrete classes.
+    if(!do_super && f.is_static) // Static methods goes only on Concrete classes.
       return true;
     if(blacklist::is_function_blacklisted(f.c_name))
       return true;
@@ -166,12 +166,12 @@ struct function_definition_generator
       return false;
 
     if(!as_generator
-       (scope_tab << (do_super ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
+       (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n "
         << eolian_mono::function_definition_preamble() << string << "("
-        << (do_super ? "efl.eo.Globals.efl_super(" : "")
-        << (f.is_static ? name_helpers::klass_get_full_name(f.klass) + "()": "this.raw_handle")
-        << (do_super ? ", this.raw_klass)" : "")
+        << ((do_super && !f.is_static) ? "efl.eo.Globals.efl_super(" : "")
+        << ((do_super && f.is_static) ? name_helpers::klass_get_full_name(f.klass) + "()": "this.raw_handle")
+        << ((do_super && !f.is_static) ? ", this.raw_klass)" : "")
         << *(", " << argument_invocation ) << ");\n"
         << eolian_mono::function_definition_epilogue()
         << " }\n")
