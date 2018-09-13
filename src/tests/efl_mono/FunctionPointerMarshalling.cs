@@ -9,7 +9,7 @@ class TestFunctionPointerMarshalling
 {
     public static void func_pointer_marshalling()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         bool called = false;
         eina.Strbuf buf = new eina.Strbuf();
         string argument = "Some String";

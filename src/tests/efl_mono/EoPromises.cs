@@ -9,7 +9,7 @@ class TestEoPromises
 {
     public static void test_simple_task_run()
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Future future = loop.Idle();
 
         bool callbackCalled = false;
@@ -36,7 +36,7 @@ class TestEoPromises
 
     public static void test_object_promise()
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         test.Testing obj = new test.Testing();
 
         eina.Future future = obj.GetFuture();
@@ -61,7 +61,7 @@ class TestEoPromises
 
     public static void test_object_promise_cancel()
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         test.Testing obj = new test.Testing();
 
         eina.Future future = obj.GetFuture();
@@ -88,7 +88,7 @@ class TestEoPromises
 
 class LoopConsumer
 {
-    public static async Task Consume(efl.ILoop loop)
+    public static async Task Consume(efl.Loop loop)
     {
         Task<eina.Value> task = loop.IdleAsync();
         eina.Value v = await task;
@@ -100,7 +100,7 @@ class TestLoopEoAsyncMethods
 {
     public static void test_simple_async()
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         Task t = LoopConsumer.Consume(loop);
 
         loop.Begin();
@@ -113,8 +113,8 @@ class TestEoAsyncMethods
 
     public static void test_async_fulfill()
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
-        test.ITesting obj = new test.Testing();
+        efl.Loop loop = efl.App.GetLoopMain();
+        test.Testing obj = new test.Testing();
 
         Task<eina.Value> task = obj.GetFutureAsync();
 
@@ -133,8 +133,8 @@ class TestEoAsyncMethods
 
     public static void test_async_cancel()
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
-        test.ITesting obj = new test.Testing();
+        efl.Loop loop = efl.App.GetLoopMain();
+        test.Testing obj = new test.Testing();
 
         CancellationTokenSource cancelSrc = new CancellationTokenSource();
         Task<eina.Value> task = obj.GetFutureAsync(cancelSrc.Token);
@@ -162,8 +162,8 @@ class TestEoAsyncMethods
 
     public static void test_async_reject()
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
-        test.ITesting obj = new test.Testing();
+        efl.Loop loop = efl.App.GetLoopMain();
+        test.Testing obj = new test.Testing();
 
         Task<eina.Value> task = obj.GetFutureAsync();
 

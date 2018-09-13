@@ -22,7 +22,7 @@ class TestPromises
         bool callbackCalled = false;
         eina.Value received_value = null;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Promise promise = new eina.Promise();
         eina.Future future = new eina.Future(promise);
 
@@ -47,7 +47,7 @@ class TestPromises
         bool callbackCalled = false;
         eina.Error received_error = eina.Error.NO_ERROR;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Promise promise = new eina.Promise();
         eina.Future future = new eina.Future(promise);
 
@@ -108,7 +108,7 @@ class TestPromises
             };
         };
 
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Promise promise = new eina.Promise();
         eina.Future future = new eina.Future(promise);
         for (int i = 0; i < 4; i++)
@@ -154,7 +154,7 @@ class TestPromises
         for (int i = 0; i < 4; i++)
             cbs.Add(genResolvedCb(i));
 
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Promise promise = new eina.Promise();
         eina.Future future = new eina.Future(promise);
         future = future.Chain(cbs);
@@ -184,7 +184,7 @@ class TestPromises
         bool callbackCalled = false;
         eina.Error received_error = eina.Error.NO_ERROR;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Promise promise = new eina.Promise();
         eina.Future future = new eina.Future(promise);
 
@@ -211,7 +211,7 @@ class TestPromises
         bool callbackCalled = false;
         eina.Value received_value = null;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Promise promise = new eina.Promise();
 #pragma warning disable 0219
         eina.Future future = new eina.Future(promise,(eina.Value value) => {
@@ -236,7 +236,7 @@ class TestPromises
         bool callbackCalled = false;
         eina.Error received_error = eina.Error.NO_ERROR;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
+        efl.Loop loop = efl.App.GetLoopMain();
         eina.Promise promise = new eina.Promise();
         eina.Future future = new eina.Future(promise);
 

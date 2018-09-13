@@ -261,7 +261,7 @@ class TestStructs
     public static void simple_in()
     {
         var simple = structSimpleWithValues();
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         bool r = t.StructSimpleIn(simple);
         Test.Assert(r, "Function returned false");
     }
@@ -271,7 +271,7 @@ class TestStructs
         var simple = structSimpleWithValues();
         int original = simple.Fint;
         simple.Fmstring = "Struct Ptr In";
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         Test.Assert(t.StructSimplePtrIn(ref simple));
         Test.AssertEquals(-original, simple.Fint);
         Test.AssertEquals("nI rtP tcurtS", simple.Fmstring);
@@ -282,7 +282,7 @@ class TestStructs
         var simple = structSimpleWithValues();
         int original = simple.Fint;
         simple.Fmstring = "Struct Ptr In Own";
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         test.StructSimple result = t.StructSimplePtrInOwn(ref simple);
         Test.AssertEquals(-original, result.Fint);
         Test.AssertEquals("nwO nI rtP tcurtS", result.Fmstring);
@@ -291,7 +291,7 @@ class TestStructs
     public static void simple_out()
     {
         var simple = new test.StructSimple();
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         bool r = t.StructSimpleOut(out simple);
         Test.Assert(r, "Function returned false");
         checkStructSimple(simple);
@@ -300,7 +300,7 @@ class TestStructs
     public static void simple_ptr_out()
     {
         test.StructSimple simple;
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         test.StructSimple result = t.StructSimplePtrOut(out simple);
         Test.AssertEquals(result.Fint, simple.Fint);
         Test.AssertEquals(result.Fstring, simple.Fstring);
@@ -309,7 +309,7 @@ class TestStructs
     public static void simple_ptr_out_own()
     {
         test.StructSimple simple;
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         test.StructSimple result = t.StructSimplePtrOutOwn(out simple);
         Test.AssertEquals(result.Fint, simple.Fint);
         Test.AssertEquals(simple.Fstring, "Ptr Out Own");
@@ -317,26 +317,26 @@ class TestStructs
 
     public static void simple_return()
     {
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         var simple = t.StructSimpleReturn();
         checkStructSimple(simple);
     }
 
     public static void simple_ptr_return()
     {
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         var simple = t.StructSimplePtrReturn();
         Test.AssertEquals(simple.Fstring, "Ret Ptr");
     }
 
     public static void simple_ptr_return_own()
     {
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         var simple = t.StructSimplePtrReturnOwn();
         Test.AssertEquals(simple.Fstring, "Ret Ptr Own");
     }
 
-    public class StructReturner : test.TestingInherit
+    public class StructReturner : test.Testing
     {
         public test.StructSimple received;
         public bool called;
@@ -505,7 +505,7 @@ class TestStructs
     public static void complex_in()
     {
         var complex = structComplexWithValues();
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         bool r = t.StructComplexIn(complex);
         Test.Assert(r, "Function returned false");
     }
@@ -521,7 +521,7 @@ class TestStructs
     public static void complex_out()
     {
         var complex = new test.StructComplex();
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         bool r = t.StructComplexOut(out complex);
         Test.Assert(r, "Function returned false");
         checkStructComplex(complex);
@@ -537,7 +537,7 @@ class TestStructs
 
     public static void complex_return()
     {
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         var complex = t.StructComplexReturn();
         checkStructComplex(complex);
     }

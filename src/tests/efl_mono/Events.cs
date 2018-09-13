@@ -9,10 +9,10 @@ class TestEoEvents
 {
     public bool called = false;
     public bool correct_sender = false;
-    public efl.ILoop loop { get; set; }
+    public efl.Loop loop { get; set; }
     protected void callback(object sender, EventArgs e) {
         called = true;
-        efl.IObject obj = sender as efl.IObject;
+        efl.Object obj = sender as efl.Object;
         if (obj != null)
         {
             obj.SetName("loop_called");
@@ -27,7 +27,7 @@ class TestEoEvents
 
     public static void idle_event()
     {
-        efl.ILoop loop = new efl.Loop();
+        efl.Loop loop = new efl.Loop();
         loop.SetName("loop");
         TestEoEvents listener = new TestEoEvents();
         listener.loop = loop;
@@ -44,7 +44,7 @@ class TestEoEvents
 
     public static void event_with_string_payload()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         string received_string = null;
 
         obj.EvtWithStringEvt += (object sender, EvtWithStringEvt_Args e) => {
@@ -58,7 +58,7 @@ class TestEoEvents
 
     public static void event_with_int_payload()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         int received_int= 0;
 
         obj.EvtWithIntEvt += (object sender, EvtWithIntEvt_Args e) => {
@@ -72,7 +72,7 @@ class TestEoEvents
 
     public static void event_with_bool_payload()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         bool received_bool = false;
 
         obj.EvtWithBoolEvt += (object sender, EvtWithBoolEvt_Args e) => {
@@ -90,7 +90,7 @@ class TestEoEvents
 
     public static void event_with_uint_payload()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         uint received_uint = 0;
         obj.EvtWithUintEvt += (object sender, EvtWithUintEvt_Args e) => {
             received_uint = e.arg;
@@ -103,14 +103,14 @@ class TestEoEvents
 
     public static void event_with_object_payload()
     {
-        test.ITesting obj = new test.Testing();
-        test.ITesting received_obj = null;
+        test.Testing obj = new test.Testing();
+        test.Testing received_obj = null;
 
         obj.EvtWithObjEvt += (object sender, EvtWithObjEvt_Args e) => {
             received_obj = e.arg;
         };
 
-        test.ITesting sent_obj = new test.Testing();
+        test.Testing sent_obj = new test.Testing();
 
         obj.EmitEventWithObj(sent_obj);
 
@@ -119,7 +119,7 @@ class TestEoEvents
 
     public static void event_with_error_payload()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         eina.Error received_error = 0;
 
         obj.EvtWithErrorEvt += (object sender, EvtWithErrorEvt_Args e) => {
@@ -135,7 +135,7 @@ class TestEoEvents
 
     public static void event_with_struct_payload()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         test.StructSimple received_struct = default(test.StructSimple);
 
         obj.EvtWithStructEvt += (object sender, EvtWithStructEvt_Args e) => {

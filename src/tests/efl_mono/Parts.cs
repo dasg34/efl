@@ -13,11 +13,11 @@ public static class TestParts
 {
     public static void basic_part_test()
     {
-        test.ITesting t = new test.Testing();
+        test.Testing t = new test.Testing();
         do_part_test(t);
     }
 
-    private class Child : test.TestingInherit
+    private class Child : test.Testing
     {
         public Child() : base(null) {}
     }
@@ -27,7 +27,7 @@ public static class TestParts
         do_part_test(t);
     }
 
-    private static void do_part_test(test.ITesting t)
+    private static void do_part_test(test.Testing t)
     {
         var p1 = t.Part1;
         var p2 = t.Part2;

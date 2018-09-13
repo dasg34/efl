@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-public class MyBox : evas.BoxInherit
+public class MyBox : evas.Box
 {
     public MyBox(efl.Object parent) : base(parent) {}
 

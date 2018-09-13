@@ -29,7 +29,7 @@ class TestFunctionPointers
     public static void set_callback_basic()
     {
         setup();
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         obj.SetCallback(twice);
 
         Test.Assert(called == false, "set_callback should not call the callback");
@@ -44,7 +44,7 @@ class TestFunctionPointers
     {
         setup();
 
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         obj.SetCallback(y => {
                     called = true;
                     return y + 4;
@@ -62,7 +62,7 @@ class TestFunctionPointers
     {
         setup();
 
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         obj.SetCallback(twice);
         Test.Assert(called == false, "set_callback should not call the callback");
 
@@ -83,7 +83,7 @@ class TestFunctionPointers
         Test.AssertEquals(42 * 42, x);
     }
 
-    class NoOverride : test.TestingInherit {
+    class NoOverride : test.Testing {
     }
     public static void set_callback_inherited_no_override()
     {
@@ -99,7 +99,7 @@ class TestFunctionPointers
         Test.AssertEquals(42 * 3, x);
     }
 
-    class WithOverride : test.TestingInherit {
+    class WithOverride : test.Testing {
         public bool set_called = false;
         public bool invoke_called = false;
         public test.SimpleCb cb = null;

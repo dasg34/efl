@@ -18,7 +18,7 @@ class TestStrBuf
 
     public static void test_eolian()
     {
-        test.ITesting obj = new test.Testing();
+        test.Testing obj = new test.Testing();
         eina.Strbuf buf = new eina.Strbuf();
 
         obj.AppendToStrbuf(buf, "Appended");
@@ -27,7 +27,7 @@ class TestStrBuf
         Test.AssertEquals("Appended to buf", buf.Steal());
     }
 
-    private class Appender : test.TestingInherit
+    private class Appender : test.Testing
     {
         public bool called;
         public Appender() : base(null)

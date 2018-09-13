@@ -20,8 +20,10 @@ public class Globals {
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_ref(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] public static extern void
         efl_unref(IntPtr eo);
+    [DllImport(efl.Libs.Eo)] public static extern int
+        efl_ref_count(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr base0);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
@@ -90,28 +92,32 @@ public class Globals {
         IntPtr klass = efl.eo.Globals.efl_class_new(description_ptr, base_klass, IntPtr.Zero);
         if(klass == IntPtr.Zero)
             eina.Log.Error("klass was not registered");
-        eina.Log.Debug("Registered?");
+        else
+            eina.Log.Debug("Registered class successfully");
         return klass;
     }
-    public static IntPtr instantiate_start(IntPtr klass, efl.IObject parent)
+    public static IntPtr instantiate_start(IntPtr klass, efl.Object parent)
     {
-        eina.Log.Debug("Instantiating");
+        eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
         if(parent != null)
             parent_ptr = parent.raw_handle;
 
         System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
+        Console.WriteLine($"Eo instance right after internal_start 0x{eo.ToInt64():x} with refcount {efl.eo.Globals.efl_ref_count(eo)}");
+        Console.WriteLine($"Parent was 0x{parent_ptr.ToInt64()}");
         return eo;
     }
 
     public static IntPtr instantiate_end(IntPtr eo) {
-        eina.Log.Debug("efl_add_internal_start returned");
+        eina.Log.Debug("calling efl_add_internal_end");
         eo = efl.eo.Globals._efl_add_end(eo, 1, 0);
-        eina.Log.Debug("efl_add_end returned");
+        eina.Log.Debug($"efl_add_end returned eo 0x{eo.ToInt64():x}");
         return eo;
     }
     public static void data_set(efl.eo.IWrapper obj)
     {
+      eina.Log.Debug($"Calling data_scope_get with obj {obj.raw_handle.ToInt64():x} and klass {obj.raw_klass.ToInt64():x}");
       IntPtr pd = efl.eo.Globals.efl_data_scope_get(obj.raw_handle, obj.raw_klass);
       {
           GCHandle gch = GCHandle.Alloc(obj);
