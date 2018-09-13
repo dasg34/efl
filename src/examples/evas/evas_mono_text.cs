@@ -22,8 +22,8 @@ class TestMain
     static int HEIGHT = 240;
 
     private EcoreEvas ecore_evas;
-    private efl.canvas.IObject canvas;
-    private efl.canvas.IRectangle bg;
+    private efl.canvas.Object canvas;
+    private efl.canvas.Rectangle bg;
     private evas.Text text;
     private evas.Image border;
 
@@ -45,7 +45,7 @@ class TestMain
         bg.SetVisible(true);
         bg.SetKeyFocus(true);
 
-        bg.KeyDownEvt += On_KeyDown;
+        ((efl.input.Interface)bg).KeyDownEvt += On_KeyDown;
 
         text = new evas.Text(canvas);
         text.SetStyle(evas.Text_Style_Type.OutlineSoftShadow);
@@ -87,7 +87,7 @@ class TestMain
 
     }
 
-    private void On_KeyDown(object sender, efl.input.Interface.KeyDownEvt_Args e)
+    private void On_KeyDown(object sender, efl.input.InterfaceConcrete.KeyDownEvt_Args e)
     {
         var key = e.arg.GetKey();
 

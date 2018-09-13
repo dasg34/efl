@@ -6,7 +6,7 @@ class TestMain
     static int WIDTH = 320;
     static int HEIGHT = 240;
 
-    evas.IImage image;
+    evas.Image image;
 
 
     static string ImagePath([CallerFilePath] string folder="")
@@ -14,7 +14,7 @@ class TestMain
         return System.IO.Path.GetDirectoryName(folder);
     }
 
-    public TestMain(evas.IImage image)
+    public TestMain(evas.Image image)
     {
         this.image = image;
     }
@@ -28,10 +28,10 @@ class TestMain
         EcoreEvas ecore_evas = new EcoreEvas();
         eina.Size2D size = new eina.Size2D();
         
-        efl.canvas.IObject canvas = ecore_evas.canvas;
+        efl.canvas.Object canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.IObject parent = canvas.GetParent();
+        efl.Object parent = canvas.GetParent();
         System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
         
         efl.canvas.Rectangle bg = new efl.canvas.Rectangle(canvas);

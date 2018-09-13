@@ -21,10 +21,10 @@ class TestMain
 
         eina.Size2D hint = new eina.Size2D();
 
-        efl.canvas.IObject canvas = ecore_evas.canvas;
+        efl.canvas.Object canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.IObject parent = canvas.GetParent();
+        efl.Object parent = canvas.GetParent();
         System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
         
         efl.canvas.Rectangle bg = new efl.canvas.Rectangle(canvas);

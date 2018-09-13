@@ -2,15 +2,15 @@ using System;
 
 public class Example
 {
-    public static efl.ui.IButton CreateButton(efl.IObject parent,
+    public static efl.ui.Button CreateButton(efl.Object parent,
                                              string text,
                                              int w, int h,
                                              EventHandler callback) {
-        efl.ui.IButton button = new efl.ui.Button(parent);
+        efl.ui.Button button = new efl.ui.Button(parent);
         button.SetText(text);
         button.SetSize(new eina.Size2D(w, h));
 
-        button.ClickedEvt += callback;
+        ((efl.ui.Clickable)button).ClickedEvt += callback;
 
         return button;
     }
@@ -42,7 +42,7 @@ public class Example
 
         efl.ui.Box_Flow box = new efl.ui.Box_Flow(win);
 
-        efl.ui.IButton button = CreateButton(box, "Click to exit", 120, 30,
+        efl.ui.Button button = CreateButton(box, "Click to exit", 120, 30,
                 (object sender, EventArgs e) => {
                     efl.ui.Config.Exit();
                 });
@@ -53,7 +53,7 @@ public class Example
         bar.SetSize(new eina.Size2D(W, H));
         bar.SetFormatCb(Formatter);
 
-        efl.ui.ISlider slider = new efl.ui.Slider(box);
+        efl.ui.Slider slider = new efl.ui.Slider(box);
         slider.SetSize(new eina.Size2D(W, H));
 
         slider.ChangedEvt += (object sender, EventArgs e) => {

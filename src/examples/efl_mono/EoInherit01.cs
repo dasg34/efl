@@ -1,8 +1,8 @@
 using static System.Console;
 
-class PlusTenNumberWrapper : example.NumberwrapperInherit
+class PlusTenNumberWrapper : example.Numberwrapper
 {
-    public PlusTenNumberWrapper(efl.IObject parent = null)
+    public PlusTenNumberWrapper(efl.Object parent = null)
         : base(parent)
     {}
 

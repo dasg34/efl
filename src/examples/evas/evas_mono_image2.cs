@@ -19,7 +19,7 @@ class TestMain
         eina.Size2D size = new eina.Size2D();
         eina.Position2D pos = new eina.Position2D();
         
-        efl.canvas.IObject canvas = ecore_evas.canvas;
+        efl.canvas.Object canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
         efl.canvas.Rectangle bg = new efl.canvas.Rectangle(canvas);

@@ -16,7 +16,7 @@ public class Example
 
     private static void ShowErrorPopup(efl.ui.Win win, string message)
     {
-        efl.ui.IPopup_Alert popup = new efl.ui.Popup_Alert(win);
+        efl.ui.Popup_Alert popup = new efl.ui.Popup_Alert(win);
         efl.ui.Text popup_text = new efl.ui.Text(popup);
         popup_text.SetText($"Error: {message}");
         popup.SetContent(popup_text);
@@ -64,7 +64,7 @@ public class Example
         miles_input.SetSize(size);
         miles_input.SetVisible(true);
 
-        efl.ui.IButton miles_button = new efl.ui.Button(miles_box);
+        efl.ui.Button miles_button = new efl.ui.Button(miles_box);
         miles_button.SetText("To Km");
         miles_button.SetSize(size);
         miles_button.SetVisible(true);
@@ -90,7 +90,7 @@ public class Example
         kms_input.SetSize(size);
         kms_input.SetVisible(true);
 
-        efl.ui.IButton kms_button = new efl.ui.Button(kms_box);
+        efl.ui.Button kms_button = new efl.ui.Button(kms_box);
         kms_button.SetText("To Miles");
         kms_button.SetSize(size);
         kms_button.SetVisible(true);
@@ -99,7 +99,7 @@ public class Example
         kms_box.DoPack(kms_input);
         kms_box.DoPack(kms_button);
 
-        kms_button.ClickedEvt += (object sender, EventArgs e) => {
+        ((efl.ui.Clickable)kms_button).ClickedEvt += (object sender, EventArgs e) => {
             try
             {
                 string text = kms_input.GetText();
@@ -115,7 +115,7 @@ public class Example
             }
         };
 
-        miles_button.ClickedEvt += (object sender, EventArgs e) => {
+        ((efl.ui.Clickable)miles_button).ClickedEvt += (object sender, EventArgs e) => {
             try
             {
                 string text = miles_input.GetText();

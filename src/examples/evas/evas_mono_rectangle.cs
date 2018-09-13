@@ -16,10 +16,10 @@ class TestMain
 
         efl.Loop loop = new efl.Loop();
         EcoreEvas ecore_evas = new EcoreEvas();
-        efl.canvas.IObject canvas = ecore_evas.canvas;
+        efl.canvas.Object canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.IObject parent = canvas.GetParent();
+        efl.Object parent = canvas.GetParent();
         System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
 
         efl.canvas.Rectangle rect = new efl.canvas.Rectangle(canvas);
@@ -30,7 +30,11 @@ class TestMain
         rect.SetSize(size);
         rect.SetVisible(true);
 
-        canvas.KeyDownEvt += (object sender, efl.input.Interface.KeyDownEvt_Args e) => {
+        // Event argument classes are still defined in the Concrete implementation of the interface.
+        // Maybe we could move them to the upper namespace with the name of the class as prefix
+        // e.g. efl.ui.InterfaceKeyDown_Args
+        // Also, interface events are currently declared at the interface level.
+        ((efl.input.Interface)canvas).KeyDownEvt += (object sender, efl.input.InterfaceConcrete.KeyDownEvt_Args e) => {
             color_index = (color_index + 1) % 3;
             Console.WriteLine("Key Down");
             Console.WriteLine("Got key obj at {0}", e.arg.raw_handle.ToString("X"));
