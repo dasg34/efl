@@ -66,7 +66,7 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition, Efl.Ui.Directio
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Focusable.on_focus_update;
       Efl.Ui.Range.range_value { set; }
       Efl.Ui.Direction.direction { get; set; }
       Efl.Access.Object.i18n_name { get; }

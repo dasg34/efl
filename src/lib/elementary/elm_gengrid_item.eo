@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
+class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focusable, Efl.Ui.Legacy)
 {
       [[Elementary gengrid item class]]
       legacy_prefix: elm_gengrid_item;
@@ -230,6 +230,6 @@ class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object, Efl.Ui
            Elm.Widget.Item.cursor_unset;
            Efl.Access.Object.i18n_name { get; }
            Efl.Access.Object.state_set { get; }
-           Efl.Ui.Focus.Object.prepare_logical_none_recursive;
+           Efl.Ui.Focusable.prepare_logical_none_recursive;
       }
 }

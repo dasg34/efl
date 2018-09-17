@@ -272,7 +272,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT);
 #undef SIG_FWD
 
-   efl_event_callback_forwarder_add(priv->entry, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, obj);
+   efl_event_callback_forwarder_add(priv->entry, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, obj);
 
    if (!elm_layout_theme_set
        (obj, "fileselector_entry", "base", elm_widget_style_get(obj)))

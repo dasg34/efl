@@ -4,9 +4,9 @@ interface Efl.Ui.Focus.Parent_Provider {
       find_logical_parent {
         [[Called to get the logical parent of widget]]
         params {
-           widget : Efl.Ui.Focus.Object; [[Object to find parent for]]
+           widget : Efl.Ui.Focusable; [[Object to find parent for]]
         }
-        return : Efl.Ui.Focus.Object; [[Parent of parameter object]]
+        return : Efl.Ui.Focusable; [[Parent of parameter object]]
       }
    }
 }

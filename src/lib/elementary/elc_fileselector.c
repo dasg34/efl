@@ -1521,7 +1521,7 @@ _on_text_focus_changed(void *data, const Efl_Event *event)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
-   if (efl_ui_focus_object_focus_get(event->object))
+   if (efl_ui_focusable_focus_get(event->object))
      {
         if (!sd->path_entry_idler)
           sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
@@ -1863,7 +1863,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj);
    efl_event_callback_add
-   (en, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _on_text_focus_changed, obj);
+   (en, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _on_text_focus_changed, obj);
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj);
 

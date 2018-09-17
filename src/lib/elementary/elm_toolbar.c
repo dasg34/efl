@@ -8,7 +8,6 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -155,7 +154,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
           }
      }
    efl_ui_focus_composition_dirty(obj);
-   efl_ui_focus_object_prepare_logical(obj);
+   efl_ui_focusable_prepare_logical(obj);
 }
 
 static void
@@ -763,17 +762,17 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static Eina_Bool
-_elm_toolbar_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_focusable_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_focusable_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
    if (!sd->items) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (efl_ui_focusable_focus_get(obj))
      {
         evas_object_focus_set(wd->resize_obj, EINA_TRUE);
         if (sd->mouse_down) return EINA_TRUE;
@@ -2370,7 +2369,7 @@ _access_widget_item_register(Elm_Toolbar_Item_Data *it)
 }
 
 EOLIAN static Eina_Rect
-_elm_toolbar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd)
+_elm_toolbar_item_efl_ui_focusable_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd)
 {
    Eina_Rect rect;
 
@@ -2941,9 +2940,9 @@ _elm_toolbar_coordinates_adjust(Elm_Toolbar_Item_Data *it)
 }
 
 EOLIAN static void
-_elm_toolbar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Toolbar_Item_Data *pd EINA_UNUSED, Eina_Bool focus)
+_elm_toolbar_item_efl_ui_focusable_focus_set(Eo *obj, Elm_Toolbar_Item_Data *pd EINA_UNUSED, Eina_Bool focus)
 {
-   efl_ui_focus_object_focus_set(efl_super(obj, ELM_TOOLBAR_ITEM_CLASS), focus);
+   efl_ui_focusable_focus_set(efl_super(obj, ELM_TOOLBAR_ITEM_CLASS), focus);
    elm_wdg_item_focus_set(obj, focus);
 }
 

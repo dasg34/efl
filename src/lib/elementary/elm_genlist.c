@@ -3391,7 +3391,7 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static void
-_elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data *sd, Efl_Ui_Focus_Direction direction EINA_UNUSED, Efl_Ui_Focus_Object *entry EINA_UNUSED)
+_elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data *sd, Efl_Ui_Focus_Direction direction EINA_UNUSED, Efl_Ui_Focusable *entry EINA_UNUSED)
 {
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
@@ -3437,14 +3437,14 @@ _elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
+_elm_genlist_efl_ui_focusable_on_focus_update(Eo *obj, Elm_Genlist_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_focusable_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj) && (sd->items) && (sd->selected) &&
+   if (efl_ui_focusable_focus_get(obj) && (sd->items) && (sd->selected) &&
        (!sd->last_selected_item))
      {
         sd->last_selected_item = eina_list_data_get(sd->selected);
@@ -6234,7 +6234,7 @@ _elm_genlist_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
      }
    else
      {
-        if (!efl_ui_focus_object_focus_get(obj))
+        if (!efl_ui_focusable_focus_get(obj))
           return;
         _elm_genlist_item_unfocused(eo_it);
      }
@@ -8844,7 +8844,7 @@ _elm_genlist_efl_object_provider_find(const Eo *obj, Elm_Genlist_Data *pd, const
 }
 
 EOLIAN static void
-_elm_genlist_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
+_elm_genlist_item_efl_ui_focusable_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
 {
    Eina_List *n;
    Efl_Ui_Widget *wid;
@@ -8855,7 +8855,7 @@ _elm_genlist_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, El
           _elm_widget_full_eval(wid);
      }
 
-   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, ELM_GENLIST_ITEM_CLASS));
+   efl_ui_focusable_prepare_logical_none_recursive(efl_super(obj, ELM_GENLIST_ITEM_CLASS));
 }
 
 EOLIAN static Eina_Bool

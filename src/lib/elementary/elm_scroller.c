@@ -133,7 +133,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    evas_object_geometry_get(sd->content, NULL, NULL, &max_x, &max_y);
 
    {
-      Efl_Ui_Focus_Object *focused;
+      Efl_Ui_Focusable *focused;
       Eina_Rectangle focused_geom, viewport;
 
       focused = efl_ui_focus_manager_focus_get(obj);
@@ -857,8 +857,8 @@ static void
 _focused_element(void *data, const Efl_Event *event)
 {
    Eina_Rect geom;
-   Efl_Ui_Focus_Object *obj = data;
-   Efl_Ui_Focus_Object *focus = efl_ui_focus_manager_focus_get(event->object);
+   Efl_Ui_Focusable *obj = data;
+   Efl_Ui_Focusable *focus = efl_ui_focus_manager_focus_get(event->object);
    Elm_Scrollable_Smart_Interface_Data *pd;
    Eina_Position2D pos;
    int pan_x, pan_y;
@@ -867,7 +867,7 @@ _focused_element(void *data, const Efl_Event *event)
 
    if (!focus) return;
 
-   geom = efl_ui_focus_object_focus_geometry_get(focus);
+   geom = efl_ui_focusable_focus_geometry_get(focus);
    pos = efl_gfx_entity_position_get(obj);
    elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
    geom.x = geom.x + pan_x - pos.x;

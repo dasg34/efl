@@ -1,7 +1,7 @@
-class Focus.Test.Sub.Main(Efl.Object, Efl.Ui.Focus.Object, Efl.Ui.Focus.Manager_Sub) {
+class Focus.Test.Sub.Main(Efl.Object, Efl.Ui.Focusable, Efl.Ui.Focus.Manager_Sub) {
     implements {
-        Efl.Ui.Focus.Object.focus_manager { get; }
-        Efl.Ui.Focus.Object.focus_parent { get; }
-        Efl.Ui.Focus.Object.focus_geometry { get; }
+        Efl.Ui.Focusable.focus_manager { get; }
+        Efl.Ui.Focusable.focus_parent { get; }
+        Efl.Ui.Focusable.focus_geometry { get; }
     }
 }

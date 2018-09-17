@@ -4195,7 +4195,7 @@ elm_gengrid_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *entry EINA_UNUSED)
+_elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focusable *entry EINA_UNUSED)
 {
    Elm_Object_Item *eo_it = NULL;
 
@@ -5740,7 +5740,7 @@ _elm_gengrid_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_
 }
 
 EOLIAN static void
-_elm_gengrid_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
+_elm_gengrid_item_efl_ui_focusable_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
 {
    Eina_List *n;
    Efl_Ui_Widget *wid;
@@ -5751,7 +5751,7 @@ _elm_gengrid_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, El
           _elm_widget_full_eval(wid);
      }
 
-   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+   efl_ui_focusable_prepare_logical_none_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
 }
 
 /* Standard widget overrides */

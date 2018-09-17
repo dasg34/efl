@@ -168,12 +168,12 @@ _list_element_focused(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Rect geom;
    Eina_Position2D pos;
-   Efl_Ui_Focus_Object *focused = efl_ui_focus_manager_focus_get(ev->object);
+   Efl_Ui_Focusable *focused = efl_ui_focus_manager_focus_get(ev->object);
 
    if (!focused) return;
 
    EFL_UI_LIST_VIEW_DATA_GET(ev->object, pd);
-   geom = efl_ui_focus_object_focus_geometry_get(focused);
+   geom = efl_ui_focusable_focus_geometry_get(focused);
    pos = efl_ui_scrollable_content_pos_get(pd->scrl_mgr);
 
    geom.x += pos.x;
@@ -651,7 +651,7 @@ _efl_ui_list_view_efl_canvas_group_group_del(Eo *obj, Efl_Ui_List_View_Data *pd)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_list_view_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_list_view_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
    if (!pd->manager)
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,

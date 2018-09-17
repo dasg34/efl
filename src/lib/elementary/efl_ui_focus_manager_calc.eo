@@ -17,8 +17,8 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
               $child gets focused.
             ]]
             params {
-                child : Efl.Ui.Focus.Object @nonull; [[The object to register]]
-                parent : Efl.Ui.Focus.Object @nonull; [[The parent to use in
+                child : Efl.Ui.Focusable @nonull; [[The object to register]]
+                parent : Efl.Ui.Focusable @nonull; [[The parent to use in
                                                         the logical tree]]
                 redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
                     once this child is focused can be NULL for no redirect]]
@@ -32,8 +32,8 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
               of the items that are.
             ]]
             params {
-                child : Efl.Ui.Focus.Object @nonull; [[The object to register]]
-                parent : Efl.Ui.Focus.Object @nonull; [[The parent to use in
+                child : Efl.Ui.Focusable @nonull; [[The object to register]]
+                parent : Efl.Ui.Focusable @nonull; [[The parent to use in
                                                         the logical tree]]
                 redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
                     once this child is focused can be $null for no redirect]]
@@ -47,7 +47,7 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
               in the redirect property. Set redirect to $null if nothing should happen.
             ]]
             params {
-                child : Efl.Ui.Focus.Object @nonull; [[The child to update]]
+                child : Efl.Ui.Focusable @nonull; [[The child to update]]
                 redirect : Efl.Ui.Focus.Manager; [[Once $child is focused this
                     element will be set as redirect]]
             }
@@ -56,8 +56,8 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         update_parent {
             [[Set a new logical parent for the given child.]]
             params {
-                child : Efl.Ui.Focus.Object @nonull; [[The child to update]]
-                parent : Efl.Ui.Focus.Object @nonull; [[The parent which now
+                child : Efl.Ui.Focusable @nonull; [[The child to update]]
+                parent : Efl.Ui.Focusable @nonull; [[The parent which now
                     will be the logical parent of child]]
             }
             return : bool; [[$true if successful, $false otherwise]]
@@ -65,8 +65,8 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         update_children {
             [[Give the list of children a different order.]]
             params {
-                parent : Efl.Ui.Focus.Object @nonull; [[the parent to update]]
-                children : list<Efl.Ui.Focus.Object> @owned; [[the list with the new order]]
+                parent : Efl.Ui.Focusable @nonull; [[the parent to update]]
+                children : list<Efl.Ui.Focusable> @owned; [[the list with the new order]]
             }
             return : bool; [[$true if successful, $false otherwise]]
         }
@@ -76,14 +76,14 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
               Children from the list which are not true children are ignored.
             ]]
             params {
-                parent : Efl.Ui.Focus.Object @nonull; [[the parent to update]]
-                children : list<Efl.Ui.Focus.Object> @owned; [[the order of items]]
+                parent : Efl.Ui.Focusable @nonull; [[the parent to update]]
+                children : list<Efl.Ui.Focusable> @owned; [[the order of items]]
             }
         }
         unregister {
             [[Unregister the given item from the focus graph.]]
             params {
-                child : Efl.Ui.Focus.Object; [[The child to unregister.]]
+                child : Efl.Ui.Focusable; [[The child to unregister.]]
             }
         }
     }

@@ -9,12 +9,12 @@ function Efl.Ui.Scrollable_On_Show_Region {
 struct Efl.Ui.Widget_Focus_State {
    [[All relevant fields needed for the current state of focus registeration]]
    manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
-   parent : Efl.Ui.Focus.Object; [[The parent the widget is using as logical parent]]
+   parent : Efl.Ui.Focusable; [[The parent the widget is using as logical parent]]
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
 abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
-                        Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
+                        Efl.Access.Component, Efl.Part, Efl.Ui.Focusable,
                         Efl.Ui.Base, Efl.Ui.Cursor, Efl.Ui.Translatable,
                         Efl.Selection, Efl.Ui.Dnd)
 {
@@ -579,16 +579,16 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Access.Object.access_children { get; }
       Efl.Access.Object.attributes { get; }
       Efl.Access.Component.focus_grab;
-      Efl.Ui.Focus.Object.focus_manager { get; }
-      Efl.Ui.Focus.Object.focus_parent { get; }
-      Efl.Ui.Focus.Object.focus_geometry { get; }
-      Efl.Ui.Focus.Object.focus { set; }
+      Efl.Ui.Focusable.focus_manager { get; }
+      Efl.Ui.Focusable.focus_parent { get; }
+      Efl.Ui.Focusable.focus_geometry { get; }
+      Efl.Ui.Focusable.focus { set; }
       Efl.Ui.Base.mirrored { get; set; }
       Efl.Ui.Base.mirrored_automatic { get; set; }
       Efl.Ui.Cursor.cursor { get; set; }
       Efl.Ui.Cursor.cursor_style { get; set; }
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
-      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Focusable.on_focus_update;
       Efl.Ui.Translatable.translation_update; [[This implements the calls to $gettext() and $text_set().]]
       Efl.Part.part_get; [[Returns @Efl.Ui.Widget_Part.]]
    }

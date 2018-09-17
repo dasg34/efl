@@ -44,7 +44,7 @@ _flush_manager(Efl_Ui_Widget *obj, Elm_Widget_Smart_Data *pd)
 {
    Efl_Ui_Focus_Manager *manager;
 
-   manager = efl_ui_focus_object_focus_manager_get(obj);
+   manager = efl_ui_focusable_focus_manager_get(obj);
    if (manager)
      {
         Eina_List *order;
@@ -86,12 +86,12 @@ _custom_chain_set(Efl_Ui_Widget *node, Eina_List *lst)
 
    if (pd->legacy_focus.custom_chain && !pd->legacy_focus.listen_to_manager)
      {
-        efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        efl_event_callback_add(node, EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
         pd->legacy_focus.listen_to_manager = EINA_TRUE;
      }
    else if (!pd->legacy_focus.custom_chain && pd->legacy_focus.listen_to_manager)
      {
-        efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        efl_event_callback_del(node, EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
         pd->legacy_focus.listen_to_manager = EINA_FALSE;
      }
 
@@ -179,7 +179,7 @@ elm_object_focus_next(Evas_Object        *obj,
 {
    Eina_Bool legacy_focus_move = EINA_FALSE;
    Efl_Ui_Widget *o = NULL, *top;
-   Efl_Ui_Focus_Object *logical;
+   Efl_Ui_Focusable *logical;
    Efl_Ui_Focus_Manager *manager_top;
    API_ENTRY()
 
@@ -191,7 +191,7 @@ elm_object_focus_next(Evas_Object        *obj,
 
    if (elm_widget_is(logical))
      {
-        Efl_Ui_Focus_Object *legacy_target = NULL;
+        Efl_Ui_Focusable *legacy_target = NULL;
         ELM_WIDGET_DATA_GET_OR_RETURN(logical, pd_logical);
 
         #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd_logical->legacy_focus.field) legacy_target = pd_logical->legacy_focus.field;
@@ -215,7 +215,7 @@ elm_object_focus_next(Evas_Object        *obj,
      {
         if (dir == EFL_UI_FOCUS_DIRECTION_NEXT || dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
           {
-             Efl_Ui_Focus_Object *root;
+             Efl_Ui_Focusable *root;
 
              root = efl_ui_focus_manager_root_get(top);
              efl_ui_focus_manager_setup_on_first_touch(top, dir, root);
@@ -278,19 +278,19 @@ EAPI Eina_Bool
 elm_object_focus_get(const Evas_Object *obj)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *focused_child;
+   Efl_Ui_Focusable *focused_child;
    API_ENTRY_VAL(EINA_FALSE)
 
    if (!elm_widget_is(obj))
      return evas_object_focus_get(obj);
 
-   m = efl_ui_focus_object_focus_manager_get(obj);
+   m = efl_ui_focusable_focus_manager_get(obj);
 
    //no manager means not registered
    if (!m) return EINA_FALSE;
 
    //assertion: our redirect manager m is in the redirect chain
-   m = efl_ui_focus_object_focus_manager_get(obj);
+   m = efl_ui_focusable_focus_manager_get(obj);
 
    //if obj is the redriect manager its kind of focused
    if (efl_ui_focus_manager_redirect_get(m) == obj) return EINA_TRUE;
@@ -305,10 +305,10 @@ elm_object_focus_get(const Evas_Object *obj)
      {
         if (focused_child == obj) return EINA_TRUE;
 
-        focused_child = efl_ui_focus_object_focus_parent_get(focused_child);
+        focused_child = efl_ui_focusable_focus_parent_get(focused_child);
      }
 
-   return efl_ui_focus_object_focus_get(obj);
+   return efl_ui_focusable_focus_get(obj);
 }
 
 EAPI void
@@ -331,8 +331,8 @@ elm_object_focus_set(Evas_Object *obj,
           efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
         else
           {
-             if (efl_ui_focus_manager_focus_get(efl_ui_focus_object_focus_manager_get(obj)) == obj)
-               efl_ui_focus_manager_pop_history_stack(efl_ui_focus_object_focus_manager_get(obj));
+             if (efl_ui_focus_manager_focus_get(efl_ui_focusable_focus_manager_get(obj)) == obj)
+               efl_ui_focus_manager_pop_history_stack(efl_ui_focusable_focus_manager_get(obj));
           }
      }
    else
