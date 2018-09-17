@@ -13,7 +13,7 @@
 typedef struct {
    Eina_List *order, *targets_ordered;
    Eina_List *register_target, *registered_targets;
-   Efl_Ui_Focus_Manager *registered, *custom_manager, *old_manager;
+   Efl_Ui_Focus_Manager_Base *registered, *custom_manager, *old_manager;
    Eina_Bool dirty;
    Eina_Bool logical;
 } Efl_Ui_Focus_Composition_Data;
@@ -21,7 +21,7 @@ typedef struct {
 static void
 _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
 {
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
 
    //Legacy code compatibility, only update the custom chain of elements if legacy was NOT messing with it.
    if (elm_widget_is_legacy(obj) && elm_object_focus_custom_chain_get(obj)) return;
@@ -193,12 +193,12 @@ _efl_ui_focus_composition_efl_ui_focusable_prepare_logical_none_recursive(Eo *ob
 }
 
 EOLIAN static void
-_efl_ui_focus_composition_custom_manager_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Focus_Manager *custom_manager)
+_efl_ui_focus_composition_custom_manager_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Focus_Manager_Base *custom_manager)
 {
    pd->custom_manager = custom_manager;
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_focus_composition_custom_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
 {
    return pd->custom_manager;
@@ -229,7 +229,7 @@ _efl_ui_focus_composition_efl_object_invalidate(Eo *obj, Efl_Ui_Focus_Compositio
 
 typedef struct {
    Evas_Object *object;
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
    Efl_Ui_Focusable *parent;
 }  Efl_Ui_Focus_Composition_Adapter_Data;
 
@@ -296,7 +296,7 @@ _efl_ui_focus_composition_adapter_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Co
 }
 
 EOLIAN static void
-_efl_ui_focus_composition_adapter_focus_manager_object_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Ui_Focus_Manager *v)
+_efl_ui_focus_composition_adapter_focus_manager_object_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Ui_Focus_Manager_Base *v)
 {
    pd->manager = v;
 }
@@ -313,7 +313,7 @@ _efl_ui_focus_composition_adapter_efl_ui_focusable_focus_parent_get(const Eo *ob
    return pd->parent;
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_focus_composition_adapter_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
 {
    return pd->manager;

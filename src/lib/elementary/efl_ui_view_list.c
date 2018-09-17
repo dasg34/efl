@@ -168,7 +168,7 @@ _list_element_focused(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Rect geom;
    Eina_Position2D pos;
-   Efl_Ui_Focusable *focused = efl_ui_focus_manager_focus_get(ev->object);
+   Efl_Ui_Focusable *focused = efl_ui_focus_manager_base_manager_focus_get(ev->object);
 
    if (!focused) return;
 
@@ -650,12 +650,12 @@ _efl_ui_view_list_efl_canvas_group_group_del(Eo *obj, Efl_Ui_View_List_Data *pd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_view_list_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
    if (!pd->manager)
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
-                          efl_ui_focus_manager_root_set(efl_added, root));
+                          efl_ui_focus_manager_base_root_set(efl_added, root));
 
    return pd->manager;
 }
@@ -687,7 +687,7 @@ _efl_ui_view_list_efl_object_constructor(Eo *obj, Efl_Ui_View_List_Data *pd)
 
    pd->segarray = efl_add(EFL_UI_VIEW_LIST_SEGARRAY_CLASS, obj, efl_ui_view_list_segarray_setup(efl_added, 32));
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _list_element_focused, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUSED, _list_element_focused, NULL);
 
    efl_ui_focus_composition_custom_manager_set(obj, obj);
    efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
@@ -823,7 +823,7 @@ _key_action_select(Evas_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   efl_ui_focus_manager_reset_history(obj);
+   efl_ui_focus_manager_base_reset_history(obj);
    return EINA_TRUE;
 }
 

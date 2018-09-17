@@ -136,7 +136,7 @@ _key_action_move(Evas_Object *obj, const char *params)
       Efl_Ui_Focusable *focused;
       Eina_Rectangle focused_geom, viewport;
 
-      focused = efl_ui_focus_manager_focus_get(obj);
+      focused = efl_ui_focus_manager_base_manager_focus_get(obj);
 
       if (focused &&
           (!strcmp(dir, "next") ||
@@ -858,7 +858,7 @@ _focused_element(void *data, const Efl_Event *event)
 {
    Eina_Rect geom;
    Efl_Ui_Focusable *obj = data;
-   Efl_Ui_Focusable *focus = efl_ui_focus_manager_focus_get(event->object);
+   Efl_Ui_Focusable *focus = efl_ui_focus_manager_base_manager_focus_get(event->object);
    Elm_Scrollable_Smart_Interface_Data *pd;
    Eina_Position2D pos;
    int pan_x, pan_y;
@@ -888,7 +888,7 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SCROLL_PANE);
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUSED, _focused_element, obj);
    return obj;
 }
 

@@ -87,12 +87,12 @@ _elm_widget_item_static_focus_efl_ui_focusable_prepare_logical_none_recursive(Eo
         return;
      }
 
-   logical_child = efl_ui_focus_manager_request_subchild(wpd->widget, obj);
+   logical_child = efl_ui_focus_manager_base_request_subchild(wpd->widget, obj);
 
    if (logical_child == pd->adapter)
      {
         Eo *next_widget;
-        next_widget = efl_ui_focus_manager_request_move(wpd->widget, EFL_UI_FOCUS_DIRECTION_NEXT, logical_child, EINA_TRUE);
+        next_widget = efl_ui_focus_manager_base_request_move(wpd->widget, EFL_UI_FOCUS_DIRECTION_NEXT, logical_child, EINA_TRUE);
 
         if (efl_isa(next_widget, ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS))
           {

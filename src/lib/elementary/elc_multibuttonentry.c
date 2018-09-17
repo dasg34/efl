@@ -1654,7 +1654,7 @@ _legacy_focused(void *data, const Efl_Event *ev)
    Eina_Bool meaningful_focus_in = EINA_FALSE, meaningful_focus_out = EINA_FALSE;
    ELM_MULTIBUTTONENTRY_DATA_GET(data, pd);
 
-   new_focus = efl_ui_focus_manager_focus_get(ev->object);
+   new_focus = efl_ui_focus_manager_base_manager_focus_get(ev->object);
 
    if (efl_isa(ev->info, EFL_UI_WIDGET_CLASS) && elm_widget_parent_get(ev->info) == pd->box)
      {
@@ -1680,8 +1680,8 @@ _legacy_focused(void *data, const Efl_Event *ev)
 static void
 _legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
-   efl_event_callback_add(efl_ui_focusable_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
+   efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUSED, _legacy_focused, ev->object);
+   efl_event_callback_add(efl_ui_focusable_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUSED, _legacy_focused, ev->object);
 }
 
 EOLIAN static Eo *

@@ -405,10 +405,10 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Evas_Object *provider = NULL;
    Evas_Object *parent;
-   Efl_Ui_Focus_Manager *new = NULL, *old = NULL;
+   Efl_Ui_Focus_Manager_Base *new = NULL, *old = NULL;
 
    parent = elm_widget_parent_get(obj);
-   if (efl_isa(parent, EFL_UI_FOCUS_MANAGER_INTERFACE))
+   if (efl_isa(parent, EFL_UI_FOCUS_MANAGER_BASE_INTERFACE))
      {
         new = parent;
      }
@@ -3239,7 +3239,7 @@ _efl_ui_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EI
    EFL_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,
          efl_ui_mirrored_automatic_get(eo_obj));
 
-   rel = efl_ui_focus_manager_fetch(_pd->focus.manager, eo_obj);
+   rel = efl_ui_focus_manager_base_fetch(_pd->focus.manager, eo_obj);
    if (rel)
      {
         focus = EFL_DBG_INFO_LIST_APPEND(group, "Focus");
@@ -3266,7 +3266,7 @@ _efl_ui_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EI
      }
 
    //if thats a focus manager, give useful information like the border elements
-   if (efl_isa(eo_obj, EFL_UI_FOCUS_MANAGER_INTERFACE))
+   if (efl_isa(eo_obj, EFL_UI_FOCUS_MANAGER_BASE_INTERFACE))
      {
         Efl_Dbg_Info *border;
 
@@ -3274,11 +3274,11 @@ _efl_ui_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EI
         border = EFL_DBG_INFO_LIST_APPEND(focus, "Border Elements");
 
         _convert(border,
-          efl_ui_focus_manager_border_elements_get(eo_obj)
+          efl_ui_focus_manager_base_border_elements_get(eo_obj)
         );
 
         EFL_DBG_INFO_APPEND(focus, "redirect", EINA_VALUE_TYPE_UINT64,
-          efl_ui_focus_manager_redirect_get(eo_obj));
+          efl_ui_focus_manager_base_redirect_get(eo_obj));
      }
 }
 
@@ -5669,13 +5669,13 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
    return lookup;
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_widget_efl_ui_focusable_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return pd->focus.parent;
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_widget_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return pd->focus.manager;
