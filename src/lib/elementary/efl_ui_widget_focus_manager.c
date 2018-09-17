@@ -13,7 +13,7 @@
 
 typedef struct
 {
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
 } Efl_Ui_Widget_Focus_Manager_Data;
 
 EOLIAN static Efl_Object*
@@ -27,7 +27,7 @@ _efl_ui_widget_focus_manager_efl_object_constructor(Eo *obj, Efl_Ui_Widget_Focus
 
    efl_ref(pd->manager);
    efl_composite_attach(obj, pd->manager);
-   _efl_ui_focus_manager_redirect_events_add(pd->manager, obj);
+   _efl_ui_focus_manager_base_redirect_events_add(pd->manager, obj);
    res = efl_constructor(efl_super(obj, MY_CLASS));
 
 
@@ -39,7 +39,7 @@ _efl_ui_widget_focus_manager_efl_object_destructor(Eo *obj, Efl_Ui_Widget_Focus_
 {
    efl_destructor(efl_super(obj, MY_CLASS));
 
-   _efl_ui_focus_manager_redirect_events_del(pd->manager, obj);
+   _efl_ui_focus_manager_base_redirect_events_del(pd->manager, obj);
    efl_unref(pd->manager);
    pd->manager = NULL;
 }
@@ -52,7 +52,7 @@ _efl_ui_widget_focus_manager_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Wid
    state = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    if (!state && !configured_state->manager && current_state.manager)
-     efl_ui_focus_manager_reset_history(obj);
+     efl_ui_focus_manager_base_reset_history(obj);
 
    return state;
 }

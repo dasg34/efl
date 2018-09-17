@@ -44,7 +44,7 @@ mixin Efl.Ui.Focusable
             ]]
             get {}
             values {
-                manager : Efl.Ui.Focus.Manager; [[The manager object]]
+                manager : Efl.Ui.Focus.Manager_Base; [[The manager object]]
             }
         }
         @property focus_parent {
@@ -77,7 +77,7 @@ mixin Efl.Ui.Focusable
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed]]
-        manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
+        manager,changed: Efl.Ui.Focus.Manager_Base; [[Emitted when a new manager is
                                                  the parent for this object.]]
         logical,changed: Efl.Ui.Focusable; [[Emitted when a new logical
                                                 parent should be used.]]

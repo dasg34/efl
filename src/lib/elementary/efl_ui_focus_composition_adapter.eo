@@ -11,7 +11,7 @@ class Efl.Ui.Focus.Composition_Adapter (Efl.Object, Efl.Ui.Focusable)
       @property focus_manager_object {
         set {}
         values {
-          v : Efl.Ui.Focus.Manager;
+          v : Efl.Ui.Focus.Manager_Base;
         }
       }
       @property focus_manager_parent {

@@ -537,7 +537,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
           {
              Efl_Ui_Focus_Relations *rel;
 
-             rel = efl_ui_focus_manager_fetch(efl_ui_focusable_focus_manager_get(obj), obj);
+             rel = efl_ui_focus_manager_base_fetch(efl_ui_focusable_focus_manager_get(obj), obj);
 
              if (rel)
                {
@@ -702,7 +702,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
         else
           {
              efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
-             efl_ui_focus_manager_move(elm_widget_top_get(obj), dir);
+             efl_ui_focus_manager_base_move(elm_widget_top_get(obj), dir);
           }
      }
 

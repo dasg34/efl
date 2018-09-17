@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
+class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager_Base) {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
       Each registered item will get an other registered object in each
@@ -20,7 +20,7 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
                 child : Efl.Ui.Focusable @nonull; [[The object to register]]
                 parent : Efl.Ui.Focusable @nonull; [[The parent to use in
                                                         the logical tree]]
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
+                redirect : Efl.Ui.Focus.Manager_Base; [[The redirect manager to set
                     once this child is focused can be NULL for no redirect]]
             }
             return : bool; [[$true if successful, $false otherwise]]
@@ -35,7 +35,7 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
                 child : Efl.Ui.Focusable @nonull; [[The object to register]]
                 parent : Efl.Ui.Focusable @nonull; [[The parent to use in
                                                         the logical tree]]
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
+                redirect : Efl.Ui.Focus.Manager_Base; [[The redirect manager to set
                     once this child is focused can be $null for no redirect]]
             }
             return : bool; [[$true if successful, $false otherwise]]
@@ -48,7 +48,7 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
             ]]
             params {
                 child : Efl.Ui.Focusable @nonull; [[The child to update]]
-                redirect : Efl.Ui.Focus.Manager; [[Once $child is focused this
+                redirect : Efl.Ui.Focus.Manager_Base; [[Once $child is focused this
                     element will be set as redirect]]
             }
             return : bool; [[$true if successful, $false otherwise]]
@@ -90,18 +90,18 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
     implements {
         class.constructor;
         class.destructor;
-        Efl.Ui.Focus.Manager.move;
-        Efl.Ui.Focus.Manager.request_move;
-        Efl.Ui.Focus.Manager.manager_focus {get; set;}
-        Efl.Ui.Focus.Manager.redirect {set; get;}
-        Efl.Ui.Focus.Manager.border_elements {get;}
-        Efl.Ui.Focus.Manager.root {set; get;}
-        Efl.Ui.Focus.Manager.request_subchild;
-        Efl.Ui.Focus.Manager.fetch;
-        Efl.Ui.Focus.Manager.logical_end;
-        Efl.Ui.Focus.Manager.reset_history;
-        Efl.Ui.Focus.Manager.pop_history_stack;
-        Efl.Ui.Focus.Manager.setup_on_first_touch;
+        Efl.Ui.Focus.Manager_Base.move;
+        Efl.Ui.Focus.Manager_Base.request_move;
+        Efl.Ui.Focus.Manager_Base.manager_focus {get; set;}
+        Efl.Ui.Focus.Manager_Base.redirect {set; get;}
+        Efl.Ui.Focus.Manager_Base.border_elements {get;}
+        Efl.Ui.Focus.Manager_Base.root {set; get;}
+        Efl.Ui.Focus.Manager_Base.request_subchild;
+        Efl.Ui.Focus.Manager_Base.fetch;
+        Efl.Ui.Focus.Manager_Base.logical_end;
+        Efl.Ui.Focus.Manager_Base.reset_history;
+        Efl.Ui.Focus.Manager_Base.pop_history_stack;
+        Efl.Ui.Focus.Manager_Base.setup_on_first_touch;
         Efl.Object.constructor;
         Efl.Object.finalize;
         Efl.Object.provider_find;

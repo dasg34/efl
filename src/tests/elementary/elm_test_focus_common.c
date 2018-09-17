@@ -41,15 +41,15 @@ elm_focus_test_setup_cross(Efl_Ui_Focusable **middle,
 }
 
 
-Efl_Ui_Focus_Manager*
+Efl_Ui_Focus_Manager_Base*
 elm_focus_test_manager_new(Efl_Ui_Focusable **middle)
 {
    Efl_Ui_Focusable *root;
-   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Manager_Base *m;
 
    root = elm_focus_test_object_new("middle", 40, 40, 20, 20);
    m = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
-     efl_ui_focus_manager_root_set(efl_added, root)
+     efl_ui_focus_manager_base_root_set(efl_added, root)
    );
    if (middle)
      *middle = root;
@@ -101,7 +101,7 @@ _focus_test_efl_gfx_entity_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Da
    return pd->rect;
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _focus_test_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->manager;
@@ -114,7 +114,7 @@ _focus_test_efl_ui_focusable_focus_parent_get(const Eo *obj, Focus_Test_Data *pd
 }
 
 EOLIAN static void
-_focus_test_manager_set(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Efl_Ui_Focus_Manager *manager)
+_focus_test_manager_set(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Efl_Ui_Focus_Manager_Base *manager)
 {
   pd->manager = manager;
 }

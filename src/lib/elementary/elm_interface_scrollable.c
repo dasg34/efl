@@ -4884,13 +4884,13 @@ _elm_interface_scrollable_class_constructor(Efl_Class *klass)
 EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, double y EINA_UNUSED) {}
 EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _elm_interface_scrollable_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
 
    manager = efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, obj,
-     efl_ui_focus_manager_root_set(efl_added, root)
+     efl_ui_focus_manager_base_root_set(efl_added, root)
    );
 
    return manager;
@@ -4926,12 +4926,12 @@ _filter_cb(const void *iterator EINA_UNUSED, void *data, void *fdata)
 }
 
 EOLIAN static Eina_Iterator*
-_elm_interface_scrollable_efl_ui_focus_manager_border_elements_get(const Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
+_elm_interface_scrollable_efl_ui_focus_manager_base_border_elements_get(const Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
 {
    Eina_Iterator *border_elements;
    Eina_Rectangle *rect = calloc(1, sizeof(Eina_Rectangle));
 
-   border_elements = efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_SCROLLABLE_INTERFACE));
+   border_elements = efl_ui_focus_manager_base_border_elements_get(efl_super(obj, MY_SCROLLABLE_INTERFACE));
    elm_interface_scrollable_content_viewport_geometry_get(obj, &rect->x, &rect->y, &rect->w, &rect->h);
 
    return eina_iterator_filter_new(border_elements, _filter_cb, free, rect);

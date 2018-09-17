@@ -10,7 +10,7 @@ class Focus.Test(Efl.Object, Efl.Ui.Focusable, Efl.Gfx.Entity) {
 
             }
             values {
-                manager : Efl.Ui.Focus.Manager;
+                manager : Efl.Ui.Focus.Manager_Base;
             }
         }
     }

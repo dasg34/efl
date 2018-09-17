@@ -32,7 +32,7 @@ struct _Efl_Ui_View_List_Data
    Efl_Ui_Layout_Factory        *factory;
    Eina_List                    *selected_items;
 
-   Efl_Ui_Focus_Manager         *manager;
+   Efl_Ui_Focus_Manager_Base         *manager;
    Efl_Ui_View_List_Relayout    *relayout;
    Efl_Ui_View_List_SegArray    *segarray;
    int                          segarray_first;
