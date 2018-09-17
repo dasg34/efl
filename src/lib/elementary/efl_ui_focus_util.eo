@@ -4,7 +4,7 @@ class Efl.Ui.Focus.Util(Efl.Object) {
       focus @class {
          [[Focus helper method]]
          params {
-            focus_elem : Efl.Ui.Focus.Object; [[Focus element]]
+            focus_elem : Efl.Ui.Focusable; [[Focus element]]
          }
       }
       active_manager @class {

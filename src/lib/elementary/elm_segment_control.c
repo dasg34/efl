@@ -815,7 +815,7 @@ _elm_segment_control_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static Eina_Rect
-_elm_segment_control_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
+_elm_segment_control_item_efl_ui_focusable_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
 {
    return efl_gfx_entity_geometry_get(VIEW(pd));
 }

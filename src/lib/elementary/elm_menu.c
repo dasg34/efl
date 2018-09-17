@@ -805,7 +805,7 @@ elm_menu_add(Evas_Object *parent)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_menu_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_menu_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
    Efl_Ui_Focus_Manager *manager;
 

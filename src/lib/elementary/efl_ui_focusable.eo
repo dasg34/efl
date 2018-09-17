@@ -1,6 +1,6 @@
 import eina_types;
 
-mixin Efl.Ui.Focus.Object
+mixin Efl.Ui.Focusable
 {
     [[Functions of focusable objects.
 
@@ -51,7 +51,7 @@ mixin Efl.Ui.Focus.Object
             [[Describes which logical parent is used by this object.]]
             get {}
             values {
-                logical_parent : Efl.Ui.Focus.Object; [[The focus parent.]]
+                logical_parent : Efl.Ui.Focusable; [[The focus parent.]]
             }
         }
         prepare_logical {
@@ -79,7 +79,7 @@ mixin Efl.Ui.Focus.Object
         focus,changed : bool; [[Emitted if the focus state has changed]]
         manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
                                                  the parent for this object.]]
-        logical,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
+        logical,changed: Efl.Ui.Focusable; [[Emitted when a new logical
                                                 parent should be used.]]
     }
 }

@@ -480,13 +480,13 @@ _efl_ui_layout_object_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Object_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_object_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Layout_Object_Data *_pd EINA_UNUSED)
+_efl_ui_layout_object_efl_ui_focusable_on_focus_update(Eo *obj, Efl_Ui_Layout_Object_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    if (!elm_widget_can_focus_get(obj)) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (efl_ui_focusable_focus_get(obj))
      {
         if (elm_widget_is_legacy(obj))
           elm_layout_signal_emit(obj, "elm,action,focus", "elm");
@@ -503,7 +503,7 @@ _efl_ui_layout_object_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Layout
         evas_object_focus_set(wd->resize_obj, EINA_FALSE);
      }
 
-   efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   efl_ui_focusable_on_focus_update(efl_super(obj, MY_CLASS));
 
    if (efl_isa(wd->resize_obj, EFL_CANVAS_LAYOUT_CLASS))
      edje_object_message_signal_process(wd->resize_obj);

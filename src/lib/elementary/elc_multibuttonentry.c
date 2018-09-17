@@ -66,7 +66,7 @@ static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
-   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
+   { EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
@@ -1650,7 +1650,7 @@ elm_multibuttonentry_add(Evas_Object *parent)
 static void
 _legacy_focused(void *data, const Efl_Event *ev)
 {
-   Efl_Ui_Focus_Object *new_focus;
+   Efl_Ui_Focusable *new_focus;
    Eina_Bool meaningful_focus_in = EINA_FALSE, meaningful_focus_out = EINA_FALSE;
    ELM_MULTIBUTTONENTRY_DATA_GET(data, pd);
 
@@ -1681,7 +1681,7 @@ static void
 _legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
-   efl_event_callback_add(efl_ui_focus_object_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
+   efl_event_callback_add(efl_ui_focusable_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
 }
 
 EOLIAN static Eo *
@@ -1693,7 +1693,7 @@ _elm_multibuttonentry_efl_object_constructor(Eo *obj, Elm_Multibuttonentry_Data 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PANEL);
 
    //listen to manager changes here
-   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
 
    return obj;
 }

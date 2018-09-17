@@ -5,15 +5,15 @@ struct Efl.Ui.Focus.Relations {
 
       @since 1.20
     ]]
-    right : list<Efl.Ui.Focus.Object>; [[List of objects on the right side]]
-    left : list<Efl.Ui.Focus.Object>; [[[List of objects on the left side]]
-    top : list<Efl.Ui.Focus.Object>; [[[List of objects above]]
-    down : list<Efl.Ui.Focus.Object>; [[[List of objects below]]
-    next : Efl.Ui.Focus.Object; [[[Next object]]
-    prev : Efl.Ui.Focus.Object; [[Previous object]]
-    parent : Efl.Ui.Focus.Object; [[Parent object]]
+    right : list<Efl.Ui.Focusable>; [[List of objects on the right side]]
+    left : list<Efl.Ui.Focusable>; [[[List of objects on the left side]]
+    top : list<Efl.Ui.Focusable>; [[[List of objects above]]
+    down : list<Efl.Ui.Focusable>; [[[List of objects below]]
+    next : Efl.Ui.Focusable; [[[Next object]]
+    prev : Efl.Ui.Focusable; [[Previous object]]
+    parent : Efl.Ui.Focusable; [[Parent object]]
     redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
-    node : Efl.Ui.Focus.Object; [[The node where this is the information from]]
+    node : Efl.Ui.Focusable; [[The node where this is the information from]]
     logical : bool; [[$true if this node is only logical]]
     position_in_history : int; [[The position in the history stack]]
 }
@@ -24,7 +24,7 @@ struct Efl.Ui.Focus.Manager_Logical_End_Detail {
       @since 1.21
     ]]
     is_regular_end : bool; [[$true if logical end, $false otherwise]]
-    element : Efl.Ui.Focus.Object; [[Focus object element]]
+    element : Efl.Ui.Focusable; [[Focus object element]]
 }
 
 interface Efl.Ui.Focus.Manager {
@@ -46,16 +46,16 @@ interface Efl.Ui.Focus.Manager {
             params {
                 direction : Efl.Ui.Focus.Direction; [[The direction to move to]]
             }
-            return : Efl.Ui.Focus.Object; [[The element which is now focused]]
+            return : Efl.Ui.Focusable; [[The element which is now focused]]
         }
         request_move {
             [[Return the object next in the $direction from $child.]]
             params {
                 direction : Efl.Ui.Focus.Direction; [[Direction to move focus]]
-                child : Efl.Ui.Focus.Object; [[The child where to look from. Pass $null to indicate the last focused child.]]
+                child : Efl.Ui.Focusable; [[The child where to look from. Pass $null to indicate the last focused child.]]
                 logical : bool; [[Weather you want to have a logical node as result or a logical. Note, at a move call no logical node will get focus, and this is passed as $false there.]]
             }
-            return : Efl.Ui.Focus.Object; [[Next object to focus]]
+            return : Efl.Ui.Focusable; [[Next object to focus]]
         }
         @property manager_focus {
             [[The element which is currently focused by this manager
@@ -64,7 +64,7 @@ interface Efl.Ui.Focus.Manager {
             ]]
 
             values {
-                focus : Efl.Ui.Focus.Object @nonull; [[Focused element]]
+                focus : Efl.Ui.Focusable @nonull; [[Focused element]]
             }
         }
         @property redirect {
@@ -86,7 +86,7 @@ interface Efl.Ui.Focus.Manager {
             ]]
             get {}
             values {
-                border_elements : iterator<Efl.Ui.Focus.Object>; [[An iterator
+                border_elements : iterator<Efl.Ui.Focusable>; [[An iterator
                    over the border objects.]]
             }
         }
@@ -104,7 +104,7 @@ interface Efl.Ui.Focus.Manager {
             }
 
             values {
-                root : Efl.Ui.Focus.Object @nonull; [[Will be registered into
+                root : Efl.Ui.Focusable @nonull; [[Will be registered into
                     this manager object.]]
             }
         }
@@ -116,9 +116,9 @@ interface Efl.Ui.Focus.Manager {
               so you can call this function out of a prepare call.
             ]]
               params {
-                 child : Efl.Ui.Focus.Object; [[Parent for returned child]]
+                 child : Efl.Ui.Focusable; [[Parent for returned child]]
               }
-              return : Efl.Ui.Focus.Object; [[Child of passed parameter]]
+              return : Efl.Ui.Focusable; [[Child of passed parameter]]
         }
         fetch {
             [[This will fetch the data from a registered node.
@@ -126,7 +126,7 @@ interface Efl.Ui.Focus.Manager {
               Be aware this function will trigger all dirty nodes to be computed
             ]]
             params {
-                child : Efl.Ui.Focus.Object; [[The child object to inspect.]]
+                child : Efl.Ui.Focusable; [[The child object to inspect.]]
             }
             return : ptr(Efl.Ui.Focus.Relations) @owned; [[The list of relations
                 starting from $child.]]
@@ -155,7 +155,7 @@ interface Efl.Ui.Focus.Manager {
            [[Called when this manager is set as redirect]]
            params {
              direction : Efl.Ui.Focus.Direction; [[The direction in which this should be setup]]
-             entry : Efl.Ui.Focus.Object; [[The object that caused this manager to be redirect]]
+             entry : Efl.Ui.Focusable; [[The object that caused this manager to be redirect]]
            }
         }
     }
@@ -165,7 +165,7 @@ interface Efl.Ui.Focus.Manager {
         flush,pre: void; [[Emitted once the graph calculationg will be performed]]
         coords,dirty: void; [[Emitted once the graph is dirty, this means there are
             potential changes in border_elements you want to know about]]
-        focused : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
+        focused : Efl.Ui.Focusable; [[Emitted if the manager has focused an
             object, the passed focus object is the last focused object]]
     }
 }

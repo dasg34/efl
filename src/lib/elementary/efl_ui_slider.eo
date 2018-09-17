@@ -10,7 +10,7 @@ class Efl.Ui.Slider (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Direction,
       Efl.Object.destructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_activate;
-      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Focusable.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Range.range_value { get; set; }
       Efl.Ui.Range.range_min_max {get; set; }

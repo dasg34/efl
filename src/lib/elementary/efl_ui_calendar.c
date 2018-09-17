@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -804,18 +803,18 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_calendar_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd)
+_efl_ui_calendar_efl_ui_focusable_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_focusable_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    // FIXME : Currently, focused item is same with selected item.
    //         After arranging focus logic in this widget, we need to make
    //         focused item which is for indicating direction key input movement
    //         on the calendar widget.
-   if (efl_ui_focus_object_focus_get(obj))
+   if (efl_ui_focusable_focus_get(obj))
      _update_focused_it(obj, sd->selected_it);
    else
      _update_unfocused_it(obj, sd->focused_it);
@@ -1245,16 +1244,16 @@ _efl_ui_calendar_item_day_number_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_
 }
 
 EOLIAN static void
-_efl_ui_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, Eina_Bool focus)
+_efl_ui_calendar_item_efl_ui_focusable_focus_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, Eina_Bool focus)
 {
-   efl_ui_focus_object_focus_set(efl_super(obj, EFL_UI_CALENDAR_ITEM_CLASS), focus);
+   efl_ui_focusable_focus_set(efl_super(obj, EFL_UI_CALENDAR_ITEM_CLASS), focus);
 
    _update_focused_it(efl_parent_get(obj), pd->v);
-   evas_object_focus_set(pd->part, efl_ui_focus_object_focus_get(obj));
+   evas_object_focus_set(pd->part, efl_ui_focusable_focus_get(obj));
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
+_efl_ui_calendar_item_efl_ui_focusable_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
 {
    return efl_gfx_entity_geometry_get(pd->part);
 }

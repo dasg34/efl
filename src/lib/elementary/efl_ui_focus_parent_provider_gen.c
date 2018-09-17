@@ -46,8 +46,8 @@ _efl_ui_focus_parent_provider_gen_container_get(const Eo *obj EINA_UNUSED, Efl_U
 }
 
 
-EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_parent(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *widget)
+EOLIAN static Efl_Ui_Focusable*
+_efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_parent(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd EINA_UNUSED, Efl_Ui_Focusable *widget)
 {
    //first check if this item is in the map
    Elm_Widget_Item *item, *above_gengrid = widget;
@@ -67,7 +67,7 @@ _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_pare
         if (parent == pd->container)
           {
              item = eina_hash_find(pd->map, &above_gengrid);
-             efl_ui_focus_object_prepare_logical(pd->container);
+             efl_ui_focusable_prepare_logical(pd->container);
 
              if (item)
                return item;
@@ -91,7 +91,7 @@ _efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_P
 
         if (efl_isa(item, ELM_WIDGET_ITEM_CLASS))
           {
-             efl_ui_focus_object_prepare_logical(pd->container);
+             efl_ui_focusable_prepare_logical(pd->container);
              return item;
           }
         else
@@ -114,7 +114,7 @@ _efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_P
      }
    item = eina_hash_find(pd->map, &above_gengrid);
 
-   efl_ui_focus_object_prepare_logical(pd->container);
+   efl_ui_focusable_prepare_logical(pd->container);
 
    return item;
 }

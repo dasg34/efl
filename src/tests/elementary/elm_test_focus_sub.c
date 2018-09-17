@@ -7,19 +7,19 @@ typedef struct {
 
 
 EOLIAN static Eina_Rect
-_focus_test_sub_main_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focusable_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return EINA_RECT(0, 0, 20, 20);
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_sub_main_efl_ui_focus_object_focus_manager_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+_focus_test_sub_main_efl_ui_focusable_focus_manager_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_manager");
 }
 
-EOLIAN static Efl_Ui_Focus_Object*
-_focus_test_sub_main_efl_ui_focus_object_focus_parent_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
+EOLIAN static Efl_Ui_Focusable*
+_focus_test_sub_main_efl_ui_focusable_focus_parent_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_parent");
 }
@@ -29,7 +29,7 @@ static Eina_List *registered;
 static Eina_List *unregistered;
 
 static Eina_Bool
-_register(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *manager)
+_register(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focusable *child, Efl_Ui_Focusable *parent, Efl_Ui_Focus_Manager *manager)
 {
    registered = eina_list_append(registered, child);
    printf("REGISTERED %p %s\n", child, efl_name_get(child));
@@ -38,7 +38,7 @@ _register(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focus_Object *child, Efl_Ui_Foc
 }
 
 static void
-_unregister(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focus_Object *child)
+_unregister(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focusable *child)
 {
    unregistered = eina_list_append(unregistered, child);
    printf("UNREGISTERED %p %s\n", child, efl_name_get(child));
@@ -64,7 +64,7 @@ _set_equal(Eina_List *a, Eina_List *b)
 #include "focus_test_sub_main.eo.c"
 
 static void
-_setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Object **r)
+_setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focusable **r)
 {
 
    TEST_OBJ_NEW(root, 10, 10, 10, 10);
@@ -96,7 +96,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 
    efl_composite_attach(focus_main, subm);
 
-   efl_event_callback_call(focus_main, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, NULL);
+   efl_event_callback_call(focus_main, EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, NULL);
 
    efl_ui_focus_manager_calc_register_logical(manager, focus_main, root_manager, subm);
 
@@ -108,7 +108,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 EFL_START_TEST(correct_register)
 {
    Eina_List *set1 = NULL;
-   Efl_Ui_Focus_Object *root;
+   Efl_Ui_Focusable *root;
    Efl_Ui_Focus_Manager *manager, *sub;
    _setup(&manager, &sub, &root);
 
@@ -145,7 +145,7 @@ EFL_END_TEST
 EFL_START_TEST(correct_unregister)
 {
    Eina_List *set = NULL;
-   Efl_Ui_Focus_Object *root;
+   Efl_Ui_Focusable *root;
    Efl_Ui_Focus_Manager *manager, *sub;
    _setup(&manager, &sub, &root);
 
@@ -185,7 +185,7 @@ EFL_END_TEST
 EFL_START_TEST(correct_un_register)
 {
    Eina_List *set_add = NULL, *set_del = NULL;
-   Efl_Ui_Focus_Object *root;
+   Efl_Ui_Focusable *root;
    Efl_Ui_Focus_Manager *manager, *sub;
    _setup(&manager, &sub, &root);
 

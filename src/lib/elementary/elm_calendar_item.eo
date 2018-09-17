@@ -1,4 +1,4 @@
-class Elm.Calendar.Item (Efl.Object, Efl.Ui.Focus.Object)
+class Elm.Calendar.Item (Efl.Object, Efl.Ui.Focusable)
 {
     [[Elm Calendar Item class]]
     methods {
@@ -10,7 +10,7 @@ class Elm.Calendar.Item (Efl.Object, Efl.Ui.Focus.Object)
        }
     }
     implements {
-       Efl.Ui.Focus.Object.focus {set;}
-       Efl.Ui.Focus.Object.focus_geometry {get;}
+       Efl.Ui.Focusable.focus {set;}
+       Efl.Ui.Focusable.focus_geometry {get;}
     }
 }

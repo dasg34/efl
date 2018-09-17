@@ -16,7 +16,7 @@ _manager_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static Eina_Bool
-_can_take_focus(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *user)
+_can_take_focus(Efl_Ui_Focus_Manager *m, Efl_Ui_Focusable *user)
 {
    if (efl_isa(user, EFL_UI_FOCUS_MANAGER_INTERFACE))
      return !!efl_ui_focus_manager_request_subchild(user, efl_ui_focus_manager_root_get(user));
@@ -25,19 +25,19 @@ _can_take_focus(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *user)
 }
 
 EOLIAN static void
-_efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Object *user)
+_efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focusable *user)
 {
-   Efl_Ui_Focus_Object *entry;
+   Efl_Ui_Focusable *entry;
    Efl_Ui_Widget *top, *o;
    Efl_Ui_Focus_Manager *m, *registered_manager;
 
    top = elm_widget_top_get(user);
 
    o = efl_key_data_get(top, "__delayed_focus_set");
-   if (o) efl_event_callback_del(o, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, o);
+   if (o) efl_event_callback_del(o, EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, _manager_changed, o);
    efl_key_data_set(top, "__delayed_focus_set", NULL);
 
-   registered_manager = m = efl_ui_focus_object_focus_manager_get(user);
+   registered_manager = m = efl_ui_focusable_focus_manager_get(user);
    entry = user;
 
    if (m && !efl_ui_widget_focus_allow_get(user) && !_can_take_focus(m, user))
@@ -47,14 +47,14 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
    while (m && !efl_isa(m, EFL_UI_WIN_CLASS))
      {
         entry = efl_ui_focus_manager_root_get(m);
-        m = efl_ui_focus_object_focus_manager_get(entry);
+        m = efl_ui_focusable_focus_manager_get(entry);
      }
 
    if (!m)
      {
         efl_key_data_set(top, "__delayed_focus_set", entry);
         efl_event_callback_add(entry,
-                               EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED,
+                               EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED,
                                _manager_changed, user);
      }
    else if (efl_isa(m, EFL_UI_WIN_CLASS))

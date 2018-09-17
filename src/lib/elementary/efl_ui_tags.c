@@ -25,7 +25,7 @@ static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_tags_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
-   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
+   { EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
@@ -254,7 +254,7 @@ _item_select(Evas_Object *obj, Evas_Object *it)
      {
         _current_item_change(obj, it);
 
-        if (efl_ui_focus_object_focus_get(obj))
+        if (efl_ui_focusable_focus_get(obj))
           {
              elm_object_focus_set(sd->entry, EINA_FALSE);
              elm_object_focus_set(it, EINA_TRUE);
@@ -264,7 +264,7 @@ _item_select(Evas_Object *obj, Evas_Object *it)
      {
         _current_item_state_change
            (obj, TAGS_IT_STATE_DEFAULT);
-        if (efl_ui_focus_object_focus_get(obj) && sd->editable)
+        if (efl_ui_focusable_focus_get(obj) && sd->editable)
           elm_object_focus_set(sd->entry, EINA_TRUE);
      }
 }
@@ -458,7 +458,7 @@ _item_new(Efl_Ui_Tags_Data *sd,
           elm_box_pack_end(sd->box, layout);
      }
 
-   if (!efl_ui_focus_object_focus_get(obj) && sd->view_state == TAGS_VIEW_SHRINK && sd->w_box)
+   if (!efl_ui_focusable_focus_get(obj) && sd->view_state == TAGS_VIEW_SHRINK && sd->w_box)
      _shrink_mode_set(obj, EINA_TRUE);
 
    if (!sd->item_setting)
@@ -564,7 +564,7 @@ _entry_resize_cb(void *data,
 {
    Efl_Ui_Tags_Data *sd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
 
-   if (efl_ui_focus_object_focus_get(sd->parent))
+   if (efl_ui_focusable_focus_get(sd->parent))
      elm_widget_show_region_set(sd->entry, efl_gfx_entity_geometry_get(sd->entry), EINA_TRUE);
 }
 
@@ -583,7 +583,7 @@ _entry_focus_changed_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Tags_Data *sd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
 
-   if (efl_ui_focus_object_focus_get(event->object))
+   if (efl_ui_focusable_focus_get(event->object))
      {
         Eo *item;
 
@@ -964,7 +964,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
 static void
 _legacy_focused(void *data, const Efl_Event *ev)
 {
-   Efl_Ui_Focus_Object *new_focus;
+   Efl_Ui_Focusable *new_focus;
    Eina_Bool meaningful_focus_in = EINA_FALSE, meaningful_focus_out = EINA_FALSE;
    Efl_Ui_Tags_Data *pd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
 
@@ -995,7 +995,7 @@ static void
 _legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
-   efl_event_callback_add(efl_ui_focus_object_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
+   efl_event_callback_add(efl_ui_focusable_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
 }
 
 EOLIAN static Eo *
@@ -1027,7 +1027,7 @@ _efl_ui_tags_efl_object_constructor(Eo *obj, Efl_Ui_Tags_Data *sd)
    _callbacks_register(obj);
 
    //listen to manager changes here
-   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
 
    return obj;
 }

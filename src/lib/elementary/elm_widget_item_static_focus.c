@@ -34,7 +34,7 @@ _list_realized_cb(void *data, const Efl_Event *ev)
 
    if (!elm_object_item_disabled_get(data) &&
        elm_genlist_item_type_get(data) != ELM_GENLIST_ITEM_GROUP)
-     efl_ui_focus_object_prepare_logical(data);
+     efl_ui_focusable_prepare_logical(data);
 }
 
 static void
@@ -52,7 +52,7 @@ _grid_realized_cb(void *data, const Efl_Event *ev)
    is_group = (itc && itc->item_style && !strcmp(itc->item_style, "group_index"));
 
    if (!elm_object_item_disabled_get(data) && !is_group)
-     efl_ui_focus_object_prepare_logical(data);
+     efl_ui_focusable_prepare_logical(data);
 }
 
 static void
@@ -65,7 +65,7 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    if (pd) /* if the obect is dead pd is NULL */
      {
         //only delete the adapter when not focused, this will lead to awfull artifacts
-        if (!efl_ui_focus_object_focus_get(pd->adapter))
+        if (!efl_ui_focusable_focus_get(pd->adapter))
           {
              efl_del(pd->adapter);
           }
@@ -74,12 +74,12 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
+_elm_widget_item_static_focus_efl_ui_focusable_prepare_logical_none_recursive(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
 {
    Eo *logical_child;
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
-   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, MY_CLASS));
+   efl_ui_focusable_prepare_logical_none_recursive(efl_super(obj, MY_CLASS));
 
    if (!pd->realized)
      {
@@ -99,7 +99,7 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
              next_widget = NULL;
           }
         //check if this is the item block representation of genlist
-        else if (efl_isa(next_widget, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS) && efl_ui_focus_object_focus_parent_get(next_widget) == wpd->widget)
+        else if (efl_isa(next_widget, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS) && efl_ui_focusable_focus_parent_get(next_widget) == wpd->widget)
           {
              next_widget = NULL;
           }

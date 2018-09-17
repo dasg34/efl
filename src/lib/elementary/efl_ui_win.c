@@ -11,7 +11,6 @@
 #define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
 #define EFL_UI_WIN_INLINED_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIN_BETA
 #define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
@@ -1334,7 +1333,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
 
         Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
         if (focused)
-          efl_ui_focus_object_focus_set(focused, EINA_TRUE);
+          efl_ui_focusable_focus_set(focused, EINA_TRUE);
      }
 
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
@@ -1357,7 +1356,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    if ((!efl_ui_focus_manager_focus_get(sd->obj)) &&
        (!efl_ui_focus_manager_redirect_get(sd->obj)))
      {
-        Efl_Ui_Focus_Object *child;
+        Efl_Ui_Focusable *child;
 
         child = efl_ui_focus_manager_request_subchild(sd->obj, sd->obj);
 
@@ -1406,7 +1405,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
           }
 
         Evas_Object *focused = efl_ui_focus_manager_focus_get(man);
-        efl_ui_focus_object_focus_set(focused, EINA_FALSE);
+        efl_ui_focusable_focus_set(focused, EINA_FALSE);
      }
    /* do nothing */
    /* if (sd->img_obj) */
@@ -1722,15 +1721,15 @@ _elm_win_state_change(Ecore_Evas *ee)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_ui_focusable_on_focus_update(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   if (!efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS)))
+   if (!efl_ui_focusable_on_focus_update(efl_super(obj, MY_CLASS)))
      return EINA_TRUE;
 
    if (sd->img_obj)
-     evas_object_focus_set(sd->img_obj, efl_ui_focus_object_focus_get(obj));
+     evas_object_focus_set(sd->img_obj, efl_ui_focusable_focus_get(obj));
    else
-     evas_object_focus_set(obj, efl_ui_focus_object_focus_get(obj));
+     evas_object_focus_set(obj, efl_ui_focusable_focus_get(obj));
 
    return EINA_TRUE;
 }
@@ -1777,7 +1776,7 @@ _key_action_move(Evas_Object *obj, const char *params)
          {
             if (focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT || focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
               {
-                 Efl_Ui_Focus_Object *root;
+                 Efl_Ui_Focusable *root;
 
                  root = efl_ui_focus_manager_root_get(obj);
                  efl_ui_focus_manager_setup_on_first_touch(obj, focus_dir, root);
@@ -5679,7 +5678,7 @@ _efl_ui_win_efl_canvas_object_legacy_ctor(Eo *obj, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_win_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_win_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -6729,7 +6728,7 @@ _efl_ui_win_indicator_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EI
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_focus_object_focus_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_ui_focusable_focus_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    // Bypass widget implementation here.
    return ecore_evas_focus_get(sd->ee);
@@ -8738,7 +8737,7 @@ EAPI Eina_Bool
 elm_win_focus_get(const Efl_Ui_Win *obj)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, MY_CLASS), EINA_FALSE);
-   return efl_ui_focus_object_focus_get(obj);
+   return efl_ui_focusable_focus_get(obj);
 }
 
 EAPI void

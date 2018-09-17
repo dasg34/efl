@@ -56,7 +56,7 @@
  *    // define this virtual function to handle it (e.g. to emit a
  *    // signal to an edje object)
  *
- *    if (efl_ui_focus_object_focus_get(obj))
+ *    if (efl_ui_focusable_focus_get(obj))
  *      {
  *         edje_object_signal_emit(sd->sub, "elm,action,focus", "elm");
  *         evas_object_focus_set(sd->sub, EINA_TRUE);
@@ -431,11 +431,11 @@ typedef struct _Elm_Widget_Smart_Data
    Efl_Ui_Widget_Focus_State focus;
    struct {
       int child_count;
-      Efl_Ui_Focus_Object *parent;
+      Efl_Ui_Focusable *parent;
    } logical;
    struct {
       Efl_Ui_Focus_Manager *manager;
-      Efl_Ui_Focus_Object *provider;
+      Efl_Ui_Focusable *provider;
    } manager;
    struct {
      Eina_Bool listen_to_manager;

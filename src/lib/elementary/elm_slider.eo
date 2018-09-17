@@ -16,7 +16,7 @@ class Elm.Slider (Efl.Ui.Slider_Interval, Efl.Ui.Legacy,
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Focusable.on_focus_update;
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }
       Efl.Ui.Format.format_cb { set; }
