@@ -16,12 +16,12 @@ _manager_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static Eina_Bool
-_can_take_focus(Efl_Ui_Focus_Manager *m, Efl_Ui_Focusable *user)
+_can_take_focus(Efl_Ui_Focus_Manager_Base *m, Efl_Ui_Focusable *user)
 {
-   if (efl_isa(user, EFL_UI_FOCUS_MANAGER_INTERFACE))
-     return !!efl_ui_focus_manager_request_subchild(user, efl_ui_focus_manager_root_get(user));
+   if (efl_isa(user, EFL_UI_FOCUS_MANAGER_BASE_INTERFACE))
+     return !!efl_ui_focus_manager_base_request_subchild(user, efl_ui_focus_manager_base_root_get(user));
    else
-     return !!efl_ui_focus_manager_request_subchild(m, user);
+     return !!efl_ui_focus_manager_base_request_subchild(m, user);
 }
 
 EOLIAN static void
@@ -29,7 +29,7 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
 {
    Efl_Ui_Focusable *entry;
    Efl_Ui_Widget *top, *o;
-   Efl_Ui_Focus_Manager *m, *registered_manager;
+   Efl_Ui_Focus_Manager_Base *m, *registered_manager;
 
    top = elm_widget_top_get(user);
 
@@ -46,7 +46,7 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
    //move up the manager chain and see if we can end at a winow or a NULL m
    while (m && !efl_isa(m, EFL_UI_WIN_CLASS))
      {
-        entry = efl_ui_focus_manager_root_get(m);
+        entry = efl_ui_focus_manager_base_root_get(m);
         m = efl_ui_focusable_focus_manager_get(entry);
      }
 
@@ -59,15 +59,15 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
      }
    else if (efl_isa(m, EFL_UI_WIN_CLASS))
      {
-        efl_ui_focus_manager_focus_set(registered_manager, user);
+        efl_ui_focus_manager_base_manager_focus_set(registered_manager, user);
      }
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_util_active_manager(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager)
+EOLIAN static Efl_Ui_Focus_Manager_Base*
+_efl_ui_focus_util_active_manager(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Manager_Base *manager)
 {
-   while (efl_ui_focus_manager_redirect_get(manager))
-     manager = efl_ui_focus_manager_redirect_get(manager);
+   while (efl_ui_focus_manager_base_redirect_get(manager))
+     manager = efl_ui_focus_manager_base_redirect_get(manager);
 
    return manager;
 }

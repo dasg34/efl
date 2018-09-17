@@ -658,7 +658,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Ui.Focus.Manager.border_elements { get; }
+      Efl.Ui.Focus.Manager_Base.border_elements { get; }
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Base.mirrored { set; }
    }

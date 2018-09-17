@@ -168,7 +168,7 @@ _list_element_focused(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Rect geom;
    Eina_Position2D pos;
-   Efl_Ui_Focusable *focused = efl_ui_focus_manager_focus_get(ev->object);
+   Efl_Ui_Focusable *focused = efl_ui_focus_manager_base_manager_focus_get(ev->object);
 
    if (!focused) return;
 
@@ -655,7 +655,7 @@ _efl_ui_list_view_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_
 {
    if (!pd->manager)
      pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
-                          efl_ui_focus_manager_root_set(efl_added, root));
+                          efl_ui_focus_manager_base_root_set(efl_added, root));
 
    return pd->manager;
 }
@@ -687,7 +687,7 @@ _efl_ui_list_view_efl_object_constructor(Eo *obj, Efl_Ui_List_View_Data *pd)
 
    pd->seg_array = efl_add(EFL_UI_LIST_VIEW_SEG_ARRAY_CLASS, obj, efl_ui_list_view_seg_array_setup(efl_added, 32));
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _list_element_focused, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUS_CHANGED, _list_element_focused, NULL);
 
    efl_ui_focus_composition_custom_manager_set(obj, obj);
    efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
@@ -823,7 +823,7 @@ _key_action_select(Evas_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   efl_ui_focus_manager_reset_history(obj);
+   efl_ui_focus_manager_base_reset_history(obj);
    return EINA_TRUE;
 }
 

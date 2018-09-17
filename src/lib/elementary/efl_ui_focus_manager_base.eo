@@ -12,13 +12,13 @@ struct Efl.Ui.Focus.Relations {
     next : Efl.Ui.Focusable; [[[Next object]]
     prev : Efl.Ui.Focusable; [[Previous object]]
     parent : Efl.Ui.Focusable; [[Parent object]]
-    redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
+    redirect : Efl.Ui.Focus.Manager_Base; [[Redirect manager]]
     node : Efl.Ui.Focusable; [[The node where this is the information from]]
     logical : bool; [[$true if this node is only logical]]
     position_in_history : int; [[The position in the history stack]]
 }
 
-struct Efl.Ui.Focus.Manager_Logical_End_Detail {
+struct Efl.Ui.Focus.Manager_Base_Logical_End_Detail {
     [[Structure holding the focus object with extra information on logical end
 
       @since 1.21
@@ -27,7 +27,7 @@ struct Efl.Ui.Focus.Manager_Logical_End_Detail {
     element : Efl.Ui.Focusable; [[Focus object element]]
 }
 
-interface Efl.Ui.Focus.Manager {
+interface Efl.Ui.Focus.Manager_Base {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
       Each registered item will get a other registered object into each
@@ -75,14 +75,14 @@ interface Efl.Ui.Focus.Manager {
               anymore.
             ]]
             values {
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager.]]
+                redirect : Efl.Ui.Focus.Manager_Base; [[The redirect manager.]]
             }
         }
         @property border_elements {
             [[The list of elements which are at the border of the graph.
 
               This means one of the relations right,left or down,up are not set.
-              This call flushes all changes. See @Efl.Ui.Focus.Manager.move
+              This call flushes all changes. See @Efl.Ui.Focus.Manager_Base.move
             ]]
             get {}
             values {
@@ -136,7 +136,7 @@ interface Efl.Ui.Focus.Manager {
 
               The returned object is the last object that would be returned if you start at the root and move the direction into next.
             ]]
-            return : Efl.Ui.Focus.Manager_Logical_End_Detail; [[Last object]]
+            return : Efl.Ui.Focus.Manager_Base_Logical_End_Detail; [[Last object]]
         }
         reset_history {
             [[Reset the history stack of this manager object.
@@ -160,7 +160,7 @@ interface Efl.Ui.Focus.Manager {
         }
     }
     events {
-        redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect
+        redirect,changed : Efl.Ui.Focus.Manager_Base; [[Emitted when the redirect
             object has changed, the old manager is passed as event info]]
         flush,pre: void; [[Emitted once the graph calculationg will be performed]]
         coords,dirty: void; [[Emitted once the graph is dirty, this means there are

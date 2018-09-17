@@ -434,7 +434,7 @@ typedef struct _Elm_Widget_Smart_Data
       Efl_Ui_Focusable *parent;
    } logical;
    struct {
-      Efl_Ui_Focus_Manager *manager;
+      Efl_Ui_Focus_Manager_Base *manager;
       Efl_Ui_Focusable *provider;
    } manager;
    struct {

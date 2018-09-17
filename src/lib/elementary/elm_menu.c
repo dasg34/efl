@@ -804,13 +804,13 @@ elm_menu_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _elm_menu_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Menu_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
 
    manager = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
-     efl_ui_focus_manager_root_set(efl_added, root)
+     efl_ui_focus_manager_base_root_set(efl_added, root)
    );
 
    return manager;

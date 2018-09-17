@@ -2065,7 +2065,7 @@ _item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
         _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
         _elm_widget_highlight_in_theme_update(WIDGET(it));
         _elm_widget_focus_highlight_start(WIDGET(it));
-        efl_ui_focus_manager_focus_set(WIDGET(it), EO_OBJ(it));
+        efl_ui_focus_manager_base_manager_focus_set(WIDGET(it), EO_OBJ(it));
         sd->focus_on_realization = NULL;
      }
 }
@@ -3391,7 +3391,7 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 }
 
 EOLIAN static void
-_elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data *sd, Efl_Ui_Focus_Direction direction EINA_UNUSED, Efl_Ui_Focusable *entry EINA_UNUSED)
+_elm_genlist_efl_ui_focus_manager_base_setup_on_first_touch(Eo *obj, Elm_Genlist_Data *sd, Efl_Ui_Focus_Direction direction EINA_UNUSED, Efl_Ui_Focusable *entry EINA_UNUSED)
 {
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
@@ -3425,8 +3425,8 @@ _elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data
                elm_object_item_focus_set(eo_it, EINA_TRUE);
             _elm_widget_focus_highlight_start(obj);
             //set it again in the manager, there might be the case that the manager focus history and internal item foused logic are in different states
-            if (efl_ui_focus_manager_request_subchild(obj, eo_it))
-              efl_ui_focus_manager_focus_set(obj, eo_it);
+            if (efl_ui_focus_manager_base_request_subchild(obj, eo_it))
+              efl_ui_focus_manager_base_manager_focus_set(obj, eo_it);
           }
      }
    else
@@ -5897,7 +5897,7 @@ static void
 _genlist_element_focused(void *data, const Efl_Event *ev)
 {
    ELM_GENLIST_DATA_GET(data, pd);
-   Efl_Ui_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
+   Efl_Ui_Widget *focused = efl_ui_focus_manager_base_manager_focus_get(ev->object);
    Elm_Widget_Item *item;
 
    if (!focused) return;
@@ -5924,7 +5924,7 @@ _elm_genlist_efl_object_constructor(Eo *obj, Elm_Genlist_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _genlist_element_focused, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUS_CHANGED, _genlist_element_focused, obj);
 
    return obj;
 }
@@ -6058,7 +6058,7 @@ _item_select(Elm_Gen_Item *it)
 
    if (!(sd->focus_on_selection_enabled || _elm_config->item_select_on_focus_disable))
      {
-        efl_ui_focus_manager_focus_set(obj, it->base->eo_obj);
+        efl_ui_focus_manager_base_manager_focus_set(obj, it->base->eo_obj);
      }
 
  item_deleted:
@@ -6223,7 +6223,7 @@ _elm_genlist_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
                   _elm_widget_item_highlight_in_theme(obj, EO_OBJ(it));
                   _elm_widget_highlight_in_theme_update(obj);
                   _elm_widget_focus_highlight_start(obj);
-                  efl_ui_focus_manager_focus_set(it->base->widget, eo_it);
+                  efl_ui_focus_manager_base_manager_focus_set(it->base->widget, eo_it);
                   sd->focus_on_realization = NULL;
                }
              else

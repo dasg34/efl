@@ -8,7 +8,7 @@
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_SUB_MIXIN
 #define MY_DATA(o, p) Efl_Ui_Focus_Manager_Sub_Data *p = efl_data_scope_get(o, MY_CLASS);
 typedef struct {
-    Efl_Ui_Focus_Manager *manager;//the manager where current_border is currently registered
+    Efl_Ui_Focus_Manager_Base *manager;//the manager where current_border is currently registered
     Eina_Bool self_dirty;
     Eina_List *current_border; //the current set of widgets which is registered as borders
 } Efl_Ui_Focus_Manager_Sub_Data;
@@ -30,14 +30,14 @@ _set_a_without_b(Eina_List *a, Eina_List *b)
 }
 
 static void
-_register(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focusable *node, Efl_Ui_Focusable *logical)
+_register(Efl_Ui_Focus_Manager_Base *obj, Efl_Ui_Focus_Manager_Base *par_m, Efl_Ui_Focusable *node, Efl_Ui_Focusable *logical)
 {
    if (par_m)
      efl_ui_focus_manager_calc_register(par_m, node, logical, obj);
 }
 
 static void
-_unregister(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager *par_m, Efl_Ui_Focusable *node)
+_unregister(Efl_Ui_Focus_Manager_Base *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Base *par_m, Efl_Ui_Focusable *node)
 {
    if (par_m)
      efl_ui_focus_manager_calc_unregister(par_m, node);
@@ -49,11 +49,11 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    Eina_Iterator *borders;
    Eina_List *selection, *tmp;
    Efl_Ui_Focusable *node, *logical;
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
 
    manager = efl_ui_focusable_focus_manager_get(obj);
    logical = obj;
-   borders = efl_ui_focus_manager_border_elements_get(obj);
+   borders = efl_ui_focus_manager_base_border_elements_get(obj);
 
    selection = NULL;
    EINA_ITERATOR_FOREACH(borders, node)
@@ -90,7 +90,7 @@ static void
 _border_unregister(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 {
    Efl_Ui_Focusable *node;
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
 
    manager = efl_ui_focusable_focus_manager_get(obj);
    EINA_LIST_FREE(pd->current_border, node)
@@ -113,15 +113,15 @@ _parent_manager_pre_flush(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _redirect_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   //if (efl_ui_focus_manager_redirect_get(ev->object) != data) return;
+   //if (efl_ui_focus_manager_base_redirect_get(ev->object) != data) return;
 
    MY_DATA(data, pd);
    _border_flush(data, pd);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(parent_manager,
-    {EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, _parent_manager_pre_flush},
-    {EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, _redirect_changed_cb}
+    {EFL_UI_FOCUS_MANAGER_BASE_EVENT_FLUSH_PRE, _parent_manager_pre_flush},
+    {EFL_UI_FOCUS_MANAGER_BASE_EVENT_REDIRECT_CHANGED, _redirect_changed_cb}
 );
 
 static void
@@ -138,7 +138,7 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
    MY_DATA(data, pd);
    Eina_List *n;
    Efl_Ui_Focusable *b;
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
 
    if (!ev->info) return;
 
@@ -153,7 +153,7 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _flush_manager(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 {
-   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Manager_Base *manager;
    Efl_Ui_Focusable *logical;
    Efl_Ui_Focusable *b;
    Eina_List *n;
@@ -188,7 +188,7 @@ _manager_change(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
-    {EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, _self_manager_dirty},
+    {EFL_UI_FOCUS_MANAGER_BASE_EVENT_COORDS_DIRTY, _self_manager_dirty},
     {EFL_UI_FOCUSABLE_EVENT_LOGICAL_CHANGED, _logical_manager_change},
     {EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, _manager_change}
 );
@@ -212,9 +212,9 @@ _efl_ui_focus_manager_sub_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Su
 }
 
 EOLIAN static Efl_Ui_Focusable*
-_efl_ui_focus_manager_sub_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd, Efl_Ui_Focus_Direction direction)
+_efl_ui_focus_manager_sub_efl_ui_focus_manager_base_move(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd, Efl_Ui_Focus_Direction direction)
 {
-   Eo *target = efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction);
+   Eo *target = efl_ui_focus_manager_base_move(efl_super(obj, MY_CLASS), direction);
 
    if (!target)
      _border_flush(obj, pd);

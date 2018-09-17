@@ -3819,7 +3819,7 @@ _elm_gengrid_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
              _elm_gengrid_item_focused(eo_it);
           }
 
-        efl_ui_focus_manager_focus_set(obj, eo_it);
+        efl_ui_focus_manager_base_manager_focus_set(obj, eo_it);
      }
    else
      {
@@ -4195,7 +4195,7 @@ elm_gengrid_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focusable *entry EINA_UNUSED)
+_elm_gengrid_efl_ui_focus_manager_base_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focusable *entry EINA_UNUSED)
 {
    Elm_Object_Item *eo_it = NULL;
 
@@ -4223,7 +4223,7 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
             eo_it != pd->last_selected_item)
           elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
         else
-          efl_ui_focus_manager_focus_set(obj, eo_it);
+          efl_ui_focus_manager_base_manager_focus_set(obj, eo_it);
      }
    else
      {
@@ -4236,7 +4236,7 @@ static void
 _gengrid_element_focused(void *data, const Efl_Event *ev)
 {
    ELM_GENGRID_DATA_GET(data, pd);
-   Efl_Ui_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
+   Efl_Ui_Widget *focused = efl_ui_focus_manager_base_manager_focus_get(ev->object);
    Elm_Widget_Item *item;
 
    if (!focused) return;
@@ -4272,7 +4272,7 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _gengrid_element_focused, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUS_CHANGED, _gengrid_element_focused, obj);
 
    return obj;
 }

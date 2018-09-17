@@ -5,7 +5,7 @@ class Efl.Ui.Focus.Manager_Root_Focus(Efl.Ui.Focus.Manager_Calc) {
         [[
           The default replacement object for the case that there is no focusable object inside the manager is the root object.
           However, you can change this by setting this value to something else.
-          $null is triggered as the same value as Efl.Ui.Focus.Manager.root.get
+          $null is triggered as the same value as Efl.Ui.Focus.Manager_Base.root.get
         ]]
         values {
            canvas_object : Efl.Canvas.Object; [[Canvas object]]
@@ -16,12 +16,12 @@ class Efl.Ui.Focus.Manager_Root_Focus(Efl.Ui.Focus.Manager_Calc) {
     Efl.Ui.Focus.Manager_Calc.register_logical;
     Efl.Ui.Focus.Manager_Calc.register;
     Efl.Ui.Focus.Manager_Calc.unregister;
-    Efl.Ui.Focus.Manager.manager_focus {set; get;}
-    Efl.Ui.Focus.Manager.fetch;
-    Efl.Ui.Focus.Manager.logical_end;
-    Efl.Ui.Focus.Manager.border_elements {get;}
-    Efl.Ui.Focus.Manager.request_move;
-    Efl.Ui.Focus.Manager.move;
+    Efl.Ui.Focus.Manager_Base.manager_focus {set; get;}
+    Efl.Ui.Focus.Manager_Base.fetch;
+    Efl.Ui.Focus.Manager_Base.logical_end;
+    Efl.Ui.Focus.Manager_Base.border_elements {get;}
+    Efl.Ui.Focus.Manager_Base.request_move;
+    Efl.Ui.Focus.Manager_Base.move;
     Efl.Object.constructor;
     Efl.Object.destructor;
     Efl.Object.finalize;

@@ -667,7 +667,7 @@ _toggle_entry(Evas_Object *obj)
 
            efl_ui_focus_composition_elements_set(obj, items);
         }
-        efl_ui_focus_manager_focus_set(efl_ui_focusable_focus_manager_get(obj), sd->ent);
+        efl_ui_focus_manager_base_manager_focus_set(efl_ui_focusable_focus_manager_get(obj), sd->ent);
      }
 }
 

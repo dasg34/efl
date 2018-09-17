@@ -10,9 +10,9 @@ class Efl.Ui.Focus.Util(Efl.Object) {
       active_manager @class {
          [[Get the highest manager in the redirect property]]
          params {
-            manager : Efl.Ui.Focus.Manager;
+            manager : Efl.Ui.Focus.Manager_Base;
          }
-         return: Efl.Ui.Focus.Manager;
+         return: Efl.Ui.Focus.Manager_Base;
       }
       direction_complement @class {
          params {

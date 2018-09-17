@@ -1,3 +1,4 @@
+#define EFL_UI_FOCUSABLE_PROTECTED
 #include "elm_test_focus_common.h"
 #include "focus_test_sub_main.eo.h"
 
@@ -12,7 +13,7 @@ _focus_test_sub_main_efl_ui_focusable_focus_geometry_get(const Eo *obj EINA_UNUS
    return EINA_RECT(0, 0, 20, 20);
 }
 
-EOLIAN static Efl_Ui_Focus_Manager*
+EOLIAN static Efl_Ui_Focus_Manager_Base*
 _focus_test_sub_main_efl_ui_focusable_focus_manager_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)
 {
    return efl_key_data_get(obj, "__user_manager");
@@ -29,7 +30,7 @@ static Eina_List *registered;
 static Eina_List *unregistered;
 
 static Eina_Bool
-_register(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focusable *child, Efl_Ui_Focusable *parent, Efl_Ui_Focus_Manager *manager)
+_register(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focusable *child, Efl_Ui_Focusable *parent, Efl_Ui_Focus_Manager_Base *manager)
 {
    registered = eina_list_append(registered, child);
    printf("REGISTERED %p %s\n", child, efl_name_get(child));
@@ -64,7 +65,7 @@ _set_equal(Eina_List *a, Eina_List *b)
 #include "focus_test_sub_main.eo.c"
 
 static void
-_setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focusable **r)
+_setup(Efl_Ui_Focus_Manager_Base **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focusable **r)
 {
 
    TEST_OBJ_NEW(root, 10, 10, 10, 10);
@@ -75,11 +76,11 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focusabl
     EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_calc_unregister, _unregister),
     );
 
-   Efl_Ui_Focus_Manager *manager = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
-    efl_ui_focus_manager_root_set(efl_added, root_manager)
+   Efl_Ui_Focus_Manager_Base *manager = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
+    efl_ui_focus_manager_base_root_set(efl_added, root_manager)
    );
    //flush now all changes
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FLUSH_PRE, NULL);
    registered = NULL;
    unregistered = NULL;
 
@@ -91,7 +92,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focusabl
    efl_key_data_set(focus_main, "__user_parent", root_manager);
 
    Efl_Ui_Focus_Manager_Calc *subm = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, focus_main,
-    efl_ui_focus_manager_root_set(efl_added, root)
+    efl_ui_focus_manager_base_root_set(efl_added, root)
    );
 
    efl_composite_attach(focus_main, subm);
@@ -109,7 +110,7 @@ EFL_START_TEST(correct_register)
 {
    Eina_List *set1 = NULL;
    Efl_Ui_Focusable *root;
-   Efl_Ui_Focus_Manager *manager, *sub;
+   Efl_Ui_Focus_Manager_Base *manager, *sub;
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -127,7 +128,7 @@ EFL_START_TEST(correct_register)
    efl_ui_focus_manager_calc_register(sub, child2, root, NULL);
    efl_ui_focus_manager_calc_register(sub, child3, root, NULL);
    //now force submanager to flush things
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FLUSH_PRE, NULL);
    ck_assert_ptr_eq(unregistered, NULL);
    fail_if(!_set_equal(registered, set1));
 
@@ -146,7 +147,7 @@ EFL_START_TEST(correct_unregister)
 {
    Eina_List *set = NULL;
    Efl_Ui_Focusable *root;
-   Efl_Ui_Focus_Manager *manager, *sub;
+   Efl_Ui_Focus_Manager_Base *manager, *sub;
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -159,7 +160,7 @@ EFL_START_TEST(correct_unregister)
    efl_ui_focus_manager_calc_register(sub, child1, root, NULL);
    efl_ui_focus_manager_calc_register(sub, child2, root, NULL);
    efl_ui_focus_manager_calc_register(sub, child3, root, NULL);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FLUSH_PRE, NULL);
    eina_list_free(unregistered);
    unregistered = NULL;
    eina_list_free(registered);
@@ -167,7 +168,7 @@ EFL_START_TEST(correct_unregister)
 
    //test unregister stuff
    efl_ui_focus_manager_calc_unregister(sub, child3);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FLUSH_PRE, NULL);
    ck_assert_ptr_eq(registered, NULL);
    fail_if(!_set_equal(unregistered, set));
    eina_list_free(unregistered);
@@ -186,7 +187,7 @@ EFL_START_TEST(correct_un_register)
 {
    Eina_List *set_add = NULL, *set_del = NULL;
    Efl_Ui_Focusable *root;
-   Efl_Ui_Focus_Manager *manager, *sub;
+   Efl_Ui_Focus_Manager_Base *manager, *sub;
    _setup(&manager, &sub, &root);
 
    TEST_OBJ_NEW(child1, 0, 0, 10, 10);
@@ -198,7 +199,7 @@ EFL_START_TEST(correct_un_register)
    //test register stuff
    efl_ui_focus_manager_calc_register(sub, child1, root, NULL);
    efl_ui_focus_manager_calc_register(sub, child3, root, NULL);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FLUSH_PRE, NULL);
    eina_list_free(unregistered);
    unregistered = NULL;
    eina_list_free(registered);
@@ -207,7 +208,7 @@ EFL_START_TEST(correct_un_register)
    //test unregister stuff
    efl_ui_focus_manager_calc_unregister(sub, child3);
    efl_ui_focus_manager_calc_register(sub, child2, root, NULL);
-   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
+   efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FLUSH_PRE, NULL);
    fail_if(!_set_equal(registered, set_add));
    fail_if(!_set_equal(unregistered, set_del));
 

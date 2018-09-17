@@ -59,7 +59,7 @@ static void
 _focused(void *data, const Efl_Event *event)
 {
    Priv_Data *priv = (Priv_Data*)data;
-   Evas_Object *focused = efl_ui_focus_manager_focus_get(event->object);
+   Evas_Object *focused = efl_ui_focus_manager_base_manager_focus_get(event->object);
 
    if (focused)
      priv->selected = focused;
@@ -95,7 +95,7 @@ _bt_del_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    Priv_Data *priv = (Priv_Data*)data;
    Eo *child = NULL;
 
-   //l = efl_ui_focus_manager_focus_get(priv->list1);
+   //l = efl_ui_focus_manager_base_manager_focus_get(priv->list1);
    if(priv->selected)
      {
         printf("focused %p\n", priv->selected);
@@ -313,7 +313,7 @@ elm_main(int argc, char **argv)
    elm_box_pack_end(vbx, bt);
 
    elm_box_pack_end(bx, priv->list2);
-   efl_event_callback_add(priv->list2, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focused ,priv);
+   efl_event_callback_add(priv->list2, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUS_CHANGED, _focused ,priv);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
 
