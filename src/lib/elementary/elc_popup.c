@@ -228,11 +228,11 @@ static void
 _focus_changed_popup(void *data, const Efl_Event *ev)
 {
    //mirror property
-   efl_ui_focus_object_focus_set(data, efl_ui_focus_object_focus_get(ev->object));
+   efl_ui_focusable_focus_set(data, efl_ui_focusable_focus_get(ev->object));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(composition_cb,
-   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed_popup },
+   { EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _focus_changed_popup },
 )
 
 EOLIAN static void
@@ -921,7 +921,7 @@ _item_focus_change(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   if (efl_ui_focus_object_focus_get(event->object))
+   if (efl_ui_focusable_focus_get(event->object))
      {
         efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
      }
@@ -959,7 +959,7 @@ _item_new(Elm_Popup_Item_Data *it)
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
         efl_event_callback_add
-              (VIEW(it), EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _item_focus_change, it);
+              (VIEW(it), EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _item_focus_change, it);
         evas_object_show(VIEW(it));
      }
 }

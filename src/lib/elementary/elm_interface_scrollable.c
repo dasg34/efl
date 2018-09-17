@@ -4885,7 +4885,7 @@ EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, do
 EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_interface_scrollable_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_interface_scrollable_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
    Efl_Ui_Focus_Manager *manager;
 
@@ -4910,7 +4910,7 @@ _filter_cb(const void *iterator EINA_UNUSED, void *data, void *fdata)
    Eina_Rect geom;
    int min_x, max_x, min_y, max_y;
 
-   geom = efl_ui_focus_object_focus_geometry_get(data);
+   geom = efl_ui_focusable_focus_geometry_get(data);
 
    min_x = geom.rect.x;
    min_y = geom.rect.y;

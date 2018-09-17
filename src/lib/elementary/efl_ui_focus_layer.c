@@ -11,7 +11,7 @@
 #define MY_CLASS EFL_UI_FOCUS_LAYER_MIXIN
 
 typedef struct {
-   Efl_Ui_Focus_Object *old_focus;
+   Efl_Ui_Focusable *old_focus;
    Efl_Ui_Focus_Manager *registered_manager;
    Efl_Ui_Focus_Manager *manager;
    Eina_Bool cycle;
@@ -19,7 +19,7 @@ typedef struct {
 } Efl_Ui_Focus_Layer_Data;
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_layer_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_efl_ui_focus_layer_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
    pd->manager = efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, obj, efl_ui_focus_manager_root_set(efl_added, root));
    return pd->manager;
@@ -36,7 +36,7 @@ _efl_ui_focus_layer_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Focus_Layer_Data 
      }
 }
 
-EOLIAN static Efl_Ui_Focus_Object*
+EOLIAN static Efl_Ui_Focusable*
 _efl_ui_focus_layer_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Efl_Ui_Focus_Direction direction)
 {
    Eo *ret = efl_ui_focus_manager_move(pd->manager, direction);
@@ -62,7 +62,7 @@ _efl_ui_focus_layer_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd E
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_layer_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
+_efl_ui_focus_layer_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
 {
    if (pd->registered_manager)
      return pd->registered_manager;
@@ -70,8 +70,8 @@ _efl_ui_focus_layer_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNU
      return NULL;
 }
 
-EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_layer_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd)
+EOLIAN static Efl_Ui_Focusable*
+_efl_ui_focus_layer_efl_ui_focusable_focus_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Layer_Data *pd)
 {
    if (pd->registered_manager)
      return efl_ui_focus_manager_root_get(pd->registered_manager);
@@ -95,10 +95,10 @@ _efl_ui_focus_layer_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
 }
 
 static void
-_publish_state_change(Eo *obj, Efl_Ui_Focus_Manager *omanager, Efl_Ui_Focus_Object *oobj)
+_publish_state_change(Eo *obj, Efl_Ui_Focus_Manager *omanager, Efl_Ui_Focusable *oobj)
 {
-   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, omanager);
-   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_LOGICAL_CHANGED, oobj);
+   efl_event_callback_call(obj, EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, omanager);
+   efl_event_callback_call(obj, EFL_UI_FOCUSABLE_EVENT_LOGICAL_CHANGED, oobj);
 }
 
 EOLIAN static void
@@ -136,7 +136,7 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
           {
              Efl_Ui_Focus_Manager *manager;
 
-             manager = efl_ui_focus_object_focus_manager_get(pd->old_focus);
+             manager = efl_ui_focusable_focus_manager_get(pd->old_focus);
              if (manager)
                {
                   efl_ui_focus_manager_focus_set(manager, pd->old_focus);

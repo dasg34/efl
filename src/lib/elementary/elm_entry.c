@@ -7,7 +7,6 @@
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED 1
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_PART_PROTECTED
@@ -943,7 +942,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    if (cursor_pos) elm_entry_cursor_pos_set(obj, cursor_pos);
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (efl_ui_focusable_focus_get(obj))
      {
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
         if (sd->scroll)
@@ -1268,7 +1267,7 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
    if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (efl_ui_focus_object_focus_get(obj) && sd->editable)
+   if (efl_ui_focusable_focus_get(obj) && sd->editable)
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
@@ -1312,7 +1311,7 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_ui_focusable_on_focus_update(Eo *obj, Elm_Entry_Data *sd)
 {
    _elm_entry_focus_update(obj, sd);
 
@@ -2455,7 +2454,7 @@ _entry_cursor_changed_signal_cb(void *data,
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
-   if (efl_ui_focus_object_focus_get(data))
+   if (efl_ui_focusable_focus_get(data))
      edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
    _cursor_geometry_recalc(data);
 
@@ -4338,7 +4337,7 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
    _elm_entry_focus_update(obj, sd);
 
    //legacy focus event emission
-   if (efl_ui_focus_object_focus_get(obj))
+   if (efl_ui_focusable_focus_get(obj))
      evas_object_smart_callback_call(obj, "focused", NULL);
    else
      evas_object_smart_callback_call(obj, "unfocused", NULL);
@@ -6162,7 +6161,7 @@ _elm_entry_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_entry_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+_elm_entry_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, Efl_Ui_Focusable *root)
 {
    return efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
      efl_ui_focus_manager_root_set(efl_added, root)

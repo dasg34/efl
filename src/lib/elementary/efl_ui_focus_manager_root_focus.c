@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_UI_FOCUS_COMPOSITION_ADAPTER_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -13,7 +12,7 @@
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS
 
 typedef struct {
-   Efl_Ui_Focus_Object *replacement_object;
+   Efl_Ui_Focusable *replacement_object;
 
    Evas_Object *rect;
    Eina_Bool rect_registered;
@@ -21,8 +20,8 @@ typedef struct {
    Eina_List *iterator_list;
 } Efl_Ui_Focus_Manager_Root_Focus_Data;
 
-static Efl_Ui_Focus_Object*
-_trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
+static Efl_Ui_Focusable*
+_trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focusable *obj)
 {
    if (pd->rect == obj) return pd->replacement_object;
    return obj;
@@ -31,7 +30,7 @@ _trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
 static void
 _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
-   Efl_Ui_Focus_Object *sub;
+   Efl_Ui_Focusable *sub;
 
    sub = efl_ui_focus_manager_request_subchild(obj, efl_ui_focus_manager_root_get(obj));
 
@@ -53,7 +52,7 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
      }
    else if (!sub && !pd->rect_registered)
      {
-        Efl_Ui_Focus_Object *root;
+        Efl_Ui_Focusable *root;
 
         root = efl_ui_focus_manager_root_get(obj);
         efl_ui_focus_manager_calc_register(obj, pd->rect, root, NULL);
@@ -64,7 +63,7 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focusable *child, Efl_Ui_Focusable *parent, Efl_Ui_Focus_Manager *redirect)
 {
    if (efl_ui_focus_manager_calc_register(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
@@ -77,7 +76,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent, Efl_Ui_Focus_Manager *redirect)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focusable *child, Efl_Ui_Focusable *parent, Efl_Ui_Focus_Manager *redirect)
 {
    if (efl_ui_focus_manager_calc_register_logical(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
@@ -90,7 +89,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register_logical(Eo *
 }
 
 EOLIAN static void
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_unregister(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_unregister(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focusable *child)
 {
    efl_ui_focus_manager_calc_unregister(efl_super(obj, MY_CLASS), child);
 
@@ -100,14 +99,14 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_unregister(Eo *obj, E
 
 
 EOLIAN static void
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *focus)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focusable *focus)
 {
    EINA_SAFETY_ON_NULL_RETURN(focus);
    efl_ui_focus_manager_focus_set(efl_super(obj, MY_CLASS), _trap(pd, focus));
 }
 
 
-EOLIAN static Efl_Ui_Focus_Object*
+EOLIAN static Efl_Ui_Focusable*
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
    return _trap(pd, efl_ui_focus_manager_focus_get(efl_super(obj, MY_CLASS)));
@@ -115,7 +114,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_get(const Eo
 
 
 EOLIAN static Efl_Ui_Focus_Relations *
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focusable *child)
 {
    return efl_ui_focus_manager_fetch(efl_super(obj, MY_CLASS), _trap(pd, child));
 }
@@ -141,13 +140,13 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_border_elements_get(const 
    return efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *child, Eina_Bool logical)
+EOLIAN static Efl_Ui_Focusable*
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focusable *child, Eina_Bool logical)
 {
    return _trap(pd, efl_ui_focus_manager_request_move(efl_super(obj, MY_CLASS), direction, child, logical));
 }
 
-EOLIAN static Efl_Ui_Focus_Object*
+EOLIAN static Efl_Ui_Focusable*
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Direction direction)
 {
    return _trap(pd, efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction));
@@ -190,11 +189,11 @@ _focus_changed(void *data, const Efl_Event *ev)
 
    root = efl_ui_focus_manager_root_get(data);
 
-   efl_ui_focus_object_focus_set(root, efl_ui_focus_object_focus_get(ev->object));
+   efl_ui_focusable_focus_set(root, efl_ui_focusable_focus_get(ev->object));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(composition_cb,
-   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed },
+   { EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _focus_changed },
 )
 
 EOLIAN static Efl_Object*

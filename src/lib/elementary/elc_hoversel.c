@@ -188,7 +188,7 @@ _item_focus_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   if (efl_ui_focus_object_focus_get(event->object))
+   if (efl_ui_focusable_focus_get(event->object))
      {
         efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
      }
@@ -596,7 +596,7 @@ EOLIAN static Eina_Bool
 _elm_hoversel_item_elm_widget_item_item_focus_get(const Eo *eo_it EINA_UNUSED,
                                              Elm_Hoversel_Item_Data *it)
 {
-   return efl_ui_focus_object_focus_get(VIEW(it));
+   return efl_ui_focusable_focus_get(VIEW(it));
 }
 
 EOLIAN static void
@@ -878,7 +878,7 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
     efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
-    efl_event_callback_add(bt, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _item_focus_changed, item);
+    efl_event_callback_add(bt, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _item_focus_changed, item);
 
    sd->items = eina_list_append(sd->items, eo_item);
 

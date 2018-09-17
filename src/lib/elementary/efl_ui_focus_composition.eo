@@ -7,11 +7,11 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Efl.Ui.Widget) {
       @property composition_elements @protected  {
          [[Set the order of elements that will be used for composition
 
-           Elements of the list can be either an Efl.Ui.Widget, an Efl.Ui.Focus.Object or an Efl.Gfx.
+           Elements of the list can be either an Efl.Ui.Widget, an Efl.Ui.Focusable or an Efl.Gfx.
 
            If the element is an Efl.Gfx.Entity, then the geometry is used as focus geometry, the focus property is redirected to the evas focus property. The mixin will take care of registration.
 
-           If the element is an Efl.Ui.Focus.Object, then the mixin will take care of registering the element.
+           If the element is an Efl.Ui.Focusable, then the mixin will take care of registering the element.
 
            If the element is a Efl.Ui.Widget nothing is done and the widget is simply part of the order.
          ]]
@@ -48,7 +48,7 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Efl.Ui.Widget) {
    implements {
       Efl.Object.invalidate;
       Efl.Ui.Widget.focus_state_apply;
-      Efl.Ui.Focus.Object.prepare_logical_none_recursive;
+      Efl.Ui.Focusable.prepare_logical_none_recursive;
       @empty .prepare;
    }
 }

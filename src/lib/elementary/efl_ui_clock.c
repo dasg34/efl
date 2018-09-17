@@ -479,14 +479,14 @@ _efl_ui_clock_edit_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Clock_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_clock_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_efl_ui_focusable_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_focusable_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (!efl_ui_focus_object_focus_get(obj))
+   if (!efl_ui_focusable_focus_get(obj))
      {
         Clock_Mod_Api *dt_mod = _dt_mod_init();
         if ((dt_mod) && (dt_mod->obj_hide))

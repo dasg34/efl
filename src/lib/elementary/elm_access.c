@@ -145,9 +145,9 @@ _elm_access_efl_ui_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Efl
 }
 
 EOLIAN static Eina_Bool
-_elm_access_efl_ui_focus_object_on_focus_update(Eo *obj, void *_pd EINA_UNUSED)
+_elm_access_efl_ui_focusable_on_focus_update(Eo *obj, void *_pd EINA_UNUSED)
 {
-   evas_object_focus_set(obj, efl_ui_focus_object_focus_get(obj));
+   evas_object_focus_set(obj, efl_ui_focusable_focus_get(obj));
 
    return EINA_TRUE;
 }
@@ -537,7 +537,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
           {
              Efl_Ui_Focus_Relations *rel;
 
-             rel = efl_ui_focus_manager_fetch(efl_ui_focus_object_focus_manager_get(obj), obj);
+             rel = efl_ui_focus_manager_fetch(efl_ui_focusable_focus_manager_get(obj), obj);
 
              if (rel)
                {

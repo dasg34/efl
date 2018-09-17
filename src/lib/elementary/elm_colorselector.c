@@ -6,7 +6,6 @@
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -2653,7 +2652,7 @@ _elm_color_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Color_Item_Data *i
      }
    else
      {
-        if (!efl_ui_focus_object_focus_get(obj))
+        if (!efl_ui_focusable_focus_get(obj))
           return;
         sd->focused_item = NULL;
      }
@@ -2710,15 +2709,15 @@ _elm_color_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Color_Item_
 }
 
 EOLIAN static Eina_Rect
-_elm_color_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
+_elm_color_item_efl_ui_focusable_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
 {
    return efl_gfx_entity_geometry_get(pd->color_obj);
 }
 
 EOLIAN static void
-_elm_color_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Color_Item_Data *pd, Eina_Bool focus)
+_elm_color_item_efl_ui_focusable_focus_set(Eo *obj, Elm_Color_Item_Data *pd, Eina_Bool focus)
 {
-   efl_ui_focus_object_focus_set(efl_super(obj, ELM_COLOR_ITEM_CLASS), focus);
+   efl_ui_focusable_focus_set(efl_super(obj, ELM_COLOR_ITEM_CLASS), focus);
    evas_object_focus_set(pd->color_obj, focus);
    elm_object_item_focus_set(obj, focus);
 }

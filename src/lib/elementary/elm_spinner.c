@@ -418,7 +418,7 @@ _entry_value_apply(Evas_Object *obj)
    if (!sd->entry_visible) return;
 
    efl_event_callback_del
-    (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
+    (sd->ent, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
@@ -653,7 +653,7 @@ _toggle_entry(Evas_Object *obj)
           }
 
         efl_event_callback_add
-           (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
+           (sd->ent, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
         evas_object_show(sd->ent);
@@ -667,7 +667,7 @@ _toggle_entry(Evas_Object *obj)
 
            efl_ui_focus_composition_elements_set(obj, items);
         }
-        efl_ui_focus_manager_focus_set(efl_ui_focus_object_focus_manager_get(obj), sd->ent);
+        efl_ui_focus_manager_focus_set(efl_ui_focusable_focus_manager_get(obj), sd->ent);
      }
 }
 
@@ -883,7 +883,7 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _text_button_focus_change(void *data, const Efl_Event *event)
 {
-   if (efl_ui_focus_object_focus_get(event->object))
+   if (efl_ui_focusable_focus_get(event->object))
      _toggle_entry(data);
 }
 
@@ -896,7 +896,7 @@ _entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _entry_focus_change(void *data, const Efl_Event *event)
 {
-   if (!efl_ui_focus_object_focus_get(event->object))
+   if (!efl_ui_focusable_focus_get(event->object))
      _toggle_entry(data);
 }
 
@@ -937,14 +937,14 @@ _elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_focusable_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_focusable_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (!efl_ui_focus_object_focus_get(obj))
+   if (!efl_ui_focusable_focus_get(obj))
      {
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
@@ -1226,7 +1226,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
 
         efl_event_callback_add
-          (priv->text_button, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _text_button_focus_change, obj);
+          (priv->text_button, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _text_button_focus_change, obj);
 
         elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
         elm_widget_sub_object_add(obj, priv->text_button);

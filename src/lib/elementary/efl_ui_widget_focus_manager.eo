@@ -8,7 +8,7 @@ mixin Efl.Ui.Widget_Focus_Manager (Efl.Interface, Efl.Ui.Widget, Efl.Ui.Focus.Ma
            custom options on the focus manager.
          ]]
          params {
-            @in root: Efl.Ui.Focus.Object; [[The logical root object for focus.]]
+            @in root: Efl.Ui.Focusable; [[The logical root object for focus.]]
          }
          return: Efl.Ui.Focus.Manager; [[The focus manager.]]
       }

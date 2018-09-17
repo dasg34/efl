@@ -1,4 +1,4 @@
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
+#define EFL_UI_FOCUSABLE_PROTECTED
 
 #include "elm_test_focus_common.h"
 
@@ -12,10 +12,10 @@
    focus_test_size(o, rect); \
   } while (0)
 
-Efl_Ui_Focus_Object*
+Efl_Ui_Focusable*
 elm_focus_test_object_new(const char *name, int x, int y, int w, int h)
 {
-   Efl_Ui_Focus_Object *ret;
+   Efl_Ui_Focusable *ret;
 
    ret = efl_add_ref(FOCUS_TEST_CLASS, NULL,
     efl_name_set(efl_added, name)
@@ -26,11 +26,11 @@ elm_focus_test_object_new(const char *name, int x, int y, int w, int h)
 }
 
 void
-elm_focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
-    Efl_Ui_Focus_Object **south,
-    Efl_Ui_Focus_Object **north,
-    Efl_Ui_Focus_Object **east,
-    Efl_Ui_Focus_Object **west)
+elm_focus_test_setup_cross(Efl_Ui_Focusable **middle,
+    Efl_Ui_Focusable **south,
+    Efl_Ui_Focusable **north,
+    Efl_Ui_Focusable **east,
+    Efl_Ui_Focusable **west)
   {
 
    *middle = elm_focus_test_object_new("middle", 40, 40, 20, 20);
@@ -42,9 +42,9 @@ elm_focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
 
 
 Efl_Ui_Focus_Manager*
-elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
+elm_focus_test_manager_new(Efl_Ui_Focusable **middle)
 {
-   Efl_Ui_Focus_Object *root;
+   Efl_Ui_Focusable *root;
    Efl_Ui_Focus_Manager *m;
 
    root = elm_focus_test_object_new("middle", 40, 40, 20, 20);
@@ -76,15 +76,15 @@ _focus_test_efl_object_constructor(Eo *obj, Focus_Test_Data *pd)
 }
 
 EOLIAN static void
-_focus_test_efl_ui_focus_object_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Bool focus)
+_focus_test_efl_ui_focusable_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Bool focus)
 {
    pd->focus = focus;
    printf("Object %p now focused\n", obj);
-   efl_ui_focus_object_focus_set(efl_super(obj, FOCUS_TEST_CLASS), focus);
+   efl_ui_focusable_focus_set(efl_super(obj, FOCUS_TEST_CLASS), focus);
 }
 
 EOLIAN static Eina_Rect
-_focus_test_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_ui_focusable_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;
 }
@@ -102,13 +102,13 @@ _focus_test_efl_gfx_entity_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Da
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->manager;
 }
 
-EOLIAN static Efl_Ui_Focus_Object*
-_focus_test_efl_ui_focus_object_focus_parent_get(const Eo *obj, Focus_Test_Data *pd EINA_UNUSED)
+EOLIAN static Efl_Ui_Focusable*
+_focus_test_efl_ui_focusable_focus_parent_get(const Eo *obj, Focus_Test_Data *pd EINA_UNUSED)
 {
    return efl_parent_get(obj);
 }

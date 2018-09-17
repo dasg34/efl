@@ -2,8 +2,8 @@
 
 EFL_START_TEST(focus_unregister_twice)
 {
-   Efl_Ui_Focus_Object *r1 = efl_add_ref(FOCUS_TEST_CLASS, NULL);
-   Efl_Ui_Focus_Object *r2 = efl_add_ref(FOCUS_TEST_CLASS, NULL);
+   Efl_Ui_Focusable *r1 = efl_add_ref(FOCUS_TEST_CLASS, NULL);
+   Efl_Ui_Focusable *r2 = efl_add_ref(FOCUS_TEST_CLASS, NULL);
 
    Efl_Ui_Focus_Manager *m = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, r1)
@@ -24,8 +24,8 @@ EFL_END_TEST
 
 EFL_START_TEST(focus_register_twice)
 {
-   Efl_Ui_Focus_Object *r1 = elm_focus_test_object_new("r1", 0, 0, 10, 10);
-   Efl_Ui_Focus_Object *r2 = elm_focus_test_object_new("r2", 0, 10, 10, 10);
+   Efl_Ui_Focusable *r1 = elm_focus_test_object_new("r1", 0, 0, 10, 10);
+   Efl_Ui_Focusable *r2 = elm_focus_test_object_new("r2", 0, 10, 10, 10);
 
    Efl_Ui_Focus_Manager *m = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
     efl_ui_focus_manager_root_set(efl_added, r1)
@@ -46,7 +46,7 @@ EFL_END_TEST
 EFL_START_TEST(pos_check)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south, *root;
+   Efl_Ui_Focusable *middle, *east, *west, *north, *south, *root;
 
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
@@ -84,7 +84,7 @@ EFL_START_TEST(pos_check)
 EFL_END_TEST
 
 static Eina_Bool
-_equal_set(Eina_List *elems, Efl_Ui_Focus_Object *lst[])
+_equal_set(Eina_List *elems, Efl_Ui_Focusable *lst[])
 {
    unsigned int i = 0;
 
@@ -92,7 +92,7 @@ _equal_set(Eina_List *elems, Efl_Ui_Focus_Object *lst[])
      {
         Eina_Bool found = EINA_FALSE;
         Eina_List *n;
-        Efl_Ui_Focus_Object *elem;
+        Efl_Ui_Focusable *elem;
 
         EINA_LIST_FOREACH(elems, n, elem)
           {
@@ -113,7 +113,7 @@ EFL_START_TEST(pos_check2)
 {
    Efl_Ui_Focus_Manager *m;
    Efl_Ui_Focus_Relations *rel;
-   Efl_Ui_Focus_Object *root, *middle, *north_east, *north_west, *south_east, *south_west;
+   Efl_Ui_Focusable *root, *middle, *north_east, *north_west, *south_east, *south_west;
 
    middle = elm_focus_test_object_new("middle", 40, 40, 5, 5);
 
@@ -133,7 +133,7 @@ EFL_START_TEST(pos_check2)
 
 #define ck_assert_set_eq(set, ...) \
    { \
-      Efl_Ui_Focus_Object *tmp[] = { __VA_ARGS__ }; \
+      Efl_Ui_Focusable *tmp[] = { __VA_ARGS__ }; \
       ck_assert_int_eq(_equal_set(set, tmp), EINA_TRUE); \
    }
 
@@ -183,10 +183,10 @@ EFL_END_TEST
 EFL_START_TEST(border_check)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south, *root;
+   Efl_Ui_Focusable *middle, *east, *west, *north, *south, *root;
    Eina_List *list = NULL;
    Eina_Iterator *iter;
-   Efl_Ui_Focus_Object *obj;
+   Efl_Ui_Focusable *obj;
 
    elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
 
@@ -219,7 +219,7 @@ EFL_END_TEST
 EFL_START_TEST(logical_chain)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *lroot;
+   Efl_Ui_Focusable *lroot;
    int i = 0;
 
    TEST_OBJ_NEW(root, 0, 0, 20, 20);
@@ -280,12 +280,12 @@ EFL_START_TEST(logical_chain)
 EFL_END_TEST
 
 static void
-_check_chain(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *objects[])
+_check_chain(Efl_Ui_Focus_Manager *m, Efl_Ui_Focusable *objects[])
 {
    int i;
    for (i = 0; objects[i]; ++i)
      {
-        Efl_Ui_Focus_Object *next;
+        Efl_Ui_Focusable *next;
 
         if (i > 0)
           efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_NEXT);
@@ -304,7 +304,7 @@ _check_chain(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *objects[])
 
    for (; i > 0; i--)
      {
-        Efl_Ui_Focus_Object *prev;
+        Efl_Ui_Focusable *prev;
 
         if (!!objects[i])
           efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_PREVIOUS);
@@ -324,7 +324,7 @@ _check_chain(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *objects[])
 EFL_START_TEST(logical_chain_multi_redirect)
 {
    Efl_Ui_Focus_Manager *m, *m2, *m3, *m4;
-   Efl_Ui_Focus_Object *root,*root2, *root3, *root4, *c1_1, *c1_2, *c1_3, *c2, *c3, *c4;
+   Efl_Ui_Focusable *root,*root2, *root3, *root4, *c1_1, *c1_2, *c1_3, *c2, *c3, *c4;
 
    m = elm_focus_test_manager_new(&root);
    m2 = elm_focus_test_manager_new(&root2);
@@ -340,7 +340,7 @@ EFL_START_TEST(logical_chain_multi_redirect)
    c3 = elm_focus_test_object_new("child2", 0, 0, 20, 20);
    c4 = elm_focus_test_object_new("child3", 0, 0, 20, 20);
 
-   Efl_Ui_Focus_Object *objects[] = {c2, c3, c4, NULL};
+   Efl_Ui_Focusable *objects[] = {c2, c3, c4, NULL};
 
    efl_ui_focus_manager_calc_register(m, c1_1, root, m2);
    efl_ui_focus_manager_calc_register(m, c1_2, root, m3);
@@ -360,7 +360,7 @@ EFL_END_TEST
 EFL_START_TEST(logical_chain_single_redirect)
 {
    Efl_Ui_Focus_Manager *m, *m2;
-   Efl_Ui_Focus_Object *root,*root2, *c1_1, *c1_2, *c1_3, *c2_1, *c2_2, *c2_3;
+   Efl_Ui_Focusable *root,*root2, *c1_1, *c1_2, *c1_3, *c2_1, *c2_2, *c2_3;
 
    m = elm_focus_test_manager_new(&root);
    m2 = elm_focus_test_manager_new(&root2);
@@ -372,7 +372,7 @@ EFL_START_TEST(logical_chain_single_redirect)
    c2_2 = elm_focus_test_object_new("child2", 0, 0, 20, 20);
    c2_3 = elm_focus_test_object_new("child3", 0, 0, 20, 20);
 
-   Efl_Ui_Focus_Object *objects[] = {c1_1, c2_1, c2_2, c2_3, c1_3, NULL};
+   Efl_Ui_Focusable *objects[] = {c1_1, c2_1, c2_2, c2_3, c1_3, NULL};
 
    efl_ui_focus_manager_calc_register(m, c1_1, root, NULL);
    efl_ui_focus_manager_calc_register(m, c1_2, root, m2);
@@ -600,10 +600,10 @@ EFL_START_TEST(root_redirect_chain_unset)
 EFL_END_TEST
 
 static Efl_Ui_Focus_Manager_Calc*
-_recursive_triangle_manager(int recusion_depth, Efl_Ui_Focus_Object **most_right, Efl_Ui_Focus_Object **most_left, Eina_List **managers)
+_recursive_triangle_manager(int recusion_depth, Efl_Ui_Focusable **most_right, Efl_Ui_Focusable **most_left, Eina_List **managers)
 {
    Efl_Ui_Focus_Manager *m, *m_child1 = NULL, *m_child3 = NULL;
-   Efl_Ui_Focus_Object *child1, *child3;
+   Efl_Ui_Focusable *child1, *child3;
 
    TEST_OBJ_NEW(root, 0, 20, 20, 20);
    TEST_OBJ_NEW(child2, 0, 20, 20, 20);
@@ -657,7 +657,7 @@ _recursive_triangle_manager(int recusion_depth, Efl_Ui_Focus_Object **most_right
    return m;
 }
 
-static Efl_Ui_Focus_Object*
+static Efl_Ui_Focusable*
 _get_highest_redirect(Efl_Ui_Focus_Manager *manager)
 {
    Efl_Ui_Focus_Manager *tmp = manager;
@@ -673,7 +673,7 @@ _get_highest_redirect(Efl_Ui_Focus_Manager *manager)
 EFL_START_TEST(first_touch_check)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *most_left, *most_right;
+   Efl_Ui_Focusable *most_left, *most_right;
    Eina_List *managers = NULL;
 
    m = _recursive_triangle_manager(0, &most_right, &most_left, &managers);
@@ -697,7 +697,7 @@ EFL_END_TEST
 EFL_START_TEST(test_request_subchild_empty)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root;
+   Efl_Ui_Focusable *root;
 
    m = elm_focus_test_manager_new(&root);
 
@@ -710,7 +710,7 @@ EFL_END_TEST
 EFL_START_TEST(test_request_subchild_one_element)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1;
+   Efl_Ui_Focusable *root, *c1;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -726,7 +726,7 @@ EFL_END_TEST
 EFL_START_TEST(test_request_subchild_child_alongside)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1, *c2;
+   Efl_Ui_Focusable *root, *c1, *c2;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -745,7 +745,7 @@ EFL_END_TEST
 EFL_START_TEST(test_request_subchild_child_logical_regular)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1, *c2;
+   Efl_Ui_Focusable *root, *c1, *c2;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -764,7 +764,7 @@ EFL_END_TEST
 EFL_START_TEST(test_request_subchild_child_regular_regular)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1, *c2;
+   Efl_Ui_Focusable *root, *c1, *c2;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -783,7 +783,7 @@ EFL_END_TEST
 EFL_START_TEST(test_unregister_last_focused_no_history)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1, *c2, *c3;
+   Efl_Ui_Focusable *root, *c1, *c2, *c3;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -806,7 +806,7 @@ EFL_END_TEST
 EFL_START_TEST(test_unregister_last_focused)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1, *c2, *c3;
+   Efl_Ui_Focusable *root, *c1, *c2, *c3;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -831,7 +831,7 @@ EFL_END_TEST
 EFL_START_TEST(test_unregister_last_focused_no_child)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1;
+   Efl_Ui_Focusable *root, *c1;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -849,7 +849,7 @@ EFL_END_TEST
 EFL_START_TEST(test_pop_history_element)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1, *c2, *c3;
+   Efl_Ui_Focusable *root, *c1, *c2, *c3;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -861,27 +861,27 @@ EFL_START_TEST(test_pop_history_element)
 
    efl_ui_focus_manager_focus_set(m, c2);
    ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c2);
-   ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_focusable_focus_get(c2), EINA_TRUE);
 
    efl_ui_focus_manager_pop_history_stack(m);
    ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c1);
-   ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_focusable_focus_get(c2), EINA_FALSE);
 
    efl_ui_focus_manager_focus_set(m, c1);
    efl_ui_focus_manager_focus_set(m, c2);
    ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c2);
-   ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_focusable_focus_get(c2), EINA_TRUE);
    efl_ui_focus_manager_pop_history_stack(m);
    ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c1);
-   ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_FALSE);
-   ck_assert_int_eq(efl_ui_focus_object_focus_get(c1), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_focusable_focus_get(c2), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_focusable_focus_get(c1), EINA_TRUE);
 
    efl_unref(m);
 }
 EFL_END_TEST
 
 static void
-_focus_request_tree_check(Efl_Ui_Focus_Manager *m, Eina_Bool accept_logicals, Efl_Ui_Focus_Object *objs[])
+_focus_request_tree_check(Efl_Ui_Focus_Manager *m, Eina_Bool accept_logicals, Efl_Ui_Focusable *objs[])
 {
    int i = 0;
    for (i = 1; objs[i]; ++i)
@@ -898,7 +898,7 @@ _focus_request_tree_check(Efl_Ui_Focus_Manager *m, Eina_Bool accept_logicals, Ef
 EFL_START_TEST(test_request_move)
 {
    Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *root, *c1, *c2, *c3, *c4, *c5, *c6;
+   Efl_Ui_Focusable *root, *c1, *c2, *c3, *c4, *c5, *c6;
 
    m = elm_focus_test_manager_new(&root);
    c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
@@ -922,10 +922,10 @@ EFL_START_TEST(test_request_move)
    //    \  |  /
    //     rooot
 
-   Efl_Ui_Focus_Object *objs_logical[] = {NULL, root, c1, c2, c3, c4, c5, c6, NULL};
+   Efl_Ui_Focusable *objs_logical[] = {NULL, root, c1, c2, c3, c4, c5, c6, NULL};
    _focus_request_tree_check(m, EINA_TRUE, objs_logical);
 
-   Efl_Ui_Focus_Object *objs_regular[] = {NULL, c1, c3, c4, c5, c6, NULL};
+   Efl_Ui_Focusable *objs_regular[] = {NULL, c1, c3, c4, c5, c6, NULL};
    _focus_request_tree_check(m, EINA_FALSE, objs_regular);
 
 }

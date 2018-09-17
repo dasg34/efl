@@ -1,8 +1,6 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
-
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -14,10 +12,10 @@ typedef enum {
 
 Quadrant q_helper[] = {Q_TOP, Q_RIGHT, Q_LEFT, Q_BOTTOM};
 
-static inline Efl_Ui_Focus_Object*
+static inline Efl_Ui_Focusable*
 _convert(Efl_Ui_Focus_Graph_Context *ctx, Opaque_Graph_Member *member)
 {
-   return *((Efl_Ui_Focus_Object**)(((char*) member) + ctx->offset_focusable));
+   return *((Efl_Ui_Focusable**)(((char*) member) + ctx->offset_focusable));
 }
 
 static inline unsigned int
@@ -160,7 +158,7 @@ efl_ui_focus_graph_calc(Efl_Ui_Focus_Graph_Context *ctx, Eina_Iterator *nodes, O
         res->relation = NULL;
      }
 
-   origin = efl_ui_focus_object_focus_geometry_get(_convert(ctx, origin_obj));
+   origin = efl_ui_focusable_focus_geometry_get(_convert(ctx, origin_obj));
 
    //printf("=========> CALCING %p %s\n", _convert(ctx, origin_obj), efl_class_name_get(_convert(ctx, origin_obj)));
 
@@ -172,7 +170,7 @@ efl_ui_focus_graph_calc(Efl_Ui_Focus_Graph_Context *ctx, Eina_Iterator *nodes, O
 
         if (elem_obj == origin_obj) continue;
 
-        elem = efl_ui_focus_object_focus_geometry_get(_convert(ctx, elem_obj));
+        elem = efl_ui_focusable_focus_geometry_get(_convert(ctx, elem_obj));
 
         if (eina_rectangle_intersection(&origin.rect, &elem.rect)) continue;
 
