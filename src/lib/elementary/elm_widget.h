@@ -446,13 +446,13 @@ typedef struct _Elm_Widget_Smart_Data
    struct {
       Efl_Ui_Focusable          *custom_object[EFL_UI_FOCUS_DIRECTION_LAST];
       Efl_Ui_Focus_Type          type;
+      Eina_Bool                  focused : 1;
    } focus;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 
    Eina_Bool                     can_focus : 1;
    Eina_Bool                     child_can_focus : 1;
-   Eina_Bool                     focused : 1;
    Eina_Bool                     top_win_focused : 1;
    Eina_Bool                     tree_unfocusable : 1;
    Eina_Bool                     focus_move_policy_auto_mode : 1; /* This is TRUE by default */

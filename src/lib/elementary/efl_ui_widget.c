@@ -19,6 +19,7 @@
 #include "elm_interface_scrollable.h"
 #include "elm_part_helper.h"
 #include "elm_combobox.eo.h"
+#include "efl_ui_focus_manager_private.h"
 
 /* FIXME: remove this when we don't rely on evas event structs anymore */
 #define EFL_INTERNAL_UNSTABLE
@@ -168,7 +169,7 @@ static inline Eina_Bool
 _is_focused(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
-   return sd->focused;
+   return sd->focus.focused;
 }
 
 static inline Eina_Bool
@@ -187,12 +188,16 @@ static void
 elm_widget_disabled_internal(Eo *obj, Eina_Bool disabled);
 static void
 _on_sub_obj_del(void *data, const Efl_Event *event);
+static void
+_on_sub_obj_hide(void *data, const Efl_Event *event);
 static void _propagate_event(void *data, const Efl_Event *eo_event);
 static void _elm_widget_focus_tree_unfocusable_handle(Eo *obj);
 static void _elm_widget_shadow_update(Efl_Ui_Widget *obj);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
-                          { EFL_EVENT_DEL, _on_sub_obj_del });
+                          { EFL_EVENT_DEL, _on_sub_obj_del },
+                          { EFL_GFX_ENTITY_EVENT_HIDE, _on_sub_obj_hide });
+
 EFL_CALLBACKS_ARRAY_DEFINE(efl_subitems_callbacks,
                           { EFL_EVENT_DEL, _on_sub_obj_del });
 EFL_CALLBACKS_ARRAY_DEFINE(focus_callbacks,
@@ -689,8 +694,8 @@ _parents_focus(Evas_Object *obj)
    for (; obj; obj = elm_widget_parent_get(obj))
      {
         INTERNAL_ENTRY;
-        if (sd->focused) return;
-        sd->focused = 1;
+        if (sd->focus.focused) return;
+        sd->focus.focused = 1;
      }
 }
 
@@ -700,9 +705,15 @@ _parents_unfocus(Evas_Object *obj)
    for (; obj; obj = elm_widget_parent_get(obj))
      {
         INTERNAL_ENTRY;
-        if (!sd->focused) return;
-        sd->focused = 0;
+        if (!sd->focus.focused) return;
+        sd->focus.focused = 0;
      }
+}
+
+static void
+_on_sub_obj_hide(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   _efl_ui_focus_manager_handle(event->object);
 }
 
 static void
@@ -710,10 +721,6 @@ _on_sub_obj_del(void *data, const Efl_Event *event)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(data, sd);
 
-   if (_elm_widget_is(event->object))
-     {
-        if (_is_focused(event->object)) _parents_unfocus(sd->obj);
-     }
    if (event->object == sd->resize_obj)
      {
         /* already dels sub object */
@@ -956,15 +963,9 @@ _efl_ui_widget_efl_gfx_entity_visible_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
    Evas_Object *o;
 
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
-     {
-        _elm_widget_full_eval_children(obj, pd);
-        return;
-     }
+     return;
 
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
-
-   _elm_widget_full_eval_children(obj, pd);
-
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
@@ -2485,7 +2486,7 @@ _elm_widget_top_win_focused_set(Evas_Object *obj,
      }
    sd->top_win_focused = top_win_focused;
 
-   if (sd->focused && !sd->top_win_focused)
+   if (sd->focus.focused && !sd->top_win_focused)
      efl_ui_focusable_on_focus_update(obj);
 }
 
@@ -2521,6 +2522,7 @@ elm_widget_disabled_internal(Eo *obj, Eina_Bool disabled)
 
    efl_ui_widget_on_disabled_update(obj, disabled);
    _elm_widget_disabled_eval(obj, disabled);
+   _efl_ui_focus_manager_handle(obj);
 }
 
 EOLIAN static void
@@ -2530,9 +2532,6 @@ _efl_ui_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabl
    sd->disabled = !!disabled;
 
    elm_widget_disabled_internal(obj, disabled);
-
-   if (efl_finalized_get(obj))
-     _elm_widget_full_eval_children(obj, sd);
 }
 
 EOLIAN static Eina_Bool
@@ -3422,14 +3421,20 @@ elm_widget_stringlist_free(Eina_List *list)
 EAPI void
 elm_widget_focus_mouse_up_handle(Eo *obj)
 {
-   Elm_Widget_Smart_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   if (!_elm_widget_is(obj)) return;
+   if (!efl_ui_widget_focus_allow_get(obj)) return;
 
-   if (!_is_focusable(obj)) return;
-
-   if (pd->focus_state.manager && !pd->focus_state.logical)
+   Evas_Object *o = obj;
+   do
      {
-        efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
+        if (_elm_widget_is(o)) break;
+        o = evas_object_smart_parent_get(o);
      }
+   while (o);
+
+   if (!efl_ui_widget_focus_allow_get(o)) return;
+
+   elm_object_focus_set(o, EINA_TRUE);
 }
 
 static void
@@ -5423,6 +5428,11 @@ _efl_ui_widget_efl_ui_focusable_on_focus_update(Eo *obj, Elm_Widget_Smart_Data *
    if (!sd->resize_obj)
      evas_object_focus_set(obj, focused);
 
+   if (focused)
+     evas_object_smart_callback_call(obj, "focused", NULL);
+   else
+     evas_object_smart_callback_call(obj, "unfocused", NULL);
+
    if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
      efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, focused);
 
@@ -5659,6 +5669,25 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
    return lookup;
 }
 
+/* Efl_Ui_Focus Begin */
+static Efl_Ui_Focusable *
+_focusable_child_find(Efl_Ui_Focusable *obj)
+{
+   const Eina_List *list, *l;
+   Efl_Ui_Focusable *o;
+
+   list = efl_ui_focusable_child_list_get(obj);
+   EINA_LIST_FOREACH(list, l, o)
+     {
+        if (!efl_isa(o, EFL_UI_FOCUSABLE_INTERFACE) || !efl_ui_focusable_is(o))
+          continue;
+        if (efl_ui_widget_focus_allow_get(o))
+          return o;
+        return _focusable_child_find(o);
+     }
+   return NULL;
+}
+
 EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_widget_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
@@ -5672,13 +5701,42 @@ _efl_ui_widget_efl_ui_focusable_focus_geometry_get(const Eo *obj, Elm_Widget_Sma
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_ui_focusable_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool focus)
+_efl_ui_widget_efl_ui_focusable_focus_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool focus)
 {
-   pd->focused = focus;
+   if (focus)
+     {
+        if (efl_ui_focus_manager_current_focus_get(EFL_UI_FOCUS_MANAGER_CLASS) == obj)
+          return;
 
-   efl_ui_focusable_focus_set(efl_super(obj, MY_CLASS), focus);
+        if (!efl_ui_widget_focus_allow_get(obj))
+          {
+             obj = _focusable_child_find(obj);
+             if (obj) efl_ui_focusable_focus_set(obj, EINA_TRUE);
+             return;
+          }
 
+        if (!_efl_ui_focus_manager_focus(obj))
+          return;
+
+        elm_widget_focus_region_show(obj);
+     }
+   else
+     {
+        if (!efl_ui_focusable_focus_get(obj))
+          return;
+
+        if (!_efl_ui_focus_manager_unfocus(obj))
+          return;
+     }
+
+   sd->focus.focused = focus;
    efl_ui_focusable_on_focus_update(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_widget_efl_ui_focusable_focus_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+{
+   return sd->focus.focused;
 }
 
 EOLIAN static Efl_Ui_Focusable *
@@ -5709,6 +5767,12 @@ EOLIAN static Efl_Ui_Focusable *
 _efl_ui_widget_efl_ui_focusable_focus_custom_object_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Direction dir)
 {
    return sd->focus.custom_object[dir];
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_widget_efl_ui_focusable_focusable_is(Eo *obj, Elm_Widget_Smart_Data *sd)
+{
+   return efl_gfx_entity_visible_get(obj) && !sd->disabled;
 }
 
 EOLIAN static Efl_Ui_Focusable *
