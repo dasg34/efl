@@ -5670,12 +5670,6 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
 }
 
 EOLIAN static Efl_Ui_Focus_Manager_Base*
-_efl_ui_widget_efl_ui_focusable_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
-{
-   return pd->focus_state.parent;
-}
-
-EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_widget_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return pd->focus_state.manager;
@@ -5695,6 +5689,12 @@ _efl_ui_widget_efl_ui_focusable_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
    efl_ui_focusable_focus_set(efl_super(obj, MY_CLASS), focus);
 
    efl_ui_focusable_on_focus_update(obj);
+}
+
+EOLIAN static Efl_Ui_Focusable *
+_efl_ui_widget_efl_ui_focusable_focus_parent_get(const Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+{
+   return evas_object_data_get(obj, "elm-parent");
 }
 
 EOLIAN static void
