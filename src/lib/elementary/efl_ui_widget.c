@@ -535,18 +535,18 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool should, Eina_Boo
         configuration.logical = EINA_FALSE;
      }
 
-   if (!efl_ui_widget_focus_state_apply(obj, pd->focus, &configuration, NULL))
+   if (!efl_ui_widget_focus_state_apply(obj, pd->focus_state, &configuration, NULL))
      {
         //things went wrong or this thing is unregistered. Purge the current configuration.
-        pd->focus.manager = NULL;
-        pd->focus.parent = NULL;
-        pd->focus.logical = EINA_FALSE;
+        pd->focus_state.manager = NULL;
+        pd->focus_state.parent = NULL;
+        pd->focus_state.logical = EINA_FALSE;
      }
    else
      {
-        pd->focus.parent = configuration.parent;
-        pd->focus.manager = configuration.manager;
-        pd->focus.logical = configuration.logical;
+        pd->focus_state.parent = configuration.parent;
+        pd->focus_state.manager = configuration.manager;
+        pd->focus_state.logical = configuration.logical;
      }
 
 }
@@ -635,18 +635,18 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
    _focus_manager_eval(obj, pd);
 
-   old_registered_parent = pd->focus.parent;
-   old_registered_manager = pd->focus.manager;
+   old_registered_parent = pd->focus_state.parent;
+   old_registered_manager = pd->focus_state.manager;
 
    _focus_state_eval(obj, pd, should, want_full);
 
-   if (old_registered_parent != pd->focus.parent)
+   if (old_registered_parent != pd->focus_state.parent)
      {
         efl_event_callback_call(obj,
              EFL_UI_FOCUSABLE_EVENT_LOGICAL_CHANGED, old_registered_parent);
      }
 
-   if (old_registered_manager != pd->focus.manager)
+   if (old_registered_manager != pd->focus_state.manager)
      {
         efl_event_callback_call(obj,
              EFL_UI_FOCUSABLE_EVENT_MANAGER_CHANGED, old_registered_manager);
@@ -3239,13 +3239,13 @@ _efl_ui_widget_efl_object_dbg_info_get(Eo *eo_obj, Elm_Widget_Smart_Data *_pd EI
    EFL_DBG_INFO_APPEND(group, "Automatic mirroring", EINA_VALUE_TYPE_CHAR,
          efl_ui_mirrored_automatic_get(eo_obj));
 
-   rel = efl_ui_focus_manager_base_fetch(_pd->focus.manager, eo_obj);
+   rel = efl_ui_focus_manager_base_fetch(_pd->focus_state.manager, eo_obj);
    if (rel)
      {
         focus = EFL_DBG_INFO_LIST_APPEND(group, "Focus");
 
         EFL_DBG_INFO_APPEND(focus, "logical", EINA_VALUE_TYPE_CHAR, rel->logical );
-        EFL_DBG_INFO_APPEND(focus, "manager", EINA_VALUE_TYPE_UINT64, _pd->focus.manager);
+        EFL_DBG_INFO_APPEND(focus, "manager", EINA_VALUE_TYPE_UINT64, _pd->focus_state.manager);
         EFL_DBG_INFO_APPEND(focus, "parent", EINA_VALUE_TYPE_UINT64, rel->parent);
         EFL_DBG_INFO_APPEND(focus, "next", EINA_VALUE_TYPE_UINT64 , rel->next);
         EFL_DBG_INFO_APPEND(focus, "prev", EINA_VALUE_TYPE_UINT64 , rel->prev);
@@ -3436,7 +3436,7 @@ elm_widget_focus_mouse_up_handle(Eo *obj)
 
    if (!_is_focusable(obj)) return;
 
-   if (pd->focus.manager && !pd->focus.logical)
+   if (pd->focus_state.manager && !pd->focus_state.logical)
      {
         efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
      }
@@ -5672,13 +5672,13 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
 EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_widget_efl_ui_focusable_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   return pd->focus.parent;
+   return pd->focus_state.parent;
 }
 
 EOLIAN static Efl_Ui_Focus_Manager_Base*
 _efl_ui_widget_efl_ui_focusable_focus_manager_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
-   return pd->focus.manager;
+   return pd->focus_state.manager;
 }
 
 EOLIAN static Eina_Rect
@@ -5696,6 +5696,20 @@ _efl_ui_widget_efl_ui_focusable_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd, Ei
 
    efl_ui_focusable_on_focus_update(obj);
 }
+
+EOLIAN static void
+_efl_ui_widget_efl_ui_focusable_focus_custom_object_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Direction dir, Efl_Ui_Focusable *custom)
+{
+   sd->focus.custom_object[dir] = custom;
+}
+
+EOLIAN static Efl_Ui_Focusable *
+_efl_ui_widget_efl_ui_focusable_focus_custom_object_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Direction dir)
+{
+   return sd->focus.custom_object[dir];
+}
+
+/* Efl_Ui_Focus End */
 
 /* Legacy APIs */
 

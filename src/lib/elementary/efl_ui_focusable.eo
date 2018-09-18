@@ -1,79 +1,88 @@
 import eina_types;
+import efl_ui;
 
 interface Efl.Ui.Focusable
 {
-    [[focusable interface.
+   [[focusable interface.
 
-      @since 1.22
-    ]]
-    methods {
-        @property focus_geometry {
-            [[The geometry used to calculate relationships between other objects.]]
-            get {
+     @since 1.22
+   ]]
+   methods {
+      @property focus {
+           [[This is called by the manager and should never be called by
+             anyone else.
 
-            }
-            values {
-                rect : Eina.Rect; [[The geometry to use.]]
-            }
-        }
-        @property focus {
-            get {
-              [[Returns whether the widget is currently focused or not.]]
-            }
-            set @protected {
-              [[This is called by the manager and should never be called by
-                anyone else.
+            It can be used by configuring a focus object to adapt to
+            any changes that are required.
 
-                It can be used by configuring a focus object to adapt to
-                any changes that are required.
+            The function emits the focus state events, if focus is
+            different to the previous state.
+           ]]
+           get {
 
-                The function emits the focus state events, if focus is
-                different to the previous state.
-            ]]
+           }
+           set @protected {
 
-            }
-            values {
-                focus : bool; [[The focused state of the object]]
-            }
-        }
-        @property focus_manager {
-            [[Describes which manager is used to register.
+           }
+           values {
+               focus : bool; [[The state in which the object should be put]]
+           }
+       }
+      @property focus_geometry {
+         [[The geometry used to calculate relationships between other objects.]]
+         get {}
+         values {
+            rect : Eina.Rect; [[The geometry to use.]]
+         }
+      }
+      @property focus_custom_object {
+         [[]]
+         keys {
+            dir : Efl.Ui.Focus.Direction;
+         }
+         values {
+            custom : Efl.Ui.Focusable; [[]]
+         }
+      }
 
-              If an instance of this interface is the root of a manager, this instance should not have a manager where as root of this property. The other manager in this instance will be set as focused in the corresponding manager.
-              This instance should be registered with its own manager as redirect.
-            ]]
-            get {}
-            values {
-                manager : Efl.Ui.Focus.Manager_Base; [[The manager object]]
-            }
-        }
-        @property focus_parent {
-            [[Describes which logical parent is used by this object.]]
-            get {}
-            values {
-                logical_parent : Efl.Ui.Focusable; [[The focus parent.]]
-            }
-        }
-        prepare_logical {
-            [[Tells the object that its children will be queried soon by the given manager.
-              The call will be a NOP if there is already a active preprare_logical call on this object
+      @property focus_manager {
+         [[Describes which manager is used to register.
 
-              Deleting manager items in this call will result in undefined behaviour and may cause your system to crash.
-            ]]
-        }
-        prepare_logical_none_recursive @protected {
-            [[]]
-        }
-        on_focus_update @protected @pure_virtual {
-           [[Virtual function handling focus in/out events on the widget]]
-           return: bool; [[$true if this widget can handle focus, $false otherwise]]
-        }
-    }
-    events {
-        focus,changed : bool; [[Emitted if the focus state has changed]]
-        manager,changed: Efl.Ui.Focus.Manager_Base; [[Emitted when a new manager is
-                                                 the parent for this object.]]
-        logical,changed: Efl.Ui.Focusable; [[Emitted when a new logical
-                                                parent should be used.]]
-    }
+           If an instance of this interface is the root of a manager, this instance should not have a manager where as root of this property. The other manager in this instance will be set as focused in the corresponding manager.
+           This instance should be registered with its own manager as redirect.
+         ]]
+         get {}
+         values {
+            manager : Efl.Ui.Focus.Manager_Base; [[The manager object]]
+         }
+      }
+      @property focus_parent {
+         [[Describes which logical parent is used by this object.]]
+         get {}
+         values {
+            logical_parent : Efl.Ui.Focusable; [[The focus parent.]]
+         }
+      }
+      prepare_logical {
+         [[Tells the object that its children will be queried soon by the given manager.
+           The call will be a NOP if there is already a active preprare_logical call on this object
+
+           Deleting manager items in this call will result in undefined behaviour and may cause your system to crash.
+         ]]
+      }
+      prepare_logical_none_recursive @protected {
+         [[]]
+      }
+      on_focus_update @protected @pure_virtual {
+         [[Virtual function handling focus in/out events on the widget]]
+         return: bool; [[$true if this widget can handle focus, $false otherwise]]
+      }
+   }
+   events {
+      focus,changed : bool; [[Emitted if the focus state has changed]]
+      manager,changed: Efl.Ui.Focus.Manager_Base; [[Emitted when a new manager is
+                                                    the parent for this object.]]
+      logical,changed: Efl.Ui.Focusable; [[Emitted when a new logical
+                                           parent should be used.]]
+   }
 }

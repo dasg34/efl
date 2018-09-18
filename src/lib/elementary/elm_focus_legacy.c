@@ -103,17 +103,14 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
                                  Evas_Object        *next,
                                  Elm_Focus_Direction dir)
 {
-   API_ENTRY()
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(next, EFL_UI_WIDGET_CLASS));
-   ELM_WIDGET_DATA_GET_OR_RETURN(next, next_pd);
+   efl_ui_focusable_focus_custom_object_set(obj, dir, next);
+}
 
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.field = next;
-   MAPPING()
-   #undef MAP
-   dir = efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS, dir);
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) next_pd->legacy_focus.field = obj;
-   MAPPING()
-   #undef MAP
+EAPI Evas_Object *
+elm_object_focus_next_object_get(const Evas_Object  *obj,
+                                 Elm_Focus_Direction dir)
+{
+   return efl_ui_focusable_focus_custom_object_get(obj, dir);
 }
 
 EAPI void
@@ -221,20 +218,6 @@ elm_object_focus_next(Evas_Object        *obj,
              efl_ui_focus_manager_base_setup_on_first_touch(top, dir, root);
           }
      }
-}
-
-EAPI Evas_Object *
-elm_object_focus_next_object_get(const Evas_Object  *obj,
-                                 Elm_Focus_Direction dir)
-{
-   Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
-   API_ENTRY_VAL(NULL)
-
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) return pd->legacy_focus.field;
-   MAPPING()
-   #undef MAP
-
-   return efl_ui_focus_manager_base_request_move(efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, top), dir, NULL, EINA_FALSE);
 }
 
 EAPI Elm_Object_Item *
