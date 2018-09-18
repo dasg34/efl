@@ -121,14 +121,14 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
 
         if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
           {
-             if (efl_isa(elem, EFL_UI_FOCUSABLE_MIXIN))
+             if (efl_isa(elem, EFL_UI_FOCUSABLE_INTERFACE))
                {
                   pd->register_target = eina_list_append(pd->register_target , o);
                   efl_event_callback_add(o, EFL_EVENT_DEL, _del, obj);
                }
              else
                {
-                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUSABLE_MIXIN or EFL_GFX_ENTITY_INTERFACE or EFL_UI_WIDGET_CLASS");
+                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUSABLE_INTERFACE or EFL_GFX_ENTITY_INTERFACE or EFL_UI_WIDGET_CLASS");
                   continue;
                }
           }
