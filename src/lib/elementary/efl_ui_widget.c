@@ -1904,29 +1904,7 @@ elm_widget_tree_unfocusable_get(const Eo *obj)
 EAPI Eina_List*
 elm_widget_can_focus_child_list_get(const Eo *obj)
 {
-   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   const Eina_List *l;
-   Eina_List *child_list = NULL;
-   Evas_Object *child;
-
-   if (!sd) return NULL;
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
-     {
-        if (!_elm_widget_is(child)) continue;
-        if ((elm_widget_can_focus_get(child)) &&
-            (evas_object_visible_get(child)) &&
-            (!elm_widget_disabled_get(child)))
-          child_list = eina_list_append(child_list, child);
-        else
-          {
-             Eina_List *can_focus_list;
-             can_focus_list = elm_widget_can_focus_child_list_get(child);
-             if (can_focus_list)
-               child_list = eina_list_merge(child_list, can_focus_list);
-          }
-     }
-
-   return child_list;
+   return efl_ui_focusable_child_list_get(obj);
 }
 
 /** @internal */
@@ -2131,42 +2109,54 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *eo_event)
      }
 }
 
-double
+static double
 _elm_widget_focus_direction_weight_get(const Evas_Object *obj1,
-                      const Evas_Object *obj2,
-                      double degree)
+                                       const Evas_Object *obj2,
+                                       Efl_Ui_Focus_Direction dir)
 {
-   Evas_Coord obj_x1, obj_y1, w1, h1, obj_x2, obj_y2, w2, h2;
+   Eina_Rect r1, r2;
    double x1, yy1, x2, yy2, xx1, yyy1, xx2, yyy2;
    double ax, ay, cx, cy;
-   double weight = -1.0, g = 0.0;
+   double weight = -1.0, g = 0.0, degree;
 
    if (obj1 == obj2) return 0.0;
 
-   degree -= 90.0;
-   while (degree >= 360.0)
-     degree -= 360.0;
-   while (degree < 0.0)
-     degree += 360.0;
+   switch (dir)
+     {
+      case EFL_UI_FOCUS_DIRECTION_UP:
+        degree = 270.0;
+        break;
+      case EFL_UI_FOCUS_DIRECTION_RIGHT:
+        degree = 0;
+        break;
+      case EFL_UI_FOCUS_DIRECTION_DOWN:
+        degree = 90.0;
+        break;
+      case EFL_UI_FOCUS_DIRECTION_LEFT:
+        degree = 180.0;
+        break;
+      default:
+        return 0.0;
+     }
 
-   evas_object_geometry_get(obj1, &obj_x1, &obj_y1, &w1, &h1);
-   cx = obj_x1 + (w1 / 2.0);
-   cy = obj_y1 + (h1 / 2.0);
-   evas_object_geometry_get(obj2, &obj_x2, &obj_y2, &w2, &h2);
+   r1 = efl_ui_focusable_focus_geometry_get(obj1);
+   r2 = efl_ui_focusable_focus_geometry_get(obj2);
+   cx = r1.x + (r1.w / 2.0);
+   cy = r1.y + (r1.h / 2.0);
 
    /* For overlapping cases. */
-   if (ELM_RECTS_INTERSECT(obj_x1, obj_y1, w1, h1, obj_x2, obj_y2, w2, h2))
+   if (ELM_RECTS_INTERSECT(r1.x, r1.y, r1.w, r1.h, r2.x, r2.y, r2.w, r2.h))
      return 0.0;
 
    /* Change all points to relative one. */
-   x1 = obj_x1 - cx;
-   xx1 = x1 + w1;
-   yy1 = obj_y1 - cy;
-   yyy1 = yy1 + h1;
-   x2 = obj_x2 - cx;
-   xx2 = x2 + w2;
-   yy2 = obj_y2 - cy;
-   yyy2 = yy2 + h2;
+   x1 = r1.x - cx;
+   xx1 = x1 + r1.w;
+   yy1 = r1.y - cy;
+   yyy1 = yy1 + r1.h;
+   x2 = r2.x - cx;
+   xx2 = x2 + r2.w;
+   yy2 = r2.y - cy;
+   yyy2 = yy2 + r2.h;
 
    /* Get crossing points (ax, ay) between obj1 and a line extending
     * to the direction of current degree. */
@@ -2443,7 +2433,7 @@ _elm_widget_focus_direction_weight_get(const Evas_Object *obj1,
      }
    /* Return the current object's weight. */
    if (weight == -1.0) return 0.0;
-   if (_R(weight) == 0) return -1.0;
+   if (_R(weight) == 0) return 1.0;
 
 #undef _R
 
@@ -5707,6 +5697,58 @@ EOLIAN static Efl_Ui_Focusable *
 _efl_ui_widget_efl_ui_focusable_focus_custom_object_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Direction dir)
 {
    return sd->focus.custom_object[dir];
+}
+
+EOLIAN static Efl_Ui_Focusable *
+_efl_ui_widget_efl_ui_focusable_focus_next_get(const Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Efl_Ui_Focusable* cur, Efl_Ui_Focus_Direction dir)
+{
+   Efl_Ui_Focusable *ret = NULL, *o;
+   Eina_List *list, *l;
+   double weight, max;
+
+   list = efl_ui_focusable_child_list_get(obj);
+   max = 0;
+
+   EINA_LIST_FOREACH(list, l, o)
+     {
+        if ((o == cur) || (o == obj) || efl_ui_focusable_focus_get(o))
+          continue;
+
+        weight = _elm_widget_focus_direction_weight_get(cur, o, dir);
+        if (weight > max)
+          {
+             ret = o;
+             max = weight;
+          }
+     }
+   eina_list_free(list);
+
+   return ret;
+}
+
+EOLIAN static Eina_List *
+_efl_ui_widget_efl_ui_focusable_focusable_child_list_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+{
+   const Eina_List *l;
+   Eina_List *child_list = NULL;
+   Evas_Object *child;
+
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     {
+        if (!efl_isa(child, EFL_UI_FOCUSABLE_INTERFACE) ||
+            !efl_ui_focusable_is(child))
+          continue;
+
+        Eina_List *can_focus_list;
+        can_focus_list = efl_ui_focusable_child_list_get(child);
+
+        if (can_focus_list)
+          child_list = eina_list_merge(child_list, can_focus_list);
+        else if (efl_ui_widget_focus_allow_get(child))
+          child_list = eina_list_append(child_list, child);
+     }
+
+   return child_list;
 }
 
 /* Efl_Ui_Focus End */

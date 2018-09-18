@@ -584,6 +584,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Ui.Focusable.focus_geometry { get; }
       Efl.Ui.Focusable.focus { set; }
       Efl.Ui.Focusable.focus_custom_object { get; set; }
+      Efl.Ui.Focusable.focus_next { get; }
+      Efl.Ui.Focusable.focusable_child_list { get; }
       Efl.Ui.Base.mirrored { get; set; }
       Efl.Ui.Base.mirrored_automatic { get; set; }
       Efl.Ui.Cursor.cursor { get; set; }

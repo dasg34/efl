@@ -44,6 +44,23 @@ interface Efl.Ui.Focusable
             custom : Efl.Ui.Focusable; [[]]
          }
       }
+      @property focus_next @protected {
+         [[]]
+         get {}
+         keys {
+            cur : Efl.Ui.Focusable; [[]]
+            dir : Efl.Ui.Focus.Direction;
+         }
+         values {
+            next : Efl.Ui.Focusable;
+         }
+      }
+      @property focusable_child_list @protected {
+         get {}
+         values {
+            child_list : list<Efl.Canvas.Object>;
+         }
+      }
 
       @property focus_manager {
          [[Describes which manager is used to register.
