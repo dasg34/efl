@@ -1,0 +1,32 @@
+import efl_ui;
+
+class Efl.Ui.Focus.Manager (Efl.Object)
+{
+   [[Focus manager singleton class
+     @since 1.22
+   ]]
+   methods {
+      focus_move @class {
+         [[]]
+         params {
+            dir : Efl.Ui.Focus.Direction; [[]]
+         }
+         return : bool; [[]]
+      }
+      focus_clear @class {
+         [[ ]]
+      }
+      @property current_focus @class {
+         get {}
+         values {
+            cur_focus : Efl.Canvas.Object;
+         }
+      }
+      @property previous_focus @class {
+         get {}
+         values {
+            prev_focus : Efl.Canvas.Object;
+         }
+      }
+   }
+}

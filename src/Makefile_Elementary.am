@@ -61,6 +61,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_clock.eo \
 	lib/elementary/efl_ui_cursor.eo \
 	lib/elementary/efl_ui_image_factory.eo \
+	lib/elementary/efl_ui_focus_manager.eo \
 	lib/elementary/efl_ui_focus_manager_base.eo \
 	lib/elementary/efl_ui_focus_manager_calc.eo \
 	lib/elementary/efl_ui_focus_manager_sub.eo \
@@ -442,7 +443,8 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_page_indicator_icon.h \
 	lib/elementary/efl_ui_tab_pager_private.h \
 	lib/elementary/efl_ui_tab_bar_private.h \
-	lib/elementary/efl_ui_tab_page_private.h
+	lib/elementary/efl_ui_tab_page_private.h \
+	lib/elementary/efl_ui_focus_manager_private.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
@@ -827,6 +829,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_clock.c \
 	lib/elementary/efl_ui_clock_private.h \
 	lib/elementary/efl_ui_image_factory.c \
+	lib/elementary/efl_ui_focus_manager.c \
 	lib/elementary/efl_ui_focus_manager_base.c \
 	lib/elementary/efl_ui_focus_manager_calc.c \
 	lib/elementary/efl_ui_focus_manager_sub.c \
