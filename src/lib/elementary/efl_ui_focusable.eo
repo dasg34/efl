@@ -1,10 +1,10 @@
 import eina_types;
 
-mixin Efl.Ui.Focusable
+interface Efl.Ui.Focusable
 {
-    [[Functions of focusable objects.
+    [[focusable interface.
 
-      @since 1.20
+      @since 1.22
     ]]
     methods {
         @property focus_geometry {
@@ -68,12 +68,6 @@ mixin Efl.Ui.Focusable
            [[Virtual function handling focus in/out events on the widget]]
            return: bool; [[$true if this widget can handle focus, $false otherwise]]
         }
-    }
-    implements {
-        @empty .focus_geometry;
-        @empty .prepare_logical_none_recursive;
-        @empty .focus_manager;
-        @empty .focus_parent;
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed]]
