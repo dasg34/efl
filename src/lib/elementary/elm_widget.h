@@ -428,7 +428,7 @@ typedef struct _Elm_Widget_Smart_Data
    Elm_Focus_Move_Policy         focus_move_policy;
    Elm_Focus_Region_Show_Mode    focus_region_show_mode;
 
-   Efl_Ui_Widget_Focus_State focus;
+   Efl_Ui_Widget_Focus_State focus_state;
    struct {
       int child_count;
       Efl_Ui_Focusable *parent;
@@ -443,6 +443,9 @@ typedef struct _Elm_Widget_Smart_Data
      Evas_Object *prev, *next, *up, *down, *right, *left;
      Elm_Object_Item *item_prev, *item_next, *item_up, *item_down, *item_right, *item_left;
    } legacy_focus;
+   struct {
+      Efl_Ui_Focusable          *custom_object[EFL_UI_FOCUS_DIRECTION_LAST];
+   } focus;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 
