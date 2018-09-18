@@ -9,25 +9,11 @@ interface Efl.Ui.Focusable
    ]]
    methods {
       @property focus {
-           [[This is called by the manager and should never be called by
-             anyone else.
-
-            It can be used by configuring a focus object to adapt to
-            any changes that are required.
-
-            The function emits the focus state events, if focus is
-            different to the previous state.
-           ]]
-           get {
-
-           }
-           set @protected {
-
-           }
-           values {
-               focus : bool; [[The state in which the object should be put]]
-           }
-       }
+         [[ Set/unset focus to a given Elementary object.]]
+         values {
+            focus : bool; [[The state in which the object should be put]]
+         }
+      }
       @property focus_parent @protected {
          [[ ]]
          get {}
@@ -67,6 +53,9 @@ interface Efl.Ui.Focusable
          values {
             child_list : list<Efl.Canvas.Object>;
          }
+      }
+      focusable_is {
+         return : bool;
       }
 
       @property focus_manager {
