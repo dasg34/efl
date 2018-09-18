@@ -28,6 +28,13 @@ interface Efl.Ui.Focusable
                focus : bool; [[The state in which the object should be put]]
            }
        }
+      @property focus_parent @protected {
+         [[ ]]
+         get {}
+         values {
+            parent : Efl.Ui.Focusable; [[ ]]
+         }
+      }
       @property focus_geometry {
          [[The geometry used to calculate relationships between other objects.]]
          get {}
@@ -71,13 +78,6 @@ interface Efl.Ui.Focusable
          get {}
          values {
             manager : Efl.Ui.Focus.Manager_Base; [[The manager object]]
-         }
-      }
-      @property focus_parent {
-         [[Describes which logical parent is used by this object.]]
-         get {}
-         values {
-            logical_parent : Efl.Ui.Focusable; [[The focus parent.]]
          }
       }
       prepare_logical {
