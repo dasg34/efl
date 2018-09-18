@@ -202,43 +202,14 @@ elm_object_focused_object_get(const Evas_Object *obj EINA_UNUSED)
 EAPI Eina_Bool
 elm_object_focus_get(const Evas_Object *obj)
 {
-   Efl_Ui_Focus_Manager_Base *m;
-   Efl_Ui_Focusable *focused_child;
-   API_ENTRY_VAL(EINA_FALSE)
-
    if (!elm_widget_is(obj))
      return evas_object_focus_get(obj);
-
-   m = efl_ui_focusable_focus_manager_get(obj);
-
-   //no manager means not registered
-   if (!m) return EINA_FALSE;
-
-   //assertion: our redirect manager m is in the redirect chain
-   m = efl_ui_focusable_focus_manager_get(obj);
-
-   //if obj is the redriect manager its kind of focused
-   if (efl_ui_focus_manager_base_redirect_get(m) == obj) return EINA_TRUE;
-
-   //if there is a redirect manager
-   if (!!efl_ui_focus_manager_base_redirect_get(m)) return EINA_FALSE;
-
-   //now take the focused object and walk down the parents, if this is
-   focused_child = efl_ui_focus_manager_base_manager_focus_get(m);
-
-   while(focused_child)
-     {
-        if (focused_child == obj) return EINA_TRUE;
-
-        focused_child = efl_ui_focusable_focus_parent_get(focused_child);
-     }
 
    return efl_ui_focusable_focus_get(obj);
 }
 
 EAPI void
-elm_object_focus_set(Evas_Object *obj,
-                     Eina_Bool    focus)
+elm_object_focus_set(Evas_Object *obj, Eina_Bool focus)
 {
    // ugly, but, special case for inlined windows
    if (efl_isa(obj, EFL_UI_WIN_CLASS))
@@ -252,13 +223,7 @@ elm_object_focus_set(Evas_Object *obj,
      }
    else if (elm_widget_is(obj))
      {
-        if (focus)
-          efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
-        else
-          {
-             if (efl_ui_focus_manager_base_manager_focus_get(efl_ui_focusable_focus_manager_get(obj)) == obj)
-               efl_ui_focus_manager_base_pop_history_stack(efl_ui_focusable_focus_manager_get(obj));
-          }
+        efl_ui_focusable_focus_set(obj, focus);
      }
    else
      {

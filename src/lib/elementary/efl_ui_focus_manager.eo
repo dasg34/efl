@@ -24,4 +24,8 @@ class Efl.Ui.Focus.Manager (Efl.Object)
          }
       }
    }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
 }
