@@ -164,60 +164,15 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj,
 }
 
 EINA_DEPRECATED EAPI void
-elm_object_focus_cycle(Evas_Object        *obj,
-                       Elm_Focus_Direction dir)
+elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
    elm_object_focus_next(obj, dir);
 }
 
 EAPI void
-elm_object_focus_next(Evas_Object        *obj,
-                      Elm_Focus_Direction dir)
+elm_object_focus_next(Evas_Object *obj EINA_UNUSED, Elm_Focus_Direction dir)
 {
-   Eina_Bool legacy_focus_move = EINA_FALSE;
-   Efl_Ui_Widget *o = NULL, *top;
-   Efl_Ui_Focusable *logical;
-   Efl_Ui_Focus_Manager_Base *manager_top;
-   API_ENTRY()
-
-   top = elm_object_top_widget_get(obj);
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(top, EFL_UI_WIN_CLASS));
-
-   manager_top = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, obj);
-   logical = efl_ui_focus_manager_base_manager_focus_get(manager_top);
-
-   if (elm_widget_is(logical))
-     {
-        Efl_Ui_Focusable *legacy_target = NULL;
-        ELM_WIDGET_DATA_GET_OR_RETURN(logical, pd_logical);
-
-        #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd_logical->legacy_focus.field) legacy_target = pd_logical->legacy_focus.field;
-        MAPPING()
-        #undef MAP
-
-        if (legacy_target)
-          {
-             efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, legacy_target);
-             if (elm_object_focused_object_get(top) == legacy_target)
-               {
-                  legacy_focus_move = EINA_TRUE;
-                  o = legacy_target;
-               }
-          }
-     }
-
-   if (!legacy_focus_move)
-     o = efl_ui_focus_manager_base_move(top, dir);
-   if (!o)
-     {
-        if (dir == EFL_UI_FOCUS_DIRECTION_NEXT || dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
-          {
-             Efl_Ui_Focusable *root;
-
-             root = efl_ui_focus_manager_base_root_get(top);
-             efl_ui_focus_manager_base_setup_on_first_touch(top, dir, root);
-          }
-     }
+   efl_ui_focus_manager_focus_move(EFL_UI_FOCUS_MANAGER_CLASS, dir);
 }
 
 EAPI Elm_Object_Item *
