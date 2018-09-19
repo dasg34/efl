@@ -659,19 +659,27 @@ struct klass
 
      std::string visibility = is_inherit_context(context) ? "protected" : "private";
 
-     if (!as_generator(scope_tab << "private readonly object eventLock = new object();\n"
-             << scope_tab << "private Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
-             .generate(sink, NULL, context))
-         return false;
+     if (!helpers::has_regular_ancestor(cls))
+       {
+         if (!as_generator(scope_tab << "protected readonly object eventLock = new object();\n"
+                 << scope_tab << "protected Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
+                 .generate(sink, NULL, context))
+             return false;
 
      // Callback registration functions
      if (!as_generator(
-            scope_tab << "private bool add_cpp_event_handler(string key, efl.Event_Cb evt_delegate) {\n"
+            scope_tab << "protected bool add_cpp_event_handler(string key, efl.Event_Cb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 0) {\n"
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = efl.eo.Globals.dlsym(efl.eo.Globals.RTLD_DEFAULT, key);\n"
+
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = efl.Event_Description.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to get native event {key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
+            << scope_tab << scope_tab << scope_tab << "}\n"
+
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to add event proxy for event {key}\");\n"
@@ -682,12 +690,18 @@ struct klass
             << scope_tab << scope_tab << "event_cb_count[key]++;\n"
             << scope_tab << scope_tab << "return true;\n"
             << scope_tab << "}\n"
-            << scope_tab << "private bool remove_cpp_event_handler(string key, efl.Event_Cb evt_delegate) {\n"
+            << scope_tab << "protected bool remove_cpp_event_handler(string key, efl.Event_Cb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 1) {\n"
-            << scope_tab << scope_tab << scope_tab << "efl.Event_Description desc = new efl.Event_Description(key);\n"
+
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = efl.Event_Description.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to get native event {key}\");\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
+            << scope_tab << scope_tab << scope_tab << "}\n"
+
             << scope_tab << scope_tab << scope_tab << "bool result = efl.eo.Globals.efl_event_callback_del(handle, desc, evt_delegate, System.IntPtr.Zero);\n"
             << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Error($\"Failed to remove event proxy for event {key}\");\n"
@@ -704,6 +718,7 @@ struct klass
             )
              .generate(sink, NULL, context))
          return false;
+       }
 
      // Self events
      if (!as_generator(*(event_definition(cls))).generate(sink, cls.events, context))
