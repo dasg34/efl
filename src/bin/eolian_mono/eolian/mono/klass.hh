@@ -536,6 +536,8 @@ struct klass
              << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "actual_klass = klass;\n"
+             << scope_tab << scope_tab << "} else {\n"
+             << scope_tab << scope_tab << scope_tab << "klass = actual_klass;\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = efl.eo.Globals.instantiate_start(actual_klass, parent);\n"
              << scope_tab << "}\n"
