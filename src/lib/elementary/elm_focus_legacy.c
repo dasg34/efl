@@ -194,22 +194,9 @@ elm_object_focus_next_item_set(Evas_Object     *obj,
 }
 
 EAPI Evas_Object *
-elm_object_focused_object_get(const Evas_Object *obj)
+elm_object_focused_object_get(const Evas_Object *obj EINA_UNUSED)
 {
-   API_ENTRY_VAL(NULL)
-   Efl_Ui_Focus_Manager_Base *man = elm_object_top_widget_get(obj);
-
-   while(efl_ui_focus_manager_base_redirect_get(man))
-     {
-        man = efl_ui_focus_manager_base_redirect_get(man);
-
-        // legacy compatible code, earlier those containers have not exposed theire items
-        if (efl_isa(man, ELM_GENGRID_CLASS) ||
-            efl_isa(man, ELM_TOOLBAR_CLASS) ||
-            efl_isa(man, ELM_GENLIST_CLASS)) return man;
-     }
-
-   return efl_ui_focus_manager_base_manager_focus_get(man);
+   return efl_ui_focus_manager_current_focus_get(EFL_UI_FOCUS_MANAGER_CLASS);
 }
 
 EAPI Eina_Bool
