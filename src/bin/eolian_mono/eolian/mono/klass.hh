@@ -608,9 +608,13 @@ struct klass
    bool generate_events_registration(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
      bool root = !helpers::has_regular_ancestor(cls);
+     std::string virtual_modifier = " ";
+
+     if (is_inherit_context(context))
+         virtual_modifier = root ? "virtual " : "override ";
      // Event proxy registration
      if (!as_generator(
-            scope_tab << "protected void register_event_proxies()\n"
+            scope_tab << "protected " << virtual_modifier << "void register_event_proxies()\n"
             << scope_tab << "{\n"
          )
          .generate(sink, NULL, context))
