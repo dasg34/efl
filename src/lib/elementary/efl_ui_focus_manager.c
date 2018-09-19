@@ -127,7 +127,8 @@ _efl_ui_focus_manager_focus_clear(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 EOLIAN static Efl_Canvas_Object *
 _efl_ui_focus_manager_current_focus_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   return NULL;
+   EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
+   return pd->current_focus;
 }
 
 #include "efl_ui_focus_manager.eo.c"
