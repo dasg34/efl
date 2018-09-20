@@ -781,7 +781,6 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
                              that it's not covered by any other window.]]
       Efl.Gfx.Stack.lower; [[This action is ignored by the Window.]]
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Focusable.focus { get; }
       Efl.Ui.Widget.focus_highlight_style { get; set; }
       Efl.Ui.Widget.focus_highlight_enabled { get; set; }
       Efl.Ui.Widget.focus_highlight_animate { get; set; }

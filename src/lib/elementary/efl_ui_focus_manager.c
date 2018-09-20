@@ -9,11 +9,25 @@
 
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_CLASS
 
-#define EFL_UI_FOCUS_MANAGER_DATA_GET(o, sd)                             \
-  Efl_Ui_Focus_Manager_Data *sd = efl_data_scope_get(o, MY_CLASS)
+#define EFL_UI_FOCUS_MANAGER_DATA_GET(o, sd)                           \
+  Efl_Ui_Focus_Manager_Data *sd = efl_data_scope_get(o, MY_CLASS);
+
+#define EFL_UI_FOCUS_MANAGER_DATA_GET_OR_RETURN(o, sd, ...)            \
+  Efl_Ui_Focus_Manager_Data *sd = efl_data_scope_get(o, MY_CLASS);     \
+  if (!sd)                                                             \
+    {                                                                  \
+       return __VA_ARGS__;                                             \
+    }
 
 
-static Efl_Ui_Focus_Manager *manager;
+#define EFL_UI_FOCUS_MANAGER_GET_OR_RETURN(o, ptr, ...)                \
+  Efl_Ui_Focus_Manager *ptr = _efl_ui_focus_manager_get(o);                                  \
+  if (!ptr)                                                            \
+    {                                                                  \
+       return __VA_ARGS__;                                             \
+    }
+
+static Efl_Ui_Focus_Manager *active_manager = NULL;
 
 static Efl_Ui_Focusable *
 _efl_ui_focus_manager_focus_root_get(Efl_Ui_Focusable *obj)
@@ -26,6 +40,12 @@ _efl_ui_focus_manager_focus_root_get(Efl_Ui_Focusable *obj)
         root = o;
      }
    return root;
+}
+
+static inline Efl_Ui_Focus_Manager *
+_efl_ui_focus_manager_get(Efl_Ui_Focusable *obj)
+{
+   return _efl_ui_win_focus_manager_get(_efl_ui_focus_manager_focus_root_get(obj));
 }
 
 static Efl_Ui_Focusable *
@@ -97,6 +117,8 @@ _efl_ui_focus_manager_handle(Efl_Ui_Focusable *obj)
 {
    EFL_UI_FOCUS_MANAGER_GET_OR_RETURN(obj, manager);
    EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
+   if (manager != active_manager)
+     return;
 
    Efl_Ui_Focusable *o = obj;
    efl_ui_focusable_focus_set(obj, EINA_FALSE);
@@ -121,14 +143,55 @@ _efl_ui_focus_manager_handle(Efl_Ui_Focusable *obj)
      }
 }
 
+void
+_efl_ui_focus_manager_active_manager_set(Efl_Ui_Focus_Manager *manager)
+{
+   if (!manager) return;
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(manager, EFL_UI_FOCUS_MANAGER_CLASS));
+   active_manager = manager;
+}
+
+void
+_efl_ui_focus_manager_last_focus_restore(Efl_Ui_Focusable *obj)
+{
+   EFL_UI_FOCUS_MANAGER_GET_OR_RETURN(obj, manager);
+   EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
+
+   Efl_Canvas_Object *last_focus;
+
+   if (pd->current_focus)
+     return;
+
+   last_focus = pd->last_focus;
+   pd->last_focus = NULL;
+
+   if (last_focus)
+     {
+        if (efl_isa(last_focus, EFL_UI_FOCUSABLE_INTERFACE))
+          efl_ui_focusable_focus_set(last_focus, EINA_TRUE);
+        else
+          evas_object_focus_set(last_focus, EINA_TRUE);
+     }
+
+   if (!pd->current_focus)
+     efl_ui_focusable_focus_set(obj, EINA_TRUE);
+}
+
 Eina_Bool
 _efl_ui_focus_manager_focus(Efl_Ui_Focusable *obj)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, EFL_UI_FOCUSABLE_INTERFACE), EINA_FALSE);
+   EFL_UI_FOCUS_MANAGER_GET_OR_RETURN(obj, manager, EINA_FALSE);
    EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
 
    Eina_List *l, *l_next;
    Efl_Ui_Focusable *focus_parent;
+
+   if (!active_manager)
+     {
+        pd->last_focus = obj;
+        return EINA_FALSE;
+     }
 
    if (!efl_ui_focusable_is(obj) || !_parent_check(obj))
      return EINA_FALSE;
@@ -169,6 +232,7 @@ Eina_Bool
 _efl_ui_focus_manager_unfocus(Efl_Ui_Focusable *obj)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, EFL_UI_FOCUSABLE_INTERFACE), EINA_FALSE);
+   EFL_UI_FOCUS_MANAGER_GET_OR_RETURN(obj, manager, EINA_FALSE);
    EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
 
    Eina_List *l;
@@ -200,7 +264,7 @@ _efl_ui_focus_manager_unfocus(Efl_Ui_Focusable *obj)
 EOLIAN static Eina_Bool
 _efl_ui_focus_manager_focus_move(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Efl_Ui_Focusable *root, Efl_Ui_Focus_Direction dir)
 {
-   EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
+   EFL_UI_FOCUS_MANAGER_DATA_GET_OR_RETURN(active_manager, pd, EINA_FALSE);
    Efl_Canvas_Object *cur;
    Efl_Ui_Focusable *next_focus = NULL;
 
@@ -244,7 +308,7 @@ end:
 EOLIAN static void
 _efl_ui_focus_manager_focus_clear(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
+   EFL_UI_FOCUS_MANAGER_DATA_GET_OR_RETURN(active_manager, pd);
    pd->current_focus = NULL;
    efl_ui_focusable_focus_set(eina_list_data_get(pd->focused_list), EINA_FALSE);
 }
@@ -252,7 +316,7 @@ _efl_ui_focus_manager_focus_clear(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 EOLIAN static Efl_Canvas_Object *
 _efl_ui_focus_manager_current_focus_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   EFL_UI_FOCUS_MANAGER_DATA_GET(manager, pd);
+   EFL_UI_FOCUS_MANAGER_DATA_GET_OR_RETURN(active_manager, pd, NULL);
    return pd->current_focus;
 }
 
