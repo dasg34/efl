@@ -82,27 +82,6 @@ _elm_scroller_proxy_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *pr
    evas_object_image_source_set(proxy, content);
    evas_object_show(proxy);
 }
-//describe position of rect2 relative to rect1
-// 1 = top outside
-// 2 = left outside
-// 4 = bottom outside
-// 8 = right outside
-static char
-_intersect_direction(Eina_Rectangle *rect1, Eina_Rectangle *rect2)
-{
-   char ret = 0;
-
-   if (rect1->y > rect2->y)
-     ret |= 1;
-   if (rect1->x > rect2->x)
-     ret |= 2;
-   if (rect1->y + rect1->h < rect2->y + rect2->h)
-     ret |= 4;
-   if (rect1->x + rect1->w < rect2->x + rect2->w)
-     ret |= 8;
-
-   return ret;
-}
 
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
@@ -131,47 +110,33 @@ _key_action_move(Evas_Object *obj, const char *params)
    elm_interface_scrollable_content_viewport_geometry_get
          (obj, &v_x, &v_y, &v_w, &v_h);
    evas_object_geometry_get(sd->content, NULL, NULL, &max_x, &max_y);
-
-   {
-      Efl_Ui_Focusable *focused;
-      Eina_Rectangle focused_geom, viewport;
-
-      focused = efl_ui_focus_manager_base_manager_focus_get(obj);
-
-      if (focused &&
-          (!strcmp(dir, "next") ||
-           !strcmp(dir, "prior")))
-        return EINA_FALSE;
-
-      if (focused &&
-          (!strcmp(dir, "left") ||
-           !strcmp(dir, "right") ||
-           !strcmp(dir, "up") ||
-           !strcmp(dir, "down")))
-        {
-           char relative;
-
-           evas_object_geometry_get(focused,
-                 &focused_geom.x, &focused_geom.y, &focused_geom.w, &focused_geom.h);
-           elm_interface_scrollable_content_viewport_geometry_get(obj,
-                 &viewport.x, &viewport.y, &viewport.w, &viewport.h);
-
-           relative = _intersect_direction(&viewport, &focused_geom);
-
-           //now precisly check if the direction is also lapping out
-           if ((!strcmp(dir, "up") && !(relative & 1)) ||
-               (!strcmp(dir, "left") && !(relative & 2)) ||
-               (!strcmp(dir, "down") && !(relative & 4)) ||
-               (!strcmp(dir, "right") && !(relative & 8)))
-             {
-                //focus will handle that
-                return EINA_FALSE;
-             }
-        }
-   }
-
    elm_interface_scrollable_paging_get(obj, NULL, NULL, &pagesize_h, &pagesize_v);
    elm_interface_scrollable_current_page_get(obj, &pagenumber_h, &pagenumber_v);
+
+   Efl_Ui_Focus_Direction focus_dir = EFL_UI_FOCUS_DIRECTION_LAST;
+
+   if (!strcmp(dir, "left"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_LEFT;
+   else if (!strcmp(dir, "right"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_RIGHT;
+   else if (!strcmp(dir, "up"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_UP;
+   else if (!strcmp(dir, "down"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_DOWN;
+
+   if (efl_ui_focus_manager_current_focus_get(EFL_UI_FOCUS_MANAGER_CLASS) == obj
+       && (focus_dir != EFL_UI_FOCUS_DIRECTION_LAST))
+     {
+        if (efl_ui_focus_manager_focus_move(EFL_UI_FOCUS_MANAGER_CLASS, obj,
+                                            EFL_UI_FOCUS_DIRECTION_NEXT))
+          return EINA_TRUE;
+     }
+   else
+     {
+        if (efl_ui_focus_manager_focus_move(EFL_UI_FOCUS_MANAGER_CLASS, obj,
+                                            focus_dir))
+          return EINA_TRUE;
+     }
 
    if (!strcmp(dir, "left"))
      {
@@ -853,34 +818,6 @@ elm_scroller_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
-static void
-_focused_element(void *data, const Efl_Event *event)
-{
-   Eina_Rect geom;
-   Efl_Ui_Focusable *obj = data;
-   Efl_Ui_Focusable *focus = efl_ui_focus_manager_base_manager_focus_get(event->object);
-   Elm_Scrollable_Smart_Interface_Data *pd;
-   Eina_Position2D pos;
-   int pan_x, pan_y;
-
-   pd = efl_data_scope_get(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
-
-   if (!focus) return;
-
-   geom = efl_ui_focusable_focus_geometry_get(focus);
-   pos = efl_gfx_entity_position_get(obj);
-   elm_obj_pan_pos_get(pd->pan_obj, &pan_x, &pan_y);
-   geom.x = geom.x + pan_x - pos.x;
-   geom.y = geom.y + pan_y - pos.y;
-
-   elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
-
-   geom = efl_gfx_entity_geometry_get(obj);
-   geom.x = geom.y = 0;
-   elm_widget_show_region_set(obj, geom, EINA_TRUE);
-
-}
-
 EOLIAN static Eo *
 _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED)
 {
@@ -888,7 +825,6 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SCROLL_PANE);
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_BASE_EVENT_FOCUSED, _focused_element, obj);
    return obj;
 }
 
@@ -1335,14 +1271,27 @@ _elm_scroller_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EOLIAN static Eina_Bool
-_elm_scroller_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
+EOLIAN static Eina_List *
+_elm_scroller_efl_ui_focusable_focusable_child_list_get(const Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
-   //undepended from logical or not we always reigster as full with ourself as redirect
-   configured_state->logical = EINA_TRUE;
-   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
-}
+   Eina_List *list, *l, *ll;
+   Efl_Canvas_Object *o;
+   Eina_Rect geom;
+   Eina_Rectangle viewport;
 
+   elm_interface_scrollable_content_viewport_geometry_get
+                      (obj, &viewport.x, &viewport.y, &viewport.w, &viewport.h);
+   list = efl_ui_focusable_child_list_get(efl_super(obj, MY_CLASS));
+   EINA_LIST_FOREACH_SAFE(list, l, ll, o)
+     {
+        if (o == obj) continue;
+        geom = efl_ui_focusable_focus_geometry_get(o);
+        if (!eina_rectangle_intersection(&geom.rect, &viewport))
+          list = eina_list_remove(list, o);
+     }
+
+   return list;
+}
 
 EOLIAN const Efl_Access_Action_Data *
 _elm_scroller_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)

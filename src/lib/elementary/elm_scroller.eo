@@ -51,12 +51,12 @@ class Elm.Scroller (Efl.Ui.Layout.Object, Elm.Interface_Scrollable,
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
+      Efl.Ui.Focusable.focusable_child_list { get; }
       Elm.Interface_Scrollable.page_size { set; }
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.single_direction { get; set; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Part.part_get;
-      Efl.Ui.Widget.focus_state_apply;
    }
    events {
       scroll,page,changed: void; [[Called when scroll page changed]]
