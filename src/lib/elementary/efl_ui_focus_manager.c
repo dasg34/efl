@@ -109,6 +109,12 @@ _efl_ui_focus_manager_handle(Efl_Ui_Focusable *obj)
      }
 }
 
+Efl_Ui_Focus_Direction
+_efl_ui_focus_manager_prev_direction_get()
+{
+   EFL_UI_FOCUS_MANAGER_DATA_GET_OR_RETURN(active_manager, pd, EFL_UI_FOCUS_DIRECTION_LAST);
+   return pd->prev_dir;
+}
 void
 _efl_ui_focus_manager_active_manager_set(Efl_Ui_Focus_Manager *manager)
 {
@@ -179,6 +185,7 @@ _efl_ui_focus_manager_focus(Efl_Ui_Focusable *obj)
         pd->focused_list = eina_list_append_relative_list(pd->focused_list,
                                                           obj, l);
      }
+   pd->prev_focus = pd->current_focus;
    pd->last_focus = pd->current_focus = obj;
 
    if (l_next)
@@ -306,6 +313,7 @@ _efl_ui_focus_manager_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_Data 
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->focus_stack = eina_hash_pointer_new(NULL);
+   pd->prev_dir = EFL_UI_FOCUS_DIRECTION_LAST;
    return obj;
 }
 

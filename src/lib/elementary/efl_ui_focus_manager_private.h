@@ -19,5 +19,6 @@ void _efl_ui_focus_manager_last_focus_restore(Efl_Ui_Focusable *obj);
 Eina_Bool _efl_ui_focus_manager_focus(Efl_Ui_Focusable *obj);
 Eina_Bool _efl_ui_focus_manager_unfocus(Efl_Ui_Focusable *obj);
 void _efl_ui_focus_manager_active_manager_set(Efl_Ui_Focus_Manager *manager);
+Efl_Ui_Focus_Direction _efl_ui_focus_manager_prev_direction_get();
 
 #endif //EFL_UI_FOCUS_MANAGER_H
