@@ -10,6 +10,11 @@ export LDFLAGS="-L$PREFIX/lib/"
 #export PKG_CONFIG_LIBDIR=$PREFIX/lib/pkgconfig/
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
+cd /src/ewpi/
+sed -i -e 's/installed: yes/installed: no/g' packages/dbus/dbus.ewpi
+./ewpi /root/EFL/ewpi_64 x86_64-w64-mingw32
+cd /src
+
 # epp is looked for in a hardcoded /usr/local/lib, need to fix in efl
 ln -s /usr/lib64/edje/ /usr/local/lib/edje
 
