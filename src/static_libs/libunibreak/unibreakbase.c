@@ -37,4 +37,3 @@
 /**
  * Version number of the library.
  */
-const int unibreak_version = UNIBREAK_VERSION;
