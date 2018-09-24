@@ -10,8 +10,9 @@ export LDFLAGS="-L$PREFIX/lib/"
 #export PKG_CONFIG_LIBDIR=$PREFIX/lib/pkgconfig/
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
-cd /src/ewpi/
+cd /ewpi/
 sed -i -e 's/installed: yes/installed: no/g' packages/dbus/dbus.ewpi
+sed -i -e 's/installed: yes/installed: no/g' packages/libtiff/libtiff.ewpi
 ./ewpi /root/EFL/ewpi_64 x86_64-w64-mingw32
 cd /src
 
