@@ -13,7 +13,6 @@ class TestEo
     //
     // Test cases:
     //
-/*
     public static void return_same_object()
     {
         test.Testing testing = new test.Testing();
@@ -24,7 +23,6 @@ class TestEo
         Test.Assert(o2.raw_handle != IntPtr.Zero);
         Test.Assert(o2.raw_handle == o1.raw_handle);
     }
-*/
     /* Commented out as adding the event listener seems to prevent it from being GC'd.
     public static void destructor_really_frees()
     {
@@ -89,7 +87,6 @@ class TestEo
     */
 }
 
-/*
 
 class MyLoop : efl.Loop
 {
@@ -250,6 +247,5 @@ class TestEoAccessors
         }
     }
 }
-*/
 
 }
