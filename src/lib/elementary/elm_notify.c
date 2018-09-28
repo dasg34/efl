@@ -20,6 +20,39 @@
 #define MY_CLASS_NAME "Elm_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_notify"
 
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   const char *dir = params;
+   Efl_Ui_Focus_Direction focus_dir;
+
+   if (!strcmp(dir, "previous"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_PREVIOUS;
+   else if (!strcmp(dir, "next"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_NEXT;
+   else if (!strcmp(dir, "left"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_LEFT;
+   else if (!strcmp(dir, "right"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_RIGHT;
+   else if (!strcmp(dir, "up"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_UP;
+   else if (!strcmp(dir, "down"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_DOWN;
+   else return EINA_FALSE;
+
+   if (efl_ui_focus_manager_focus_move(EFL_UI_FOCUS_MANAGER_CLASS, obj, focus_dir))
+     return EINA_TRUE;
+
+   return EINA_TRUE;
+}
+
 static Efl_Ui_Theme_Apply
 _notify_theme_apply(Evas_Object *obj)
 {
@@ -700,6 +733,10 @@ _elm_notify_class_constructor(Efl_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_notify, Elm_Notify_Data)
 
 /* Efl.Part begin */
 
