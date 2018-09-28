@@ -199,8 +199,8 @@ struct klass
         /*                                      default: return true; }; }); */
 
 
-        EINA_LOG_ERR("Length of inherit_classes: %d", inherit_classes.size());
-        EINA_LOG_ERR("Length of inherit_interfaces: %d", inherit_interfaces.size());
+        EINA_LOG_ERR("Length of inherit_classes: %lu", inherit_classes.size());
+        EINA_LOG_ERR("Length of inherit_interfaces: %lu", inherit_interfaces.size());
 
          if(!as_generator
             (
