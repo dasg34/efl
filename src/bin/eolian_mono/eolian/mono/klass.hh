@@ -624,7 +624,7 @@ struct klass
 
      // Generate event registrations here
 
-     if (is_inherit_context(context) && !root)
+     if (!root)
        if (!as_generator(scope_tab << scope_tab << "base.register_event_proxies();\n").generate(sink, NULL, context))
          return false;
 
@@ -729,8 +729,9 @@ struct klass
      EINA_LOG_ERR("Generating interface events for class %s", name_helpers::klass_full_concrete_or_interface_name(cls).c_str());
 
      // Inherited events
-     // 
-     auto inherits = is_inherit_context(context) ? helpers::non_implemented_interfaces(cls) : cls.inherits;
+
+     // For now, as mixins can inherit from regular classes, we can't filter out inherited events.
+     auto inherits = helpers::non_implemented_interfaces(cls);
      for (auto&& c : inherits)
        {
           attributes::klass_def klass(get_klass(c, cls.unit), cls.unit);
