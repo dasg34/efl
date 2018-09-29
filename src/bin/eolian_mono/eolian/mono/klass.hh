@@ -450,12 +450,6 @@ struct klass
                 << scope_tab << scope_tab << "get { return handle; }\n"
                 << scope_tab << "}\n"
 
-                << scope_tab << "public static System.IntPtr klass = System.IntPtr.Zero;\n"
-                << scope_tab << "private static readonly object klassAllocLock = new object();\n"
-                << scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
-                << scope_tab << "public System.IntPtr raw_klass {\n"
-                << scope_tab << scope_tab << "get { return klass; }\n"
-                << scope_tab << "}\n"
                 << scope_tab << "protected bool inherited;\n"
              ).generate(sink, attributes::unused, context);
    }
@@ -476,6 +470,16 @@ struct klass
             ).generate(sink, attributes::unused, context))
        return false;
 
+     if(!as_generator(
+                scope_tab << "public " << (root ? "" : "new ") <<  "static System.IntPtr klass = System.IntPtr.Zero;\n"
+                << scope_tab << "private static readonly object klassAllocLock = new object();\n"
+                << scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
+                << scope_tab << "public " << (root ? "" : "new " ) << "System.IntPtr raw_klass {\n"
+                << scope_tab << scope_tab << "get { return klass; }\n"
+                << scope_tab << "}\n"
+            ).generate(sink, attributes::unused, context))
+         return false;
+
      EINA_LOG_ERR("Root? %d\n", root);
      if (!root)
        {
@@ -484,7 +488,7 @@ struct klass
                      << scope_tab << "///<param>Parent instance.</param>\n"
                      << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
                      // FIXME Pass the class name and class get function to this constructor.
-                     << scope_tab << "public " << inherit_name << "(efl.Object parent = null, ConstructingMethod init_cb=null) : base(" << native_inherit_name << ".class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
+                     << scope_tab << "public " << inherit_name << "(efl.Object parent = null, ConstructingMethod init_cb=null) : base(" << native_inherit_name << ".class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent, ref klass)\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << "if (init_cb != null) {\n"
                      << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
@@ -494,7 +498,7 @@ struct klass
                      << scope_tab << "}\n"
 
                      << scope_tab << "///<summary>Internal construtor to forward the wrapper initialization to the root class.\n"
-                     << scope_tab << "protected " << inherit_name << "(efl.eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, Type managed_type, efl.Object parent) : base(class_initializer, klass_name, base_klass, managed_type, parent) {}\n"
+                     << scope_tab << "protected " << inherit_name << "(efl.eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, Type managed_type, efl.Object parent, ref IntPtr target_klass) : base(class_initializer, klass_name, base_klass, managed_type, parent, ref target_klass) {}\n"
 
                      << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
                      << scope_tab << "public " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
@@ -510,7 +514,7 @@ struct klass
              scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << inherit_name << "(efl.Object parent = null, ConstructingMethod init_cb=null) : this(" << native_inherit_name << ".class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) << "(), typeof(" << inherit_name << "), parent)\n"
+             << scope_tab << "public " << inherit_name << "(efl.Object parent = null, ConstructingMethod init_cb=null) : this(" << native_inherit_name << ".class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) << "(), typeof(" << inherit_name << "), parent, ref klass)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (init_cb != null) {\n"
              << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
@@ -520,24 +524,22 @@ struct klass
              << scope_tab << "}\n"
              /* << scope_tab << "protected " << inherit_name << "() {}\n" */
 
-             << scope_tab << "protected " << inherit_name << "(efl.eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, Type managed_type, efl.Object parent)\n"
+             << scope_tab << "protected " << inherit_name << "(efl.eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, Type managed_type, efl.Object parent, ref IntPtr target_klass)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "inherited = this.GetType() != managed_type;\n"
              << scope_tab << scope_tab << "IntPtr actual_klass = base_klass;\n"
              << scope_tab << scope_tab << "if (inherited) {\n"
-             << scope_tab << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "klass = efl.eo.Globals.register_class(class_initializer, klass_name, base_klass);\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "target_klass = efl.eo.Globals.register_class(class_initializer, klass_name, base_klass);\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "throw new System.InvalidOperationException(\"Failed to initialize class '" << inherit_name << "'\");\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "actual_klass = klass;\n"
-             << scope_tab << scope_tab << "} else {\n"
-             << scope_tab << scope_tab << scope_tab << "klass = actual_klass;\n"
+             << scope_tab << scope_tab << scope_tab << "actual_klass = target_klass;\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = efl.eo.Globals.instantiate_start(actual_klass, parent);\n"
              << scope_tab << "}\n"
