@@ -445,6 +445,7 @@ typedef struct _Elm_Widget_Smart_Data
    } legacy_focus;
    struct {
       Efl_Ui_Focusable          *custom_object[EFL_UI_FOCUS_DIRECTION_LAST];
+      Eina_List                 *chain;
       Efl_Ui_Focus_Type          type;
       Eina_Bool                  focused : 1;
    } focus;
@@ -756,6 +757,12 @@ EAPI const char      *elm_widget_theme_element_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_theme_style_set(Evas_Object *obj, const char *name);
 EAPI const char      *elm_widget_theme_style_get(const Evas_Object *obj);
 EAPI Efl_Ui_Theme_Apply elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name);
+
+EAPI void             elm_widget_focus_custom_chain_set(Eo *obj, Eina_List *objs);
+EAPI const Eina_List *elm_widget_focus_custom_chain_get(const Eo *obj EINA_UNUSED);
+EAPI void             elm_widget_focus_custom_chain_unset(Eo *obj EINA_UNUSED);
+EAPI void             elm_widget_focus_custom_chain_append(Eo *obj, Evas_Object *child, Evas_Object *relative_child);
+EAPI void             elm_widget_focus_custom_chain_prepend(Eo *obj, Evas_Object *child, Evas_Object *relative_child);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);

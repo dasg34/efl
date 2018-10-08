@@ -5819,13 +5819,16 @@ _efl_ui_widget_efl_ui_focusable_focus_next_get(const Eo *obj, Elm_Widget_Smart_D
 }
 
 EOLIAN static Eina_List *
-_efl_ui_widget_efl_ui_focusable_focusable_child_list_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_efl_ui_widget_efl_ui_focusable_focusable_child_list_get(const Eo *obj, Elm_Widget_Smart_Data *sd)
 {
-   const Eina_List *l;
+   const Eina_List *list, *l;
    Eina_List *child_list = NULL;
    Evas_Object *child;
 
-   EINA_LIST_FOREACH(sd->subobjs, l, child)
+   list = elm_widget_focus_custom_chain_get(obj);
+   if (!list) list = sd->subobjs;
+
+   EINA_LIST_FOREACH(list, l, child)
      {
         if (!efl_isa(child, EFL_UI_FOCUSABLE_INTERFACE) ||
             !efl_ui_focusable_is(child))
@@ -5848,6 +5851,150 @@ _efl_ui_widget_efl_ui_focusable_focusable_child_list_get(const Eo *obj EINA_UNUS
 /* Efl_Ui_Focus End */
 
 /* Legacy APIs */
+
+static void
+_elm_object_focus_chain_del_cb(void *data,
+                               Evas *e EINA_UNUSED,
+                               Evas_Object *obj,
+                               void *event_info EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET(data, sd);
+
+   sd->focus.chain = eina_list_remove(sd->focus.chain, obj);
+}
+
+/**
+ * @internal
+ *
+ * Set custom focus chain.
+ *
+ * This function i set one new and overwrite any previous custom focus chain
+ * with the list of objects. The previous list will be deleted and this list
+ * will be managed. After setted, don't modity it.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container widget
+ * @param objs Chain of objects to pass focus
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_custom_chain_set(Eo *obj, Eina_List *objs)
+{
+   API_ENTRY return;
+   elm_widget_focus_custom_chain_unset(obj);
+
+   Eina_List *l;
+   Evas_Object *o;
+
+   EINA_LIST_FOREACH(objs, l, o)
+     {
+        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                       _elm_object_focus_chain_del_cb, obj);
+     }
+
+   sd->focus.chain = objs;
+}
+
+/**
+ * @internal
+ *
+ * Get custom focus chain
+ *
+ * @param obj The container widget
+ * @ingroup Widget
+ */
+EAPI const Eina_List*
+elm_widget_focus_custom_chain_get(const Eo *obj EINA_UNUSED)
+{
+   API_ENTRY return NULL;
+   return (const Eina_List *)sd->focus.chain;
+}
+
+/**
+ * @internal
+ *
+ * Unset custom focus chain
+ *
+ * @param obj The container widget
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_custom_chain_unset(Eo *obj EINA_UNUSED)
+{
+   API_ENTRY return;
+   Eina_List *l, *l_next;
+   Evas_Object *o;
+
+   EINA_LIST_FOREACH_SAFE(sd->focus.chain, l, l_next, o)
+     {
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
+                                            _elm_object_focus_chain_del_cb, obj);
+        sd->focus.chain = eina_list_remove_list(sd->focus.chain, l);
+     }
+}
+
+/**
+ * @internal
+ *
+ * Append object to custom focus chain.
+ *
+ * @note If relative_child equal to NULL or not in custom chain, the object
+ * will be added in end.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container widget
+ * @param child The child to be added in custom chain
+ * @param relative_child The relative object to position the child
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_custom_chain_append(Eo *obj, Evas_Object *child, Evas_Object *relative_child)
+{
+   API_ENTRY return;
+   EINA_SAFETY_ON_NULL_RETURN(child);
+
+   evas_object_event_callback_add(child, EVAS_CALLBACK_DEL,
+                                  _elm_object_focus_chain_del_cb, obj);
+
+   if (!relative_child)
+     sd->focus.chain = eina_list_append(sd->focus.chain, child);
+   else
+     sd->focus.chain = eina_list_append_relative(sd->focus.chain,
+                                                 child, relative_child);
+}
+
+/**
+ * @internal
+ *
+ * Prepend object to custom focus chain.
+ *
+ * @note If relative_child equal to NULL or not in custom chain, the object
+ * will be added in begin.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container widget
+ * @param child The child to be added in custom chain
+ * @param relative_child The relative object to position the child
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_custom_chain_prepend(Eo *obj, Evas_Object *child, Evas_Object *relative_child)
+{
+   API_ENTRY return;
+   EINA_SAFETY_ON_NULL_RETURN(child);
+
+   evas_object_event_callback_add(child, EVAS_CALLBACK_DEL,
+                                  _elm_object_focus_chain_del_cb, obj);
+
+   if (!relative_child)
+     sd->focus.chain = eina_list_prepend(sd->focus.chain, child);
+   else
+     sd->focus.chain = eina_list_prepend_relative(sd->focus.chain,
+                                                  child, relative_child);
+}
 
 /* elm_object_content_xxx APIs are supposed to work on all objects for which
  * elm_object_widget_check() returns true. The below checks avoid printing out
