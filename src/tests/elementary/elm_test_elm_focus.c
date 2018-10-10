@@ -15,8 +15,19 @@
    ck_assert_ptr_eq(elm_object_focused_object_get(win), obj);
 
 
-static Evas_Object *win, *bx_main, *bx1, *bx2, *bx3;
+static Evas_Object *win, *bx_main, *bx1, *bx2, *bx3, *scr;
 static Evas_Object *btn, *btn1[2],*btn2[3], *btn3[4];
+
+typedef struct _Focus_Count Focus_Count;
+static struct _Focus_Count{
+   int win, scr, btn, btn1[2], btn2[3], btn3[4];
+} focus_count;
+
+static inline void
+focus_count_init()
+{
+   memset(&focus_count, 0, sizeof(Focus_Count));
+}
 
 static Evas_Object *
 test_button_create(Evas_Object *box, const char *text)
@@ -97,6 +108,67 @@ focus_custom_view_create()
    evas_object_show(win);
 }
 
+static void
+_focused_cb(void *data, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
+{
+   (*(int*)data)++;
+}
+
+static void
+_unfocused_cb(void *data, Evas_Object *obj EINA_UNUSED,
+            void *event_info EINA_UNUSED)
+{
+   (*(int*)data)--;
+}
+
+static void
+focus_state_view_create()
+{
+#define FOCUS_CALLBACK_ADD(obj) \
+   evas_object_smart_callback_add(obj, "focused", _focused_cb, &focus_count.obj); \
+   evas_object_smart_callback_add(obj, "unfocused", _unfocused_cb, &focus_count.obj);
+
+   focus_count_init();
+   win = win_add(NULL, "focus_state", ELM_WIN_BASIC);
+   ecore_evas_focus_device_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), NULL, 0);
+   elm_win_autodel_set(win, EINA_TRUE);
+   FOCUS_CALLBACK_ADD(win);
+
+   bx_main = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx_main, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx_main);
+   evas_object_show(bx_main);
+
+   bx1 = test_box_create(bx_main);
+   btn2[0] = test_button_create(bx1, "btn2_1");
+   FOCUS_CALLBACK_ADD(btn2[0]);
+
+   bx2 = test_box_create(bx1);
+   btn2[1] = test_button_create(bx2, "btn2_2");
+   FOCUS_CALLBACK_ADD(btn2[1]);
+   elm_object_focus_set(btn2[1], EINA_TRUE);
+   btn2[2] = test_button_create(bx2, "btn2_3");
+   FOCUS_CALLBACK_ADD(btn2[2]);
+
+   scr = elm_scroller_add(bx_main);
+   evas_object_size_hint_weight_set(scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   FOCUS_CALLBACK_ADD(scr);
+   elm_box_pack_end(bx_main, scr);
+   evas_object_show(scr);
+
+   btn = elm_button_add(scr);
+   elm_object_text_set(btn, "btn");
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   FOCUS_CALLBACK_ADD(btn);
+   elm_object_content_set(scr, btn);
+
+   evas_object_resize(win, 300, 400);
+   evas_object_show(win);
+}
+
 EFL_START_TEST (elm_focus_custom_focus)
 {
    focus_custom_view_create();
@@ -142,7 +214,48 @@ EFL_START_TEST (elm_focus_custom_focus)
 }
 EFL_END_TEST
 
+EFL_START_TEST (elm_focus_state)
+{
+   focus_state_view_create();
+   ecore_evas_manual_render(ecore_evas_ecore_evas_get(evas_object_evas_get(win)));
+   ecore_evas_focus_device_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), NULL, 1);
+
+   // parent focus test
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), btn2[1]);
+   ck_assert_int_eq(elm_object_focus_get(btn2[1]), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(win), EINA_TRUE);
+   ck_assert_int_eq(focus_count.btn2[1], 1);
+   ck_assert_int_eq(focus_count.win, 1);
+
+   elm_object_focus_set(btn, EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(scr), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(win), EINA_TRUE);
+   ck_assert_int_eq(focus_count.btn, 1);
+   ck_assert_int_eq(focus_count.scr, 1);
+   ck_assert_int_eq(focus_count.win, 1);
+   ck_assert_int_eq(focus_count.btn2[1], 0);
+
+   // disable focus test
+   elm_object_focus_set(btn2[0], EINA_TRUE);
+   ck_assert_int_eq(focus_count.btn, 0);
+   ck_assert_int_eq(focus_count.scr, 0);
+   elm_object_focus_set(btn2[1], EINA_TRUE);
+   elm_object_disabled_set(btn2[1], EINA_TRUE);
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), btn2[0]);
+   ck_assert_int_eq(elm_object_focus_get(btn2[1]), EINA_FALSE);
+   ck_assert_int_eq(focus_count.btn2[1], 0);
+
+   TEST_FOCUS_NEXT(DOWN, btn2[2]);
+   elm_object_disabled_set(btn2[1], EINA_FALSE);
+   TEST_FOCUS_NEXT(UP, btn2[1]);
+   ck_assert_int_eq(elm_object_focus_get(btn2[1]), EINA_TRUE);
+   ck_assert_int_eq(focus_count.btn2[1], 1);
+}
+EFL_END_TEST
+
 void elm_test_elm_focus(TCase *tc)
 {
    tcase_add_test(tc, elm_focus_custom_focus);
+   tcase_add_test(tc, elm_focus_state);
 }
