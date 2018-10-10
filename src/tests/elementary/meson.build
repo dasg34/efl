@@ -99,9 +99,8 @@ elementary_suite_src = [
   'elm_test_focus_common.c',
   'elm_test_focus_common.h',
   'elm_test_focus.c',
-  'elm_test_focus_sub.c',
   'efl_ui_test_grid.c',
-  'elm_test_widget_focus.c'
+  'elm_test_elm_focus.c'
 ]
 
 elementary_suite = executable('elementary_suite',

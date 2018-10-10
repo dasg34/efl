@@ -92,6 +92,7 @@ static const Efl_Test_Case etc[] = {
  * EFL_UI_TEST BEGIN */
   { "efl_ui_grid", efl_ui_test_grid},
 /* EFL_UI_TEST END */
+  { "elm_focus_elm_focus", elm_test_elm_focus},
   { NULL, NULL }
 };
 

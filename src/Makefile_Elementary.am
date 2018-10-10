@@ -1543,6 +1543,7 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_widget_selection.c \
 	tests/elementary/elm_code_test_widget_undo.c \
 	tests/elementary/efl_ui_test_grid.c \
+	tests/elementary/elm_test_elm_focus.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \

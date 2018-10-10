@@ -85,6 +85,7 @@ void elm_test_plug(TCase *tc);
  * EFL_UI_TEST BEGIN */
 void efl_ui_test_grid(TCase *tc);
 /* EFL_UI_TEST END */
+void elm_test_elm_focus(TCase *tc);
 
 void elm_code_file_test_load(TCase *tc);
 void elm_code_file_test_memory(TCase *tc);

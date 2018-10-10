@@ -532,7 +532,7 @@ _elm_layout_list_data_get(const Eina_List *list)
  * child objects, but still inheriting from elm_layout, just set its
  * focus_next smart function back to NULL */
 EOLIAN static Eina_Bool
-_efl_ui_layout_object_efl_ui_widget_focus_next(Eo *obj, Efl_Ui_Layout_Data *sd, Efl_Ui_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+_efl_ui_layout_efl_ui_widget_focus_next(Eo *obj, Efl_Ui_Layout_Data *sd, Efl_Ui_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
 {
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
@@ -609,7 +609,7 @@ _efl_ui_layout_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_object_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
+_efl_ui_layout_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *_pd EINA_UNUSED)
 {
    if (!elm_widget_can_focus_get(obj))
      return EINA_TRUE;
@@ -618,7 +618,7 @@ _efl_ui_layout_object_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUS
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_object_efl_ui_widget_focus_direction(Eo *obj, Efl_Ui_Layout_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+_efl_ui_layout_efl_ui_widget_focus_direction(Eo *obj, Efl_Ui_Layout_Data *sd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
 {
    const Eina_List *items;
    void *(*list_data_get)(const Eina_List *list);
