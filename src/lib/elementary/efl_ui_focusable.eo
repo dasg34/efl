@@ -54,6 +54,11 @@ interface Efl.Ui.Focusable
             child_list : list<Efl.Canvas.Object>;
          }
       }
+      @property tree_focus_allow {
+         values {
+            allowed : bool;
+         }
+      }
       focusable_is {
          return : bool;
       }
