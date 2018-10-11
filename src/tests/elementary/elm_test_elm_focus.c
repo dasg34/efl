@@ -251,6 +251,33 @@ EFL_START_TEST (elm_focus_state)
    TEST_FOCUS_NEXT(UP, btn2[1]);
    ck_assert_int_eq(elm_object_focus_get(btn2[1]), EINA_TRUE);
    ck_assert_int_eq(focus_count.btn2[1], 1);
+
+   // tree focus test
+   elm_object_focus_set(btn2[0], EINA_TRUE);
+   elm_object_focus_set(btn2[1], EINA_TRUE);
+   elm_object_focus_set(btn2[2], EINA_TRUE);
+   elm_object_tree_focus_allow_set(bx2, EINA_FALSE);
+   ck_assert_int_eq(elm_object_focus_get(btn2[0]), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(btn2[1]), EINA_FALSE);
+   ck_assert_int_eq(elm_object_focus_get(btn2[2]), EINA_FALSE);
+   ck_assert_int_eq(focus_count.btn2[0], 1);
+   ck_assert_int_eq(focus_count.btn2[1], 0);
+   ck_assert_int_eq(focus_count.btn2[2], 0);
+
+   elm_object_focus_set(btn2[1], EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(btn2[1]), EINA_FALSE);
+   ck_assert_int_eq(focus_count.btn2[1], 0);
+
+   TEST_FOCUS_NEXT(DOWN, btn);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_TRUE);
+   ck_assert_int_eq(focus_count.btn, 1);
+
+   elm_object_tree_focus_allow_set(bx2, EINA_TRUE);
+   elm_object_focus_set(btn2[0], EINA_TRUE);
+   elm_object_focus_set(btn2[1], EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(btn2[1]), EINA_TRUE);
+   ck_assert_int_eq(focus_count.btn2[1], 1);
+   ck_assert_int_eq(focus_count.btn2[0], 0);
 }
 EFL_END_TEST
 

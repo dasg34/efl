@@ -191,7 +191,6 @@ _on_sub_obj_del(void *data, const Efl_Event *event);
 static void
 _on_sub_obj_hide(void *data, const Efl_Event *event);
 static void _propagate_event(void *data, const Efl_Event *eo_event);
-static void _elm_widget_focus_tree_unfocusable_handle(Eo *obj);
 static void _elm_widget_shadow_update(Efl_Ui_Widget *obj);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
@@ -1865,10 +1864,8 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
    tree_unfocusable = !!tree_unfocusable;
    if (sd->tree_unfocusable == tree_unfocusable) return;
    sd->tree_unfocusable = tree_unfocusable;
-   _elm_widget_focus_tree_unfocusable_handle(obj);
 
-   //focus state eval on all children
-   _elm_widget_full_eval_children(obj, sd);
+   _efl_ui_focus_manager_handle(obj);
 }
 
 /**
@@ -3435,12 +3432,6 @@ elm_widget_focus_mouse_up_handle(Eo *obj)
    if (!efl_ui_widget_focus_allow_get(o)) return;
 
    elm_object_focus_set(o, EINA_TRUE);
-}
-
-static void
-_elm_widget_focus_tree_unfocusable_handle(Eo *obj EINA_UNUSED)
-{
-   //FIXME
 }
 
 /*
@@ -5769,10 +5760,22 @@ _efl_ui_widget_efl_ui_focusable_focus_custom_object_get(const Eo *obj EINA_UNUSE
    return sd->focus.custom_object[dir];
 }
 
+EOLIAN static void
+_efl_ui_widget_efl_ui_focusable_tree_focus_allow_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Bool allowed)
+{
+   elm_widget_tree_unfocusable_set(obj, !allowed);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_widget_efl_ui_focusable_tree_focus_allow_get(const Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+{
+   return !elm_widget_tree_unfocusable_get(obj);
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_widget_efl_ui_focusable_focusable_is(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
-   return efl_gfx_entity_visible_get(obj) && !sd->disabled;
+   return efl_gfx_entity_visible_get(obj) && !sd->disabled && !sd->tree_unfocusable;
 }
 
 EOLIAN static Efl_Ui_Focusable *
