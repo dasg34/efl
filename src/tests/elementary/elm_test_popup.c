@@ -55,6 +55,7 @@ EFL_START_TEST (elm_popup_focus_get)
    Eina_Bool focused = EINA_FALSE;
 
    win = win_add(NULL, "popup", ELM_WIN_BASIC);
+   ecore_evas_focus_device_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), NULL, 0);
 
    popup = elm_popup_add(win);
    elm_popup_scrollable_set(popup, EINA_TRUE);
@@ -66,6 +67,8 @@ EFL_START_TEST (elm_popup_focus_get)
    // popup show should be called after adding all the contents and the buttons
    // of popup to set the focus into popup's contents correctly.
    evas_object_show(popup);
+   evas_object_show(win);
+   ecore_evas_focus_device_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), NULL, 1);
    ck_assert(focused);
 }
 EFL_END_TEST

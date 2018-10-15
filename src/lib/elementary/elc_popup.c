@@ -135,12 +135,15 @@ _access_object_get(const Evas_Object *obj, const char* part)
 }
 
 static void
-_on_show(void *data EINA_UNUSED,
+_on_show(void *data,
          Evas *e EINA_UNUSED,
          Evas_Object *obj,
          void *event_info EINA_UNUSED)
 {
+   Evas_Object *popup = data;
    elm_object_focus_set(obj, EINA_TRUE);
+   if (!elm_object_focus_get(popup))
+     elm_object_focus_set(popup, EINA_TRUE);
 }
 
 static void
@@ -224,17 +227,6 @@ _items_remove(Elm_Popup_Data *sd)
    sd->items = NULL;
 }
 
-static void
-_focus_changed_popup(void *data, const Efl_Event *ev)
-{
-   //mirror property
-   efl_ui_focusable_focus_set(data, efl_ui_focusable_focus_get(ev->object));
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(composition_cb,
-   { EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _focus_changed_popup },
-)
-
 EOLIAN static void
 _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
 {
@@ -247,8 +239,7 @@ _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
    efl_event_callback_array_del(sd->notify, _notify_cb(), obj);
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
-   efl_event_callback_array_del(sd->notify, composition_cb(), obj);
+   evas_object_event_callback_del(sd->main_layout, EVAS_CALLBACK_SHOW, _on_show);
 
    sd->last_button_number = 0;
 
@@ -917,18 +908,19 @@ _elm_popup_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Popup_Ite
 }
 
 static void
-_item_focus_change(void *data, const Efl_Event *event EINA_UNUSED)
+_item_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   if (efl_ui_focusable_focus_get(event->object))
-     {
-        efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-     }
-   else
-     {
-        efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
-     }
+   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+}
+
+static void
+_item_unfocused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Popup_Item_Data *it = data;
+
+   efl_event_callback_legacy_call(WIDGET(it), ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
 }
 
 EOLIAN static Eo *
@@ -958,8 +950,8 @@ _item_new(Elm_Popup_Item_Data *it)
         elm_layout_signal_callback_add(VIEW(it), "elm,action,click", "*",
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-        efl_event_callback_add
-              (VIEW(it), EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _item_focus_change, it);
+        evas_object_smart_callback_add(VIEW(it), "focused", _item_focused_cb, it);
+        evas_object_smart_callback_add(VIEW(it), "unfocused", _item_unfocused_cb, it);
         evas_object_show(VIEW(it));
      }
 }
@@ -1445,7 +1437,6 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
    elm_object_mirrored_set(priv->notify, elm_object_mirrored_get(obj));
 
    evas_object_event_callback_add(priv->notify, EVAS_CALLBACK_RESIZE, _notify_resize_cb, obj);
-   efl_event_callback_array_add(priv->notify, composition_cb(), obj);
 
    priv->main_layout = elm_layout_add(obj);
    if (!elm_layout_theme_set(priv->main_layout, "popup", "base",
@@ -1454,7 +1445,7 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
 
    elm_object_content_set(priv->notify, priv->main_layout);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
+   evas_object_event_callback_add(priv->main_layout, EVAS_CALLBACK_SHOW, _on_show, obj);
    efl_ui_mirrored_automatic_set(priv->main_layout, EINA_FALSE);
    elm_object_mirrored_set(priv->main_layout, elm_object_mirrored_get(obj));
 
@@ -1477,6 +1468,8 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
 
    priv->content_text_wrap_type = ELM_WRAP_MIXED;
    efl_event_callback_array_add(priv->notify, _notify_cb(), obj);
+
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    _populate_theme_scroll(priv);
 
@@ -1548,6 +1541,7 @@ _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
+   efl_ui_focusable_focus_type_set(obj, EFL_UI_FOCUS_TYPE_LAYER);
 
    return obj;
 }
