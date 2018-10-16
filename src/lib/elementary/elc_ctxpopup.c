@@ -917,16 +917,7 @@ _on_show(void *data EINA_UNUSED,
      {
         elm_list_go(sd->list);
         sd->visible = EINA_TRUE;
-        /*
-         * XXX: Giving focus to the list when it has nothing selected makes
-         * it select the first of its items, which makes the popup in
-         * Terminology never open and instead just trigger the first option.
-         * I'll let as an exercise to the reader to figure out why that
-         * is so fucking annoying. Extra points for noting why this is my
-         * choice of a "fix" instead of fixing the actual focus/select issue
-         * that seems to be spread all over Elementary.
-         */
-        //elm_object_focus_set(sd->list, EINA_TRUE);
+        elm_object_focus_set(sd->list, EINA_TRUE);
         return;
      }
 
@@ -938,10 +929,9 @@ _on_show(void *data EINA_UNUSED,
    _show_signals_emit(obj, sd->dir);
 
    elm_layout_sizing_eval(obj);
-   /*
-    * XXX: see above comment, but for any swallowed list-type object
-    */
-   //elm_object_focus_set(obj, EINA_TRUE);
+   elm_object_focus_set(sd->content, EINA_TRUE);
+   if (!elm_object_focus_get(obj))
+     elm_object_focus_set(obj, EINA_TRUE);
 }
 
 static void
@@ -1145,6 +1135,7 @@ _elm_ctxpopup_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
+   efl_ui_focusable_focus_type_set(obj, EFL_UI_FOCUS_TYPE_LAYER);
 
    return obj;
 }
