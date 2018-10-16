@@ -184,18 +184,20 @@ _on_item_clicked(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_item_focus_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_item_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   if (efl_ui_focusable_focus_get(event->object))
-     {
-        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-     }
-   else
-     {
-        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
-     }
+   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+}
+
+static void
+_item_unfocused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+
+{
+   Elm_Hoversel_Item_Data *it = data;
+
+   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
 }
 
 static void
@@ -205,6 +207,7 @@ _create_scroller(Evas_Object *obj, Elm_Hoversel_Data *sd)
    sd->tbl = elm_table_add(obj);
    evas_object_size_hint_align_set(sd->tbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(sd->tbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(sd->tbl);
 
    //spacer
    sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -496,6 +499,7 @@ _activate(Evas_Object *obj)
    elm_box_horizontal_set(sd->bx, sd->horizontal);
    evas_object_size_hint_align_set(sd->bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(sd->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(sd->bx);
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
@@ -516,6 +520,10 @@ _activate(Evas_Object *obj)
 
    efl_event_callback_legacy_call(obj, ELM_HOVERSEL_EVENT_EXPANDED, NULL);
    evas_object_show(sd->hover);
+
+   eo_item = eina_list_data_get(sd->items);
+   ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
+   elm_object_focus_set(VIEW(item), EINA_TRUE);
 }
 
 static void
@@ -878,7 +886,9 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
     efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
-    efl_event_callback_add(bt, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _item_focus_changed, item);
+
+   evas_object_smart_callback_add(bt, "focused", _item_focused_cb, item);
+   evas_object_smart_callback_add(bt, "unfocused", _item_unfocused_cb, item);
 
    sd->items = eina_list_append(sd->items, eo_item);
 
