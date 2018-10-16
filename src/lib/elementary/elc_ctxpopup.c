@@ -43,8 +43,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 #undef ELM_PRIV_CTXPOPUP_SIGNALS
 
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
+static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 
 static const Elm_Action key_actions[] = {
+   {"move", _key_action_move},
    {"escape", _key_action_escape},
    {NULL, NULL}
 };
@@ -61,6 +63,32 @@ _elm_ctxpopup_efl_ui_translatable_translation_update(Eo *obj, Elm_Ctxpopup_Data 
      elm_wdg_item_translate(it);
 
    efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+}
+
+static Eina_Bool
+_key_action_move(Evas_Object *obj, const char *params)
+{
+   const char *dir = params;
+   Efl_Ui_Focus_Direction focus_dir;
+
+   if (!strcmp(dir, "previous"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_PREVIOUS;
+   else if (!strcmp(dir, "next"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_NEXT;
+   else if (!strcmp(dir, "left"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_LEFT;
+   else if (!strcmp(dir, "right"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_RIGHT;
+   else if (!strcmp(dir, "up"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_UP;
+   else if (!strcmp(dir, "down"))
+     focus_dir = EFL_UI_FOCUS_DIRECTION_DOWN;
+   else return EINA_FALSE;
+
+   if (efl_ui_focus_manager_focus_move(EFL_UI_FOCUS_MANAGER_CLASS, obj, focus_dir))
+     return EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -917,16 +945,7 @@ _on_show(void *data EINA_UNUSED,
      {
         elm_list_go(sd->list);
         sd->visible = EINA_TRUE;
-        /*
-         * XXX: Giving focus to the list when it has nothing selected makes
-         * it select the first of its items, which makes the popup in
-         * Terminology never open and instead just trigger the first option.
-         * I'll let as an exercise to the reader to figure out why that
-         * is so fucking annoying. Extra points for noting why this is my
-         * choice of a "fix" instead of fixing the actual focus/select issue
-         * that seems to be spread all over Elementary.
-         */
-        //elm_object_focus_set(sd->list, EINA_TRUE);
+        elm_object_focus_set(sd->list, EINA_TRUE);
         return;
      }
 
@@ -938,10 +957,9 @@ _on_show(void *data EINA_UNUSED,
    _show_signals_emit(obj, sd->dir);
 
    elm_layout_sizing_eval(obj);
-   /*
-    * XXX: see above comment, but for any swallowed list-type object
-    */
-   //elm_object_focus_set(obj, EINA_TRUE);
+   elm_object_focus_set(sd->content, EINA_TRUE);
+   if (!elm_object_focus_get(obj))
+     elm_object_focus_set(obj, EINA_TRUE);
 }
 
 static void
