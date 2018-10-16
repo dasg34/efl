@@ -100,6 +100,7 @@ class Elm.Hoversel (Efl.Ui.Button_Legacy, Efl.Ui.Selectable,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Translatable.translation_update;
       Efl.Ui.Widget.widget_event;
+      Efl.Ui.Focusable.focus_next { get; }
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Object.access_children { get; }

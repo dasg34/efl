@@ -39,13 +39,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static Eina_Bool _hoversel_efl_ui_widget_widget_event(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED);
 
 static const Elm_Action key_actions[] = {
-   {"move", _key_action_move},
    {"activate", _key_action_activate},
    {"escape", _key_action_escape},
    {NULL, NULL}
@@ -184,18 +182,20 @@ _on_item_clicked(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_item_focus_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_item_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   if (efl_ui_focusable_focus_get(event->object))
-     {
-        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
-     }
-   else
-     {
-        efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
-     }
+   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it));
+}
+
+static void
+_item_unfocused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+
+{
+   Elm_Hoversel_Item_Data *it = data;
+
+   efl_event_callback_legacy_call(WIDGET(it), ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it));
 }
 
 static void
@@ -205,6 +205,7 @@ _create_scroller(Evas_Object *obj, Elm_Hoversel_Data *sd)
    sd->tbl = elm_table_add(obj);
    evas_object_size_hint_align_set(sd->tbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(sd->tbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(sd->tbl);
 
    //spacer
    sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
@@ -496,6 +497,7 @@ _activate(Evas_Object *obj)
    elm_box_horizontal_set(sd->bx, sd->horizontal);
    evas_object_size_hint_align_set(sd->bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(sd->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(sd->bx);
 
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
@@ -516,6 +518,10 @@ _activate(Evas_Object *obj)
 
    efl_event_callback_legacy_call(obj, ELM_HOVERSEL_EVENT_EXPANDED, NULL);
    evas_object_show(sd->hover);
+
+   eo_item = eina_list_data_get(sd->items);
+   ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
+   elm_object_focus_set(VIEW(item), EINA_TRUE);
 }
 
 static void
@@ -707,6 +713,7 @@ _elm_hoversel_efl_object_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
+   efl_ui_focusable_focus_type_set(obj, EFL_UI_FOCUS_TYPE_LAYER);
 
    return obj;
 }
@@ -878,7 +885,9 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
     efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
-    efl_event_callback_add(bt, EFL_UI_FOCUSABLE_EVENT_FOCUS_CHANGED, _item_focus_changed, item);
+
+   evas_object_smart_callback_add(bt, "focused", _item_focused_cb, item);
+   evas_object_smart_callback_add(bt, "unfocused", _item_unfocused_cb, item);
 
    sd->items = eina_list_append(sd->items, eo_item);
 
@@ -925,71 +934,14 @@ item_focused_get(Elm_Hoversel_Data *sd)
    return NULL;
 }
 
-static Eina_Bool
+static Efl_Ui_Focusable *
 item_focused_set(Elm_Object_Item *eo_item, Eina_Bool focus)
 {
    ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
    if (elm_object_disabled_get(VIEW(item)))
-      return EINA_FALSE;
+      return NULL;
    elm_object_focus_set(VIEW(item), focus);
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_key_action_move(Evas_Object *obj, const char *params)
-{
-   Eina_List *l;
-   Elm_Object_Item *focused_item, *eo_item;
-   Eina_Bool ret, next = EINA_FALSE;
-
-   ELM_HOVERSEL_DATA_GET(obj, sd);
-   const char *dir = params;
-
-   if (!sd->hover) return EINA_FALSE;
-   _elm_widget_focus_auto_show(obj);
-   if (!strcmp(dir, "down") || !strcmp(dir, "right"))
-     {
-        focused_item = item_focused_get(sd);
-        EINA_LIST_FOREACH(sd->items, l, eo_item)
-          {
-             if (next)
-               {
-                  ret = item_focused_set(eo_item, EINA_TRUE);
-                  if (ret) return EINA_TRUE;
-               }
-             if (eo_item == focused_item) next = EINA_TRUE;
-          }
-        EINA_LIST_FOREACH(sd->items, l, eo_item)
-          {
-             if (eo_item == focused_item) return EINA_FALSE;
-
-             ret = item_focused_set(eo_item, EINA_TRUE);
-             if (ret) return EINA_TRUE;
-          }
-        return EINA_FALSE;
-     }
-   else if (!strcmp(dir, "up") || !strcmp(dir, "left"))
-     {
-        focused_item = item_focused_get(sd);
-        EINA_LIST_REVERSE_FOREACH(sd->items, l, eo_item)
-          {
-             if (next)
-               {
-                  ret = item_focused_set(eo_item, EINA_TRUE);
-                  if (ret) return EINA_TRUE;
-               }
-             if (eo_item == focused_item) next = EINA_TRUE;
-          }
-        EINA_LIST_REVERSE_FOREACH(sd->items, l, eo_item)
-          {
-             if (eo_item == focused_item) return EINA_FALSE;
-
-             ret = item_focused_set(eo_item, EINA_TRUE);
-             if (ret) return EINA_TRUE;
-          }
-        return EINA_FALSE;
-     }
-   else return EINA_FALSE;
+   return VIEW(item);
 }
 
 static Eina_Bool
@@ -1033,10 +985,6 @@ _elm_hoversel_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
-          { "move,up", "move", "up", _key_action_move},
-          { "move,down", "move", "down", _key_action_move},
-          { "move,left", "move", "left", _key_action_move},
-          { "move,right", "move", "right", _key_action_move},
           { "escape", "escape", NULL, _key_action_escape},
           { NULL, NULL, NULL, NULL}
    };
@@ -1059,6 +1007,62 @@ EOLIAN Eina_Bool
 _elm_hoversel_auto_update_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    return sd->auto_update;
+}
+
+EOLIAN static Efl_Ui_Focusable *
+_elm_hoversel_efl_ui_focusable_focus_next_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd, Efl_Ui_Focusable* cur EINA_UNUSED, Efl_Ui_Focus_Direction dir)
+{
+   Eina_List *l;
+   Elm_Object_Item *focused_item, *eo_item;
+   Eina_Bool next = EINA_FALSE;
+   Efl_Ui_Focusable *ret;
+
+   if (!sd->hover) return NULL;
+   if ((dir == EFL_UI_FOCUS_DIRECTION_DOWN) ||
+       (dir == EFL_UI_FOCUS_DIRECTION_RIGHT))
+     {
+        focused_item = item_focused_get(sd);
+        EINA_LIST_FOREACH(sd->items, l, eo_item)
+          {
+             if (next)
+               {
+                  ret = item_focused_set(eo_item, EINA_TRUE);
+                  if (ret) return ret;
+               }
+             if (eo_item == focused_item) next = EINA_TRUE;
+          }
+        EINA_LIST_FOREACH(sd->items, l, eo_item)
+          {
+             if (eo_item == focused_item) return NULL;
+
+             ret = item_focused_set(eo_item, EINA_TRUE);
+             if (ret) return ret;
+          }
+        return NULL;
+     }
+   else if ((dir == EFL_UI_FOCUS_DIRECTION_UP) ||
+            (dir == EFL_UI_FOCUS_DIRECTION_LEFT))
+     {
+        focused_item = item_focused_get(sd);
+        EINA_LIST_REVERSE_FOREACH(sd->items, l, eo_item)
+          {
+             if (next)
+               {
+                  ret = item_focused_set(eo_item, EINA_TRUE);
+                  if (ret) return ret;
+               }
+             if (eo_item == focused_item) next = EINA_TRUE;
+          }
+        EINA_LIST_REVERSE_FOREACH(sd->items, l, eo_item)
+          {
+             if (eo_item == focused_item) return NULL;
+
+             ret = item_focused_set(eo_item, EINA_TRUE);
+             if (ret) return ret;
+          }
+        return NULL;
+     }
+   return NULL;
 }
 
 /* Internal EO APIs and hidden overrides */
