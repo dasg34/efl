@@ -296,6 +296,7 @@ _hov_show_do(Evas_Object *obj)
            elm_layout_signal_emit(obj, buf, "elm");
         }
    }
+   elm_object_focus_set(obj, EINA_TRUE);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
