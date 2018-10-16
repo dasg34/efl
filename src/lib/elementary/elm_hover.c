@@ -296,6 +296,7 @@ _hov_show_do(Evas_Object *obj)
            elm_layout_signal_emit(obj, buf, "elm");
         }
    }
+   elm_object_focus_set(obj, EINA_TRUE);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
@@ -697,6 +698,7 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
+   efl_ui_focusable_focus_type_set(obj, EFL_UI_FOCUS_TYPE_LAYER);
 
    return obj;
 }
