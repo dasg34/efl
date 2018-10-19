@@ -5754,7 +5754,7 @@ _efl_ui_widget_efl_ui_focusable_focus_next_get(const Eo *obj, Elm_Widget_Smart_D
 }
 
 EOLIAN static Efl_Ui_Focusable *
-_efl_ui_widget_efl_ui_focusable_focus_next_item_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd EINA_UNUSED, Efl_Ui_Focusable* cur EINA_UNUSED, Efl_Ui_Focus_Direction dir EINA_UNUSED)
+_efl_ui_widget_efl_ui_focusable_focus_next_item_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd EINA_UNUSED, Efl_Ui_Focus_Direction dir EINA_UNUSED)
 {
    return NULL;
 }

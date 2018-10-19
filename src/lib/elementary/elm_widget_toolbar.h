@@ -33,6 +33,7 @@ struct _Elm_Toolbar_Data
    Evas_Object                          *bx, *more, *bx_more, *bx_more2;
    Evas_Object                          *menu_parent;
    Eina_Inlist                          *items;
+   Eina_list                            *item_focus_chain;
    Elm_Toolbar_Item_Data                *more_item;
    Elm_Object_Item                      *selected_item; /**< a selected item by mouse click, return key, api, and etc. */
    Elm_Object_Item                      *focused_item; /**< a focused item by keypad arrow or mouse. This is set to NULL if widget looses focus. */

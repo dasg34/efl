@@ -61,7 +61,6 @@ interface Efl.Ui.Focusable
          [[]]
          get {}
          keys {
-            cur : Efl.Ui.Focusable; [[]]
             dir : Efl.Ui.Focus.Direction;
          }
          values {

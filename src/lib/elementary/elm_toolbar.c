@@ -360,6 +360,13 @@ _elm_toolbar_item_coordinates_calc(Elm_Toolbar_Item_Data *item,
    return EINA_TRUE;
 }
 
+static inline void
+_item_focus_chain_append(Elm_Toolbar_Dats *sd, Elm_Toolbar_Item_Data *it)
+{
+   if (!it->separator && !elm_wdg_item_disabled_get(EO_OBJ(it)))
+     sd->item_focus_chain = eina_list_append(sd->item_focus_chain, it);
+}
+
 static void
 _resize_job(void *data)
 {
@@ -408,6 +415,7 @@ _resize_job(void *data)
          * individual items won't trigger a resize. Items are be
          * readded below. */
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
+        sd->item_focus_chain = eina_list_free(item_focus_chain);
         if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
             ( efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (iw > vw)) ||
             more)
@@ -442,10 +450,12 @@ _resize_job(void *data)
                     {
                        evas_object_box_append(sd->bx, VIEW(it));
                        evas_object_show(VIEW(it));
+                       _item_focus_chain_append(sd, it);
                     }
                }
              evas_object_box_append(sd->bx, sd->VIEW(more_item));
              evas_object_show(sd->VIEW(more_item));
+             _item_focus_chain_append(sd, it);
           }
         else
           {
@@ -455,8 +465,11 @@ _resize_job(void *data)
                {
                   evas_object_show(VIEW(it));
                   evas_object_box_append(sd->bx, VIEW(it));
+                  _item_focus_chain_append(sd, it);
                }
              evas_object_hide(sd->VIEW(more_item));
+             sd->item_focus_chain =
+                 eina_list_remove(sd->item_focus_chain, more_item);
           }
      }
    else if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
@@ -474,6 +487,7 @@ _resize_job(void *data)
              _items_visibility_fix(obj, sd, &iw, vw, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
+        sd->item_focus_chain = eina_list_free(item_focus_chain);
         if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
             ( efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (iw > vw)) ||
             more)
@@ -486,6 +500,7 @@ _resize_job(void *data)
                     {
                        evas_object_box_append(sd->bx, VIEW(it));
                        evas_object_show(VIEW(it));
+                       _item_focus_chain_append(sd, it);
                     }
                }
           }
@@ -496,6 +511,7 @@ _resize_job(void *data)
                {
                   evas_object_show(VIEW(it));
                   evas_object_box_append(sd->bx, VIEW(it));
+                  _item_focus_chain_append(sd, it);
                }
           }
      }
@@ -516,6 +532,7 @@ _resize_job(void *data)
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         evas_object_box_remove_all(sd->bx_more, EINA_FALSE);
         evas_object_box_remove_all(sd->bx_more2, EINA_FALSE);
+        sd->item_focus_chain = eina_list_free(item_focus_chain);
 
         EINA_INLIST_FOREACH(sd->items, it)
           {
@@ -523,15 +540,21 @@ _resize_job(void *data)
                {
                   evas_object_box_append(it->in_box, VIEW(it));
                   evas_object_show(VIEW(it));
+                  _item_focus_chain_append(sd, it);
                }
           }
         if (more)
           {
              evas_object_box_append(sd->bx, sd->VIEW(more_item));
              evas_object_show(sd->VIEW(more_item));
+             _item_focus_chain_append(sd, it);
           }
         else
-          evas_object_hide(sd->VIEW(more_item));
+          {
+             evas_object_hide(sd->VIEW(more_item));
+             sd->item_focus_chain =
+                 eina_list_remove(sd->item_focus_chain, more_item);
+          }
 
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
@@ -680,7 +703,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
  * according to the given item's position.
  */
 static Elm_Object_Item *
-_elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
+_elm_toolbar_nearest_visible_item_get(const Evas_Object *obj, Elm_Object_Item *eo_it)
 {
    Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0; // toolbar viewport geometry
    Evas_Coord ix = 0, iy = 0, iw = 0, ih = 0; // given item geometry
@@ -788,6 +811,40 @@ _elm_toolbar_efl_ui_focusable_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd)
    return EINA_TRUE;
 }
 
+EOLIAN static Efl_Ui_Focusable *
+_elm_toolbar_efl_ui_focusable_focus_next_item_get(const Eo *obj, Elm_Toolbar_Data *sd, Efl_Ui_Focus_Direction dir)
+{
+   Elm_Object_Item *eo_it = NULL;
+
+   if (!sd->items) return NULL;
+
+   if (sd->last_focused_item)
+     eo_it = sd->last_focused_item;
+   else
+     eo_it = elm_toolbar_first_item_get(obj);
+
+   eo_it = _elm_toolbar_nearest_visible_item_get(obj, eo_it);
+
+   if (((sd->dir == EFL_UI_DIR_VERTICAL) && (dir == EFL_UI_FOCUS_DIRECTION_UP)) ||
+       ((sd->dir == EFL_UI_DIR_HORIZONTAL) && (dir == EFL_UI_FOCUS_DIRECTION_LEFT)))
+     {
+        Elm_Object_Item *eo_it = NULL;
+        for (;;)
+          {
+             
+          }
+        eo_it = elm_toolbar_item_prev_get(eo_it);
+     }
+   else if (((sd->dir == EFL_UI_DIR_VERTICAL) && (dir == EFL_UI_FOCUS_DIRECTION_DOWN)) ||
+            ((sd->dir == EFL_UI_DIR_HORIZONTAL) && (dir == EFL_UI_FOCUS_DIRECTION_RIGHT)))
+     {
+        eo_it = elm_toolbar_item_next_get(eo_it);
+     }
+
+
+   return eo_it;
+}
+
 EOLIAN static void
 _elm_toolbar_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it, Eina_Bool focused)
 {
@@ -819,8 +876,6 @@ _elm_toolbar_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Dat
         if (eo_it)
           _elm_toolbar_item_unfocused(eo_it);
      }
-
-   evas_object_focus_set(VIEW(it), focused);
 
    _elm_widget_item_highlight_in_theme(obj, EO_OBJ(it));
    _elm_widget_highlight_in_theme_update(obj);
@@ -3012,6 +3067,7 @@ _elm_toolbar_item_append(Eo *obj, Elm_Toolbar_Data *sd, const char *icon, const 
    sd->items = eina_inlist_append(sd->items, EINA_INLIST_GET(it));
    evas_object_box_append(sd->bx, VIEW(it));
    evas_object_show(VIEW(it));
+   sd->item_focus_chain = eina_list_append(sd->item_focus_chain, it);
 
    _item_theme_hook(obj, it, scale, sd->icon_size);
    sd->item_count++;

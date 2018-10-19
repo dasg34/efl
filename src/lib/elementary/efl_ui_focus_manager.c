@@ -267,6 +267,7 @@ _efl_ui_focus_manager_focus_move(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Efl
    EFL_UI_FOCUS_MANAGER_DATA_GET_OR_RETURN(active_manager, pd, EINA_FALSE);
    Efl_Canvas_Object *cur;
    Efl_Ui_Focusable *next_focus = NULL;
+   Elm_Object_Item *focus_it;
 
    cur = pd->current_focus;
    if (!cur) return EINA_FALSE;
@@ -274,6 +275,13 @@ _efl_ui_focus_manager_focus_move(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Efl
    next_focus = efl_ui_focusable_focus_custom_object_get(cur, dir);
    if (next_focus)
      goto end;
+
+   focus_it = efl_ui_focusable_focus_next_item_get(cur, dir);
+   if (focus_it)
+     {
+        elm_object_item_focus_set(focus_it, EINA_TRUE);
+        return EINA_TRUE;
+     }
 
    switch (dir)
      {
