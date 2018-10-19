@@ -66,18 +66,17 @@ elm_object_focus_next(Evas_Object *obj, Elm_Focus_Direction dir)
 
 EAPI Elm_Object_Item *
 elm_object_focus_next_item_get(const Evas_Object  *obj,
-                               Elm_Focus_Direction dir EINA_UNUSED)
+                               Elm_Focus_Direction dir)
 {
-   /* FOCUS-FIXME */
-   return NULL;
+   return efl_ui_focusable_focus_custom_item_get(obj, dir);
 }
 
 EAPI void
 elm_object_focus_next_item_set(Evas_Object     *obj,
-                               Elm_Object_Item *next_item EINA_UNUSED,
-                               Elm_Focus_Direction dir EINA_UNUSED)
+                               Elm_Object_Item *next_item,
+                               Elm_Focus_Direction dir)
 {
-   /* FOCUS-FIXME */
+   efl_ui_focusable_focus_custom_item_set(obj, dir, next_item);
 }
 
 EAPI Evas_Object *

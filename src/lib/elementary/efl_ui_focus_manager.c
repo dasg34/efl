@@ -275,6 +275,9 @@ _efl_ui_focus_manager_focus_move(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, Efl
    if (next_focus)
      goto end;
 
+   if (efl_ui_focusable_item_focus_move(cur, dir))
+     return EINA_TRUE;
+
    switch (dir)
      {
       case EFL_UI_FOCUS_DIRECTION_UP:
