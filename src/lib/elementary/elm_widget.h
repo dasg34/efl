@@ -445,6 +445,7 @@ typedef struct _Elm_Widget_Smart_Data
    } legacy_focus;
    struct {
       Efl_Ui_Focusable          *custom_object[EFL_UI_FOCUS_DIRECTION_LAST];
+      Efl_Ui_Focusable          *custom_item[EFL_UI_FOCUS_DIRECTION_LAST];
       Eina_List                 *chain;
       Efl_Ui_Focus_Type          type;
       Eina_Bool                  focused : 1;
@@ -621,10 +622,11 @@ struct _Elm_Widget_Item_Data
    /**< widget delete callback function. don't expose this callback call */
    Elm_Widget_Del_Pre_Cb          del_pre_func;
 
-   Evas_Object                   *focus_previous, *focus_next;
-   Evas_Object                   *focus_up, *focus_down, *focus_right, *focus_left;
-   Elm_Object_Item               *item_focus_previous, *item_focus_next;
-   Elm_Object_Item               *item_focus_up, *item_focus_down, *item_focus_right, *item_focus_left;
+   struct {
+      Efl_Ui_Focusable           *custom_object[EFL_UI_FOCUS_DIRECTION_LAST];
+      Efl_Ui_Focusable           *custom_item[EFL_UI_FOCUS_DIRECTION_LAST];
+      Eina_Bool                   focused;
+   } focus;
    Eina_Stringshare              *style;
 
    Evas_Object                   *access_obj;

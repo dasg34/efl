@@ -5151,77 +5151,25 @@ _elm_widget_item_access_object_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Ite
 EOLIAN static Evas_Object *
 _elm_widget_item_focus_next_object_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, Elm_Focus_Direction dir)
 {
-   Evas_Object *ret = NULL;
-
-   if (dir == ELM_FOCUS_PREVIOUS)
-     ret = item->focus_previous;
-   else if (dir == ELM_FOCUS_NEXT)
-     ret = item->focus_next;
-   else if (dir == ELM_FOCUS_UP)
-     ret = item->focus_up;
-   else if (dir == ELM_FOCUS_DOWN)
-     ret = item->focus_down;
-   else if (dir == ELM_FOCUS_RIGHT)
-     ret = item->focus_right;
-   else if (dir == ELM_FOCUS_LEFT)
-     ret = item->focus_left;
-
-   return ret;
+   return item->focus.custom_object[dir];
 }
 
 EOLIAN static void
 _elm_widget_item_focus_next_object_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, Evas_Object *next, Elm_Focus_Direction dir)
 {
-   if (dir == ELM_FOCUS_PREVIOUS)
-     item->focus_previous = next;
-   else if (dir == ELM_FOCUS_NEXT)
-     item->focus_next = next;
-   else if (dir == ELM_FOCUS_UP)
-     item->focus_up = next;
-   else if (dir == ELM_FOCUS_DOWN)
-     item->focus_down = next;
-   else if (dir == ELM_FOCUS_RIGHT)
-     item->focus_right = next;
-   else if (dir == ELM_FOCUS_LEFT)
-     item->focus_left = next;
+   item->focus.custom_object[dir] = next;
 }
 
 EOLIAN static Elm_Object_Item*
 _elm_widget_item_focus_next_item_get(const Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, Elm_Focus_Direction dir)
 {
-   Elm_Object_Item *ret = NULL;
-
-   if (dir == ELM_FOCUS_PREVIOUS)
-     ret = item->item_focus_previous;
-   else if (dir == ELM_FOCUS_NEXT)
-     ret = item->item_focus_next;
-   else if (dir == ELM_FOCUS_UP)
-     ret = item->item_focus_up;
-   else if (dir == ELM_FOCUS_DOWN)
-     ret = item->item_focus_down;
-   else if (dir == ELM_FOCUS_RIGHT)
-     ret = item->item_focus_right;
-   else if (dir == ELM_FOCUS_LEFT)
-     ret = item->item_focus_left;
-
-   return ret;
+   return item->focus.custom_item[dir];
 }
 
 EOLIAN static void
 _elm_widget_item_focus_next_item_set(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item, Elm_Object_Item *next_item, Elm_Focus_Direction dir)
 {
-   if (dir == ELM_FOCUS_PREVIOUS)
-     item->item_focus_previous = next_item;
-   else if (dir == ELM_FOCUS_NEXT)
-     item->item_focus_next = next_item;
-   else if (dir == ELM_FOCUS_UP)
-     item->item_focus_up = next_item;
-   else if (dir == ELM_FOCUS_DOWN)
-     item->item_focus_down = next_item;
-   else if (dir == ELM_FOCUS_RIGHT)
-     item->item_focus_right = next_item;
-   else if (dir == ELM_FOCUS_LEFT)
-     item->item_focus_left = next_item;
+   item->focus.custom_item[dir] = next_item;
 }
 
 /* happy debug functions */
@@ -5761,6 +5709,18 @@ _efl_ui_widget_efl_ui_focusable_focus_custom_object_get(const Eo *obj EINA_UNUSE
 }
 
 EOLIAN static void
+_efl_ui_widget_efl_ui_focusable_focus_custom_item_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Direction dir, Efl_Ui_Focusable *custom)
+{
+   sd->focus.custom_item[dir] = custom;
+}
+
+EOLIAN static Efl_Ui_Focusable *
+_efl_ui_widget_efl_ui_focusable_focus_custom_item_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Direction dir)
+{
+   return sd->focus.custom_item[dir];
+}
+
+EOLIAN static void
 _efl_ui_widget_efl_ui_focusable_tree_focus_allow_set(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED, Eina_Bool allowed)
 {
    elm_widget_tree_unfocusable_set(obj, !allowed);
@@ -5819,6 +5779,12 @@ _efl_ui_widget_efl_ui_focusable_focus_next_get(const Eo *obj, Elm_Widget_Smart_D
      next_focus = cur;
 
    return next_focus;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_widget_efl_ui_focusable_item_focus_move(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd EINA_UNUSED, Efl_Ui_Focus_Direction dir EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_List *
