@@ -37,7 +37,27 @@ interface Efl.Ui.Focusable
             custom : Efl.Ui.Focusable; [[]]
          }
       }
+      @property focus_custom_item {
+         [[]]
+         keys {
+            dir : Efl.Ui.Focus.Direction;
+         }
+         values {
+            custom : Efl.Ui.Focusable; [[]]
+         }
+      }
       @property focus_next @protected {
+         [[]]
+         get {}
+         keys {
+            cur : Efl.Ui.Focusable; [[]]
+            dir : Efl.Ui.Focus.Direction;
+         }
+         values {
+            next : Efl.Ui.Focusable;
+         }
+      }
+      @property focus_next_item @protected {
          [[]]
          get {}
          keys {
