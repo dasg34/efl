@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
@@ -82,8 +81,7 @@ _toolbar_item_prio_compare_cb(const void *i1,
 }
 
 static void
-_items_visibility_fix(Elm_Toolbar *obj,
-                      Elm_Toolbar_Data *sd,
+_items_visibility_fix(Elm_Toolbar_Data *sd,
                       Evas_Coord *iw,
                       Evas_Coord vw,
                       Eina_Bool *more)
@@ -127,8 +125,6 @@ _items_visibility_fix(Elm_Toolbar *obj,
              it->prio.visible = (*iw <= vw);
              it->in_box = sd->bx;
              if (!it->separator) count++;
-             if (!it->prio.visible)
-               *more = EINA_TRUE;
           }
         else
           {
@@ -141,8 +137,6 @@ _items_visibility_fix(Elm_Toolbar *obj,
              *more = EINA_TRUE;
           }
      }
-   efl_ui_focus_composition_dirty(obj);
-   efl_ui_focusable_prepare_logical(obj);
 }
 
 static void
@@ -385,12 +379,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(obj, sd, &ih, vh, &more);
+             _items_visibility_fix(sd, &ih, vh, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(obj, sd, &iw, vw, &more);
+             _items_visibility_fix(sd, &iw, vw, &more);
           }
         evas_object_geometry_get
           (sd->VIEW(more_item), NULL, NULL, &more_w, &more_h);
@@ -466,12 +460,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(obj, sd, &ih, vh, &more);
+             _items_visibility_fix(sd, &ih, vh, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(obj, sd, &iw, vw, &more);
+             _items_visibility_fix(sd, &iw, vw, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
@@ -509,9 +503,9 @@ _resize_job(void *data)
           w = (vw >= mw) ? vw : mw;
 
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
-          _items_visibility_fix(obj, sd, &ih, vh, &more);
+          _items_visibility_fix(sd, &ih, vh, &more);
         else
-          _items_visibility_fix(obj, sd, &iw, vw, &more);
+          _items_visibility_fix(sd, &iw, vw, &more);
 
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         evas_object_box_remove_all(sd->bx_more, EINA_FALSE);
@@ -680,7 +674,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
  * according to the given item's position.
  */
 static Elm_Object_Item *
-_elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
+_elm_toolbar_nearest_visible_item_get(const Evas_Object *obj, Elm_Object_Item *eo_it)
 {
    Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0; // toolbar viewport geometry
    Evas_Coord ix = 0, iy = 0, iw = 0, ih = 0; // given item geometry
@@ -699,7 +693,7 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
 
    if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
      {
-        if (!elm_object_item_disabled_get(eo_it))
+        if (!elm_object_item_disabled_get(eo_it) && evas_object_visible_get(VIEW(it)))
           return eo_it;
         else
           search_next = EINA_TRUE;
@@ -788,6 +782,62 @@ _elm_toolbar_efl_ui_focusable_on_focus_update(Eo *obj, Elm_Toolbar_Data *sd)
    return EINA_TRUE;
 }
 
+EOLIAN static Eina_Bool
+_elm_toolbar_efl_ui_focusable_item_focus_move(Eo *obj, Elm_Toolbar_Data *sd, Efl_Ui_Focus_Direction dir)
+{
+   Elm_Object_Item *it = NULL, *eo_it = NULL;
+   Eina_List *item_list, *l;
+   Evas_Object *obj_it;
+
+   if (!sd->items) return EINA_FALSE;
+   if ((sd->dir == EFL_UI_DIR_HORIZONTAL &&
+        (dir == EFL_UI_FOCUS_DIRECTION_UP || dir == EFL_UI_FOCUS_DIRECTION_DOWN)) ||
+       (sd->dir == EFL_UI_DIR_VERTICAL &&
+        (dir == EFL_UI_FOCUS_DIRECTION_LEFT || dir == EFL_UI_FOCUS_DIRECTION_RIGHT)))
+     return EINA_FALSE;
+
+
+   if (sd->last_focused_item)
+     eo_it = sd->last_focused_item;
+   else
+     eo_it = elm_toolbar_first_item_get(obj);
+
+   it = _elm_toolbar_nearest_visible_item_get(obj, eo_it);
+   if (!it || it != eo_it)
+     goto end;
+
+   item_list = evas_object_box_children_get(sd->bx);
+
+   if (((sd->dir == EFL_UI_DIR_VERTICAL) && (dir == EFL_UI_FOCUS_DIRECTION_UP)) ||
+       ((sd->dir == EFL_UI_DIR_HORIZONTAL) && (dir == EFL_UI_FOCUS_DIRECTION_LEFT)))
+     {
+        item_list = eina_list_reverse(item_list);
+     }
+
+   ELM_TOOLBAR_ITEM_DATA_GET(it, focused_it);
+   item_list = eina_list_data_find_list(item_list, VIEW(focused_it));
+
+   it = NULL;
+
+   EINA_LIST_FOREACH(eina_list_next(item_list), l, obj_it)
+     {
+        focused_it = evas_object_data_get(obj_it, "item");
+        if (!focused_it->separator &&
+            !elm_wdg_item_disabled_get(EO_OBJ(focused_it)))
+          {
+             it = EO_OBJ(focused_it);
+             break;
+          }
+     }
+end:
+   if (!it)
+     return EINA_FALSE;
+
+   elm_object_item_focus_set(it, EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
 EOLIAN static void
 _elm_toolbar_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it, Eina_Bool focused)
 {
@@ -819,8 +869,6 @@ _elm_toolbar_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Dat
         if (eo_it)
           _elm_toolbar_item_unfocused(eo_it);
      }
-
-   evas_object_focus_set(VIEW(it), focused);
 
    _elm_widget_item_highlight_in_theme(obj, EO_OBJ(it));
    _elm_widget_highlight_in_theme_update(obj);
@@ -893,13 +941,6 @@ _resize_cb(void *data,
            void *event_info EINA_UNUSED)
 {
    _resizing_eval(data);
-}
-
-EOLIAN static void
-_elm_toolbar_item_elm_widget_item_disabled_set(Eo *eo_id, Elm_Toolbar_Item_Data *sd, Eina_Bool disabled)
-{
-   elm_wdg_item_disabled_set(efl_super(eo_id, ELM_TOOLBAR_ITEM_CLASS), disabled);
-   efl_ui_focus_composition_dirty(WIDGET(sd));
 }
 
 EOLIAN static void
@@ -2309,7 +2350,6 @@ _elm_toolbar_item_efl_object_invalidate(Eo *eo_item, Elm_Toolbar_Item_Data *item
                  item->selected && next) _item_select(next);
           }
      }
-   efl_ui_focus_composition_dirty(WIDGET(item));
 
    _item_del(item);
 
@@ -2469,8 +2509,6 @@ _item_new(Evas_Object *obj,
      }
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
-
-   efl_ui_focus_composition_dirty(obj);
 
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_RESIZE, _item_resize, obj);
@@ -2958,13 +2996,6 @@ elm_toolbar_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
-EOLIAN static Eina_Bool
-_elm_toolbar_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
-{
-   configured_state->logical = EINA_TRUE;
-   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
-}
-
 EOLIAN static Eo *
 _elm_toolbar_efl_object_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
 {
@@ -2972,8 +3003,6 @@ _elm_toolbar_efl_object_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TOOL_BAR);
-
-   efl_ui_focus_composition_custom_manager_set(obj, obj);
 
    return obj;
 }
@@ -4011,53 +4040,6 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
 {
    return ELM_ICON_LOOKUP_FDO_THEME;
 }
-
-static Eina_Bool
-_more_item_is_present(Elm_Toolbar_Data *pd)
-{
-  return pd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU || pd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND;
-}
-
-static Eina_Bool
-_part_of_chain(Elm_Toolbar_Item_Data *pd)
-{
-   Eina_Bool want = EINA_TRUE;
-   if (elm_wdg_item_disabled_get(pd->base->eo_obj))
-     want = EINA_FALSE;
-
-   if (!pd->prio.visible)
-     want = EINA_FALSE;
-
-   if (pd->separator)
-     want = EINA_FALSE;
-
-   return want;
-}
-
-EOLIAN static void
-_elm_toolbar_efl_ui_focus_composition_prepare(Eo *obj, Elm_Toolbar_Data *pd)
-{
-   Elm_Toolbar_Item_Data *it;
-   Eina_List *order = NULL;
-   Eina_Bool require_more_items = EINA_FALSE;
-
-   EINA_INLIST_FOREACH(pd->items, it)
-     {
-       if (_part_of_chain(it))
-          order = eina_list_append(order, EO_OBJ(it));
-        if (_more_item_is_present(pd) && !it->prio.visible)
-          require_more_items = EINA_TRUE;
-     }
-
-   if (require_more_items)
-     {
-        if (_part_of_chain(pd->more_item))
-          order = eina_list_append(order, EO_OBJ(pd->more_item));
-     }
-
-   efl_ui_focus_composition_elements_set(obj, order);
-}
-
 
 /* Standard widget overrides */
 

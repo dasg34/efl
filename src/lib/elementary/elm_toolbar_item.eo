@@ -314,7 +314,6 @@ class Elm.Toolbar_Item(Elm.Widget.Item, Efl.Ui.Focusable, Efl.Ui.Legacy)
            Efl.Object.constructor;
            Efl.Object.invalidate;
            Elm.Widget.Item.disable;
-           Elm.Widget.Item.disabled { set; }
            Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.signal_emit;
            Elm.Widget.Item.part_text { get; set; }
