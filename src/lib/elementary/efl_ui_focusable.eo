@@ -35,6 +35,12 @@ interface Efl.Ui.Focusable
             parent : Efl.Ui.Focusable; [[ ]]
          }
       }
+      @property focus_type @protected {
+         [[ ]]
+         values {
+            focus_type : Efl.Ui.Focus.Type; [[ ]]
+         }
+      }
       @property focus_geometry {
          [[The geometry used to calculate relationships between other objects.]]
          get {}

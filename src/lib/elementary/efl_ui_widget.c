@@ -5698,6 +5698,18 @@ _efl_ui_widget_efl_ui_focusable_focus_parent_get(const Eo *obj, Elm_Widget_Smart
 }
 
 EOLIAN static void
+_efl_ui_widget_efl_ui_focusable_focus_type_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Type focus_type)
+{
+   sd->focus.type = focus_type;
+}
+
+EOLIAN static Efl_Ui_Focus_Type
+_efl_ui_widget_efl_ui_focusable_focus_type_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+{
+   return sd->focus.type;
+}
+
+EOLIAN static void
 _efl_ui_widget_efl_ui_focusable_focus_custom_object_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Direction dir, Efl_Ui_Focusable *custom)
 {
    sd->focus.custom_object[dir] = custom;

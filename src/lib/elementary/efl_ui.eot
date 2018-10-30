@@ -11,6 +11,13 @@ enum Efl.Ui.Theme.Apply
                   theme.]]
 }
 
+enum Efl.Ui.Focus.Type
+{
+   [[ Focus type. ]]
+   normal,  [[  ]]
+   layer   [[  ]]
+}
+
 enum Efl.Ui.Focus.Direction
 {
    [[ Focus directions. ]]

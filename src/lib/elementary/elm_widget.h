@@ -445,6 +445,7 @@ typedef struct _Elm_Widget_Smart_Data
    } legacy_focus;
    struct {
       Efl_Ui_Focusable          *custom_object[EFL_UI_FOCUS_DIRECTION_LAST];
+      Efl_Ui_Focus_Type          type;
    } focus;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
