@@ -2,8 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -292,27 +290,6 @@ _access_calendar_register(Evas_Object *obj)
 }
 
 static void
-_flush_calendar_composite_elements(Evas_Object *obj, Efl_Ui_Calendar_Data *sd)
-{
-   Eina_List *items = NULL;
-   int max_day = _maxdays_get(&sd->shown_date, 0);
-
-#define EXTEND(v) \
-    if (v) items = eina_list_append(items, v); \
-
-    EXTEND(sd->month_access);
-    EXTEND(sd->dec_btn_month);
-    EXTEND(sd->inc_btn_month);
-
-#undef EXTEND
-
-   for (int i = sd->first_day_it; i <= max_day; ++i)
-     items = eina_list_append(items, sd->items[i]);
-
-   efl_ui_focus_composition_elements_set(obj, items);
-}
-
-static void
 _populate(Evas_Object *obj)
 {
    int maxdays, prev_month_maxdays, day, mon, yr, i;
@@ -400,8 +377,6 @@ _populate(Evas_Object *obj)
 
    elm_layout_thaw(obj);
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-
-   _flush_calendar_composite_elements(obj, sd);
 }
 
 static void
@@ -804,18 +779,14 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_calendar_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd)
+_efl_ui_calendar_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Calendar_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   // FIXME : Currently, focused item is same with selected item.
-   //         After arranging focus logic in this widget, we need to make
-   //         focused item which is for indicating direction key input movement
-   //         on the calendar widget.
-   if (efl_ui_focus_object_focus_get(obj))
+   if (elm_widget_focus_get(obj))
      _update_focused_it(obj, sd->selected_it);
    else
      _update_unfocused_it(obj, sd->focused_it);
@@ -949,13 +920,6 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
    // ACCESS
    if ((_elm_config->access_mode != ELM_ACCESS_MODE_OFF))
       _access_calendar_spinner_register(obj);
-
-   // Items for composition
-   for (int i = 0; i < 42; ++i)
-     {
-        priv->items[i] = efl_add(EFL_UI_CALENDAR_ITEM_CLASS, obj,
-                                 efl_ui_calendar_item_day_number_set(efl_added, i));
-     }
 
    return obj;
 }
@@ -1276,7 +1240,6 @@ _efl_ui_calendar_item_day_number_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, int
      pd->part = po;
    else
      pd->part = evas_object_data_get(po, "_part_access_obj");
-   _efl_ui_focus_event_redirector(pd->part, obj);
 
    EINA_SAFETY_ON_NULL_RETURN(pd->part);
 }
@@ -1285,27 +1248,6 @@ EOLIAN static int
 _efl_ui_calendar_item_day_number_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
 {
    return pd->v;
-}
-
-EOLIAN static void
-_efl_ui_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, Eina_Bool focus)
-{
-   efl_ui_focus_object_focus_set(efl_super(obj, EFL_UI_CALENDAR_ITEM_CLASS), focus);
-
-   _update_focused_it(efl_parent_get(obj), pd->v);
-   evas_object_focus_set(pd->part, efl_ui_focus_object_focus_get(obj));
-}
-
-EOLIAN static Eina_Rect
-_efl_ui_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
-{
-   return efl_gfx_entity_geometry_get(pd->part);
-}
-
-EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_calendar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj, Efl_Ui_Calendar_Item_Data *pd EINA_UNUSED)
-{
-   return efl_parent_get(obj);
 }
 
 #include "efl_ui_calendar_item.eo.c"

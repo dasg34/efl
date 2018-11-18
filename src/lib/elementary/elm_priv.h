@@ -63,10 +63,6 @@
 # include "elm_widget.h"
 # include "elm_access.eo.h"
 # include "elm_code_private.h"
-# include "efl_ui_focus_parent_provider.eo.h"
-# include "efl_ui_widget_focus_manager.eo.h"
-# include "efl_ui_focus_parent_provider_standard.eo.h"
-# include "elm_widget_item_static_focus.eo.h"
 #include "efl_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
 
@@ -740,9 +736,6 @@ void                 _elm_menu_menu_bar_hide(Eo *obj);
 void                 _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor);
 # endif
 
-void _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj);
-void _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj);
-
 void _efl_access_shutdown(void);
 
 /* Combobox: no proper support for Efl.Part API yet. */
@@ -764,10 +757,6 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
                                                    Edje_Signal_Cb func_cb);
  void                _efl_ui_image_sizing_eval(Evas_Object *obj);
 /* end of DEPRECATED */
-
-/* DO NOT USE THIS this is only for performance optimization! */
-void                 _elm_widget_full_eval(Eo *obj);
-void                 _elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *pd);
 
 EOAPI void			 efl_page_transition_page_size_set(Eo *obj, Eina_Size2D sz);
 EOAPI void			 efl_page_transition_padding_size_set(Eo *obj, int padding);
@@ -892,25 +881,5 @@ efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
       default: return !!def_val;
      }
 }
-
-/**
- * This function sets up handlers for emitting "unfocused" / "focused" events.
- * Once the passed manager object is active, "focused" is emitted, if it gets inactive "unfocused" is emitted
- */
-void legacy_efl_ui_focus_manager_widget_legacy_signals(Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Manager *emittee);
-
-/**
- * This function sets up handlers for emitting "unfocused" / "focused" events.
- * Once the children of the passed object are getting focus, "focused" will be emitted on the object, "unfocused" otherwise.
- */
-void legacy_child_focus_handle(Efl_Ui_Focus_Object *object);
-
-/**
- * This function sets up handlers for emitting "unfocused" / "focused" events.
- * Once the passed object is getting focus, "focused" will be emitted on the object, "unfocused" otherwise.
- */
-void legacy_object_focus_handle(Efl_Ui_Focus_Object *object);
-
-void _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal);
 
 #endif

@@ -693,6 +693,18 @@ _efl_ui_progressbar_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Ef
    if (max) *max = sd->val_max;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_progressbar_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_progressbar_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 /* Efl.Part begin */
 
 EOLIAN static Eo *
@@ -795,7 +807,6 @@ _efl_ui_progressbar_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   legacy_object_focus_handle(obj);
    return obj;
 }
 

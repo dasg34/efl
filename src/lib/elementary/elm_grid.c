@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include <elm_grid.eo.h>
@@ -14,22 +13,85 @@
 #define MY_CLASS_NAME "Elm_Grid"
 #define MY_CLASS_NAME_LEGACY "elm_grid"
 
-static void
-_elm_grid_efl_ui_focus_composition_prepare(Eo *obj, void *pd EINA_UNUSED)
+EOLIAN static Eina_Bool
+_elm_grid_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
-   Eina_List *l, *ll;
-   Efl_Ui_Widget *elem;
+   return EINA_TRUE;
+}
 
-   Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
-   Eina_List *order = evas_object_grid_children_get(wpd->resize_obj);
+EOLIAN static Eina_Bool
+_elm_grid_efl_ui_widget_focus_next(Eo *obj, void *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   const Eina_List *items;
+   Eina_List *(*list_free)(Eina_List *list);
+   void *(*list_data_get)(const Eina_List *list);
 
-   EINA_LIST_FOREACH_SAFE(order, l, ll, elem)
+   Eina_Bool int_ret;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   /* Focus chain */
+   /* TODO: Change this to use other chain */
+   if ((items = efl_ui_widget_focus_custom_chain_get(obj)))
      {
-        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
-          order = eina_list_remove(order, elem);
+        list_data_get = eina_list_data_get;
+        list_free = NULL;
+     }
+   else
+     {
+        items = evas_object_grid_children_get(wd->resize_obj);
+        list_data_get = eina_list_data_get;
+        list_free = eina_list_free;
+
+        if (!items) return EINA_FALSE;
      }
 
-   efl_ui_focus_composition_elements_set(obj, order);
+   int_ret = efl_ui_widget_focus_list_next_get(obj, items, list_data_get, dir, next, next_item);
+
+   if (list_free) list_free((Eina_List *)items);
+
+   return int_ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_grid_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_grid_efl_ui_widget_focus_direction(Eo *obj, void *_pd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+{
+   const Eina_List *items;
+   Eina_List *(*list_free)(Eina_List *list);
+   void *(*list_data_get)(const Eina_List *list);
+
+   Eina_Bool int_ret;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   /* Focus chain */
+   /* TODO: Change this to use other chain */
+   if ((items = efl_ui_widget_focus_custom_chain_get(obj)))
+     {
+        list_data_get = eina_list_data_get;
+        list_free = NULL;
+     }
+   else
+     {
+        items = evas_object_grid_children_get(wd->resize_obj);
+        list_data_get = eina_list_data_get;
+        list_free = eina_list_free;
+
+        if (!items) return EINA_FALSE;
+     }
+
+   int_ret = efl_ui_widget_focus_list_direction_get(obj, base, items, list_data_get,
+                                             degree, direction, direction_item, weight);
+
+   if (list_free) list_free((Eina_List *)items);
+
+   return int_ret;
 }
 
 static void
@@ -135,7 +197,6 @@ _elm_grid_pack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, Evas_Coord x
 
    elm_widget_sub_object_add(obj, subobj);
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
-   efl_ui_focus_composition_dirty(obj);
 }
 
 EOLIAN static void
@@ -145,7 +206,6 @@ _elm_grid_unpack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj)
 
    _elm_widget_sub_object_redirect_to_top(obj, subobj);
    evas_object_grid_unpack(wd->resize_obj, subobj);
-   efl_ui_focus_composition_dirty(obj);
 }
 
 EOLIAN static void
@@ -164,7 +224,6 @@ _elm_grid_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
      }
 
    evas_object_grid_clear(wd->resize_obj, clear);
-   efl_ui_focus_composition_dirty(obj);
 }
 
 EAPI void
@@ -180,7 +239,6 @@ elm_grid_pack_set(Evas_Object *subobj,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    evas_object_grid_pack(wd->resize_obj, subobj, x, y, w, h);
-   efl_ui_focus_composition_dirty(obj);
 }
 
 EAPI void

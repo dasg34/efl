@@ -4,8 +4,6 @@
 
 #include <Elementary.h>
 
-#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
-
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
 
@@ -95,19 +93,7 @@ static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
 {
    if (psd->content)
-     {
-        Efl_Ui_Focus_Manager *manager;
-
-        manager = psd->interface_object;
-
-        efl_ui_focus_manager_dirty_logic_freeze(manager);
-        evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
-        efl_ui_focus_manager_dirty_logic_unfreeze(manager);
-        //XXX: hack, right now there is no api in efl_ui_focus_manager_sub.eo to mark it dirty
-        // If we have moved the content, then emit this event, in order to ensure that the focus_manager_sub
-        // logic tries to fetch the viewport again
-        efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
-     }
+     evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
 }
 
 EOLIAN static void
@@ -4200,8 +4186,6 @@ _elm_interface_scrollable_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_I
    if (!sid->pan_obj)
      {
         o = _elm_pan_add(evas_object_evas_get(obj));
-        ELM_PAN_DATA_GET_OR_RETURN(o, pd);
-        pd->interface_object = obj;
         sid->pan_obj = o;
         efl_event_callback_add
           (o, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
@@ -4897,59 +4881,6 @@ _elm_interface_scrollable_class_constructor(Efl_Class *klass)
  */
 EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, double y EINA_UNUSED) {}
 EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
-
-EOLIAN static Efl_Ui_Focus_Manager*
-_elm_interface_scrollable_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
-{
-   Efl_Ui_Focus_Manager *manager;
-
-   manager = efl_add(EFL_UI_FOCUS_MANAGER_ROOT_FOCUS_CLASS, obj,
-     efl_ui_focus_manager_root_set(efl_added, root)
-   );
-
-   return manager;
-}
-
-EOLIAN static Efl_Object*
-_elm_interface_scrollable_efl_object_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
-{
-   Eo *o = efl_constructor(efl_super(obj, MY_SCROLLABLE_INTERFACE));
-
-   return o;
-}
-
-static Eina_Bool
-_filter_cb(const void *iterator EINA_UNUSED, void *data, void *fdata)
-{
-   Eina_Rect geom;
-   int min_x, max_x, min_y, max_y;
-
-   geom = efl_ui_focus_object_focus_geometry_get(data);
-
-   min_x = geom.rect.x;
-   min_y = geom.rect.y;
-   max_x = eina_rectangle_max_x(&geom.rect);
-   max_y = eina_rectangle_max_y(&geom.rect);
-
-   Eina_Bool inside = eina_rectangle_coords_inside(fdata, min_x, min_y) ||
-                      eina_rectangle_coords_inside(fdata, min_x, max_y) ||
-                      eina_rectangle_coords_inside(fdata, max_x, min_y) ||
-                      eina_rectangle_coords_inside(fdata, max_x, max_y);
-
-   return inside;
-}
-
-EOLIAN static Eina_Iterator*
-_elm_interface_scrollable_efl_ui_focus_manager_border_elements_get(const Eo *obj, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED)
-{
-   Eina_Iterator *border_elements;
-   Eina_Rectangle *rect = calloc(1, sizeof(Eina_Rectangle));
-
-   border_elements = efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_SCROLLABLE_INTERFACE));
-   elm_interface_scrollable_content_viewport_geometry_get(obj, &rect->x, &rect->y, &rect->w, &rect->h);
-
-   return eina_iterator_filter_new(border_elements, _filter_cb, free, rect);
-}
 
 EOLIAN static void
 _elm_interface_scrollable_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Eina_Bool enable EINA_UNUSED)

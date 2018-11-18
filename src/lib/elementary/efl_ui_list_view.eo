@@ -7,8 +7,8 @@ struct Efl.Ui.List_View_Item_Event
    index: int;
 }
 class Efl.Ui.List_View (Efl.Ui.Layout, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
-                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
-                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager)
+                Efl.Access.Widget.Action, Efl.Access.Selection,
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model)
 {
    methods {
       @property relayout {
@@ -77,10 +77,7 @@ class Efl.Ui.List_View (Efl.Ui.Layout, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scr
       Efl.Ui.List_View_Model.min_size { get; set; }
 
       // Widget
-      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Widget.focus_state_apply;
-      Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.View.model { get; set; }
 
 //      Efl.Ui.Scrollable_Interactive.scroll;

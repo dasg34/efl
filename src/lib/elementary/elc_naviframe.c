@@ -91,9 +91,19 @@ _resize_object_reset(Evas_Object *obj, Elm_Naviframe_Item_Data *it)
 static void
 _prev_page_focus_recover(Elm_Naviframe_Item_Data *it)
 {
-   Elm_Naviframe *n = it->base->widget;
+   Evas_Object *newest;
+   unsigned int order = 0;
 
-   efl_ui_focus_manager_focus_set(efl_ui_focus_object_focus_manager_get(n), n);
+   newest = efl_ui_widget_newest_focus_order_get(VIEW(it), &order, EINA_TRUE);
+   if (newest)
+     elm_object_focus_set(newest, EINA_TRUE);
+   else
+     {
+        if (elm_object_focus_allow_get(VIEW(it)))
+          elm_object_focus_set(VIEW(it), EINA_TRUE);
+        else
+          elm_object_focus_set(WIDGET(it), EINA_TRUE);
+     }
 }
 
 EOLIAN static void
@@ -1386,6 +1396,76 @@ _on_obj_size_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
      _item_dispmode_set(it, dispmode);
 }
 
+EOLIAN static Eina_Bool
+_elm_naviframe_efl_ui_widget_focus_next(Eo *obj, Elm_Naviframe_Data *sd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   Evas_Object *ao;
+
+   Eina_List *l = NULL;
+   Elm_Object_Item *eo_top_it;
+   void *(*list_data_get)(const Eina_List *list);
+
+   Eina_Bool int_ret = EINA_FALSE;
+
+   eo_top_it = elm_naviframe_top_item_get(obj);
+   if (!eo_top_it) goto end;
+
+   list_data_get = eina_list_data_get;
+
+   ELM_NAVIFRAME_ITEM_DATA_GET(eo_top_it, top_it);
+   l = eina_list_append(l, VIEW(top_it));
+
+   /* access */
+   if (_elm_config->access_mode)
+     {
+        ao = _access_object_get(top_it, TITLE_ACCESS_PART);
+        if (ao) l = eina_list_append(l, ao);
+     }
+
+   int_ret = efl_ui_widget_focus_list_next_get(obj, l, list_data_get, dir, next, next_item);
+   eina_list_free(l);
+
+end:
+   if (!int_ret)
+     {
+        *next = obj;
+        int_ret = !elm_widget_focus_get(obj);
+     }
+
+   return int_ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_naviframe_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_naviframe_efl_ui_widget_focus_direction(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd EINA_UNUSED, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+{
+   Eina_Bool int_ret;
+
+   Eina_List *l = NULL;
+   Elm_Object_Item *eo_top_it;
+   void *(*list_data_get)(const Eina_List *list);
+
+   eo_top_it = elm_naviframe_top_item_get(obj);
+   if (!eo_top_it) return EINA_FALSE;
+
+   list_data_get = eina_list_data_get;
+
+   ELM_NAVIFRAME_ITEM_DATA_GET(eo_top_it, top_it);
+   l = eina_list_append(l, VIEW(top_it));
+
+   int_ret = efl_ui_widget_focus_list_direction_get
+            (obj, base, l, list_data_get, degree, direction, direction_item, weight);
+
+   eina_list_free(l);
+
+   return int_ret;
+}
+
 EOLIAN static void
 _elm_naviframe_efl_canvas_group_group_add(Eo *obj, Elm_Naviframe_Data *priv)
 {
@@ -1402,7 +1482,7 @@ _elm_naviframe_efl_canvas_group_group_add(Eo *obj, Elm_Naviframe_Data *priv)
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _on_obj_size_hints_changed, obj);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
 static void
@@ -1549,6 +1629,8 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
    evas_object_show(VIEW(item));
 
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_top_item, top_item);
+   if (top_item)
+     efl_ui_widget_focused_object_clear(VIEW(top_item));
    _resize_object_reset(obj, item);
    if (top_item)
      {
@@ -1607,7 +1689,6 @@ _elm_naviframe_efl_object_constructor(Eo *obj, Elm_Naviframe_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
-   legacy_child_focus_handle(obj);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PAGE_TAB_LIST);
@@ -1690,6 +1771,7 @@ _elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Ite
 
    if (top_inserted)
      {
+        efl_ui_widget_focused_object_clear(VIEW(after));
         elm_widget_tree_unfocusable_set(VIEW(after), EINA_TRUE);
         _resize_object_reset(obj, it);
         evas_object_show(VIEW(it));
@@ -2011,6 +2093,12 @@ EOLIAN static Eina_Bool
 _elm_naviframe_event_enabled_get(const Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    return !sd->freeze_events;
+}
+
+EOLIAN static Eina_Bool
+_elm_naviframe_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd EINA_UNUSED)
+{
+   return EINA_TRUE;
 }
 
 static void

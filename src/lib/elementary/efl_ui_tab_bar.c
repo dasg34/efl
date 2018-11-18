@@ -34,7 +34,7 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
    Eina_List *l, *l_next;
    EINA_LIST_FOREACH_SAFE(sd->tab_infos, l, l_next, ti)
      {
-        if (efl_ui_focus_object_focus_get(ti->tab))
+        if (elm_widget_focus_get(ti->tab))
           {
              _tab_select(sd, ti);
              return EINA_TRUE;

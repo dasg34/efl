@@ -41,39 +41,6 @@ Eina_Bool _use_build_config;
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Elm_Version *elm_version = &_version;
 
-static void
-_focus_ev_redirect_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, NULL);
-}
-
-void
-_efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal)
-{
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_MOVE, _focus_ev_redirect_cb, goal);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _focus_ev_redirect_cb, goal);
-}
-
-void
-_efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj)
-{
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
-}
-
-void
-_efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj)
-{
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
-}
-
 Eina_Bool
 _elm_dangerous_call_check(const char *call)
 {
@@ -1634,7 +1601,6 @@ elm_object_focus_allow_get(const Evas_Object *obj)
    return (elm_widget_can_focus_get(obj)) || (elm_widget_child_can_focus_get(obj));
 }
 
-
 EAPI void
 elm_object_tree_focus_allow_set(Evas_Object *obj,
                                 Eina_Bool    tree_focusable)
@@ -1676,7 +1642,7 @@ EAPI void
 elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   return efl_ui_widget_focus_move_policy_automatic_set(obj, automatic);
+   efl_ui_widget_focus_move_policy_automatic_set(obj, automatic);
 }
 
 EAPI void

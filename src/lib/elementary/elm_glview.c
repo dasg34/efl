@@ -27,15 +27,15 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EOLIAN static Eina_Bool
-_elm_glview_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED)
+_elm_glview_efl_ui_widget_on_focus_update(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (elm_widget_focus_get(obj))
      evas_object_focus_set(wd->resize_obj, EINA_TRUE);
    else
      evas_object_focus_set(wd->resize_obj, EINA_FALSE);
@@ -360,13 +360,6 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
-}
-
-EOLIAN static Efl_Object*
-_elm_glview_efl_object_constructor(Eo *obj, Elm_Glview_Data *pd EINA_UNUSED)
-{
-   legacy_object_focus_handle(obj);
-   return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eo *

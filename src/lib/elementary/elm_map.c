@@ -3936,15 +3936,15 @@ _elm_map_pan_efl_gfx_entity_position_set(Eo *obj, Elm_Map_Pan_Data *_pd EINA_UNU
 }
 
 EOLIAN static Eina_Bool
-_elm_map_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED)
+_elm_map_efl_ui_widget_on_focus_update(Eo *obj, Elm_Map_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (elm_widget_focus_get(obj))
      {
         edje_object_signal_emit
           (wd->resize_obj, "elm,action,focus", "elm");
@@ -4297,7 +4297,6 @@ _elm_map_efl_object_constructor(Eo *obj, Elm_Map_Data *sd)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
-   legacy_object_focus_handle(obj);
 
    return obj;
 }

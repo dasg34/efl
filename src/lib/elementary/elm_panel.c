@@ -4,7 +4,6 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define EFL_UI_FOCUS_LAYER_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -466,7 +465,6 @@ _panel_toggle(void *data EINA_UNUSED,
         edje_object_message_signal_process(wd->resize_obj);
      }
 
-   efl_ui_focus_layer_enable_set(obj, !sd->hidden);
    efl_event_callback_legacy_call(obj, ELM_PANEL_EVENT_TOGGLED, NULL);
 }
 
@@ -992,8 +990,6 @@ _elm_panel_efl_object_constructor(Eo *obj, Elm_Panel_Data *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PANEL);
-
-   efl_ui_focus_layer_behaviour_set(obj, EINA_FALSE, EINA_FALSE);
 
    return obj;
 }

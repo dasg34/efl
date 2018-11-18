@@ -46,7 +46,6 @@ struct _Elm_Pan_Smart_Data
 {
    Evas_Object                   *self;
    Evas_Object                   *content;
-   Evas_Object                   *interface_object;
    Evas_Coord                     x, y, w, h;
    Evas_Coord                     content_w, content_h, px, py;
 };
@@ -236,8 +235,6 @@ struct _Elm_Scrollable_Smart_Interface_Data
    Eina_Bool  go_down : 1;
    Eina_Bool  loop_h : 1;
    Eina_Bool  loop_v : 1;
-
-   Efl_Ui_Focus_Manager *manager;
 };
 
 #define ELM_SCROLLABLE_CHECK(obj, ...)                                       \

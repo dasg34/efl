@@ -145,9 +145,9 @@ _elm_access_efl_ui_widget_on_access_activate(Eo *obj, void *_pd EINA_UNUSED, Efl
 }
 
 EOLIAN static Eina_Bool
-_elm_access_efl_ui_focus_object_on_focus_update(Eo *obj, void *_pd EINA_UNUSED)
+_elm_access_efl_ui_widget_on_focus_update(Eo *obj, void *_pd EINA_UNUSED)
 {
-   evas_object_focus_set(obj, efl_ui_focus_object_focus_get(obj));
+   evas_object_focus_set(obj, elm_widget_focus_get(obj));
 
    return EINA_TRUE;
 }
@@ -535,19 +535,9 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
           }
         else
           {
-             Efl_Ui_Focus_Relations *rel;
-
-             rel = efl_ui_focus_manager_fetch(efl_ui_focus_object_focus_manager_get(obj), obj);
-
-             if (rel)
-               {
-                  if (dir == ELM_FOCUS_NEXT)
-                    _elm_access_highlight_set(rel->next);
-                  else
-                    _elm_access_highlight_set(rel->prev);
-
-                  free(rel);
-               }
+             ret = efl_ui_widget_focus_next_get(obj, dir, &target, NULL);
+             if (ret && target)
+               _elm_access_highlight_set(target);
           }
      }
 
@@ -700,10 +690,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
              elm_widget_focus_region_show(comming);
           }
         else
-          {
-             efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
-             efl_ui_focus_manager_move(elm_widget_top_get(obj), dir);
-          }
+          efl_ui_widget_focus_cycle(obj, dir);
      }
 
    action_by = ELM_ACCESS_ACTION_FIRST;

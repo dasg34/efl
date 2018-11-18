@@ -188,7 +188,7 @@ _drag_start(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   if (!efl_ui_focus_object_focus_get(data))
+   if (!elm_widget_focus_get(data))
      elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
    efl_event_callback_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
@@ -507,7 +507,7 @@ _spacer_down_cb(void *data,
 
    efl_ui_slider_down_knob(data, button_x, button_y);
 
-   if (!efl_ui_focus_object_focus_get(data))
+   if (!elm_widget_focus_get(data))
      elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
    efl_event_callback_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
@@ -766,16 +766,6 @@ _efl_ui_slider_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Da
    sd->step = step;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_slider_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED)
-{
-   Eina_Bool int_ret = EINA_FALSE;
-
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
-
-   return int_ret;
-}
-
 // A11Y Accessibility
 
 EOLIAN static void
@@ -801,6 +791,18 @@ _efl_ui_slider_efl_access_value_value_and_text_set(Eo *obj, Efl_Ui_Slider_Data *
    efl_event_callback_call(obj, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
 
    return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_slider_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_slider_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 EOLIAN static void

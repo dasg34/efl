@@ -780,7 +780,7 @@ _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    // and one of them can delete elm_entry.
    evas_object_ref(obj);
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (elm_widget_focus_get(obj))
      {
         edje_object_signal_emit(sd->entry_edje, "efl,action,focus", "efl");
         if (sd->scroll)
@@ -922,7 +922,7 @@ _return_key_enabled_check(Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_ui_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Evas_Object *top;
    Eina_Bool top_is_win = EINA_FALSE;
@@ -933,7 +933,7 @@ _efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
    if (top && efl_isa(top, EFL_UI_WIN_CLASS))
      top_is_win = EINA_TRUE;
 
-   if (efl_ui_focus_object_focus_get(obj))
+   if (elm_widget_focus_get(obj))
      {
         evas_object_focus_set(sd->text_obj, EINA_TRUE);
 

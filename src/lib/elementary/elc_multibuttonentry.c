@@ -61,12 +61,14 @@ static Eina_Bool _elm_multibuttonentry_smart_focus_next_enable = EINA_FALSE;
 static Eina_Bool _elm_multibuttonentry_smart_focus_direction_enable = EINA_TRUE;
 
 static void _entry_changed_cb(void *data, const Efl_Event *event);
-static void _entry_focus_changed_cb(void *data, const Efl_Event *event);
+static void _entry_focus_in_cb(void *data, const Efl_Event *event);
+static void _entry_focus_out_cb(void *data, const Efl_Event *event);
 static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
-   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
+   { EFL_UI_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
+   { EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
@@ -1048,31 +1050,29 @@ _entry_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
    str = elm_object_text_get(sd->entry);
    sd->n_str = str ? strlen(str) : 0;
 }
-
 static void
-_entry_focus_changed_cb(void *data, const Efl_Event *event)
+_entry_focus_in_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
+   Elm_Multibuttonentry_Item_Data *item = NULL;
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
 
-   if (elm_object_focus_get(event->object))
+   if (sd->selected_it)
      {
-        Elm_Multibuttonentry_Item_Data *item = NULL;
-
-        if (sd->selected_it)
-          {
-             item = sd->selected_it;
-             elm_object_focus_set(sd->entry, EINA_FALSE);
-             elm_object_focus_set(VIEW(item), EINA_TRUE);
-          }
+        item = sd->selected_it;
+        elm_object_focus_set(sd->entry, EINA_FALSE);
+        elm_object_focus_set(VIEW(item), EINA_TRUE);
      }
-   else
-     {
-        const char *str;
+}
 
-        str = elm_object_text_get(sd->entry);
-        if (str && str[0])
-          _item_new(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
-     }
+static void
+_entry_focus_out_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
+   const char *str;
+
+   str = elm_object_text_get(sd->entry);
+   if (str && str[0])
+     _item_new(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
 }
 
 static void
@@ -1650,8 +1650,6 @@ elm_multibuttonentry_add(Evas_Object *parent)
 EOLIAN static Eo *
 _elm_multibuttonentry_efl_object_constructor(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
 {
-
-   legacy_child_focus_handle(obj);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

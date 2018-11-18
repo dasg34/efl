@@ -320,7 +320,6 @@ _elm_list_item_content_focus_set(Elm_List_Item_Data *it, Elm_Focus_Direction dir
         return EINA_TRUE;
      }
 
-   /* FOCUS-FIXME
    if (dir != ELM_FOCUS_PREVIOUS)
      {
         Evas_Object *nextfocus;
@@ -339,7 +338,6 @@ _elm_list_item_content_focus_set(Elm_List_Item_Data *it, Elm_Focus_Direction dir
         if (idx >= focus_objs) idx = 0;
         focused = focus_chain[idx];
      }
-   */
    elm_object_focus_set(focused, EINA_TRUE);
    return EINA_TRUE;
 }
@@ -1281,13 +1279,13 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
 }
 
 EOLIAN static Eina_Bool
-_elm_list_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_List_Data *sd)
+_elm_list_efl_ui_widget_on_focus_update(Eo *obj, Elm_List_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (elm_object_focus_get(obj) && sd->selected && !sd->last_selected_item)
@@ -1319,7 +1317,9 @@ _elm_list_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_List_Data *sd)
                   if (!_elm_config->item_select_on_focus_disable && is_sel)
                     elm_list_item_selected_set(EO_OBJ(it), EINA_TRUE);
                   else
-                    _elm_list_item_focused(EO_OBJ(it));
+                    {
+                       elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
+                    }
                }
           }
      }
@@ -2315,7 +2315,6 @@ _item_new(Evas_Object *obj,
           (it->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
         efl_access_object_access_type_set(it->icon, EFL_ACCESS_TYPE_DISABLED);
-        elm_widget_tree_unfocusable_set(it->icon, EINA_TRUE);
      }
    if (it->end)
      {
@@ -2324,7 +2323,6 @@ _item_new(Evas_Object *obj,
           (it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb,
           obj);
         efl_access_object_access_type_set(it->end, EFL_ACCESS_TYPE_DISABLED);
-        elm_widget_tree_unfocusable_set(it->end, EINA_TRUE);
      }
 
    if (_elm_config->atspi_mode)
@@ -2343,6 +2341,39 @@ _resize_cb(void *data,
 }
 
 static Eina_Bool _elm_list_smart_focus_next_enable = EINA_FALSE;
+
+EOLIAN static Eina_Bool
+_elm_list_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_List_Data *sd EINA_UNUSED)
+{
+   return _elm_list_smart_focus_next_enable;
+}
+
+EOLIAN static Eina_Bool
+_elm_list_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_List_Data *sd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_list_efl_ui_widget_focus_next(Eo *obj, Elm_List_Data *sd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   Eina_List *items = NULL;
+   Eina_List *elist = NULL;
+   Elm_Object_Item *eo_it;
+
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_ON) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(sd->items, elist, eo_it)
+     {
+        ELM_LIST_ITEM_DATA_GET(eo_it, it);
+        items = eina_list_append(items, it->base->access_obj);
+        if (it->icon) items = eina_list_append(items, it->icon);
+        if (it->end) items = eina_list_append(items, it->end);
+     }
+
+   return efl_ui_widget_focus_list_next_get
+            (obj, items, eina_list_data_get, dir, next, next_item);
+}
 
 EOLIAN static void
 _elm_list_efl_canvas_group_group_add(Eo *obj, Elm_List_Data *priv)
@@ -2502,7 +2533,6 @@ _elm_list_efl_object_constructor(Eo *obj, Elm_List_Data *sd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
-   legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
 
    return obj;
 }
@@ -3196,12 +3226,6 @@ _elm_list_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_List_Data
         return EINA_TRUE;
      }
    return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_list_efl_ui_widget_focus_state_apply(Eo *obj, Elm_List_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
-{
-   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 /* Standard widget overrides */

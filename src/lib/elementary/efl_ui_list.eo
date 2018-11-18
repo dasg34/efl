@@ -57,7 +57,7 @@ class Efl.Ui.List (Efl.Ui.Layout,
       Efl.Ui.Widget.theme_apply;
 
       //Efl.Ui.Focus
-      //Efl.Ui.Focus.Object.on_focus_update;
+      //Efl.Ui.Widget.on_focus_update;
 
       //Efl.Pack
       Efl.Pack.pack_clear;

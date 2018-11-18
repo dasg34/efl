@@ -3,13 +3,10 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
-#define EFL_UI_FOCUS_COMPOSITION_ADAPTER_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_clock.h"
-#include "efl_ui_focus_composition_adapter.eo.h"
 
 #define MY_CLASS ELM_CLOCK_CLASS
 
@@ -345,59 +342,6 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
    edje_object_thaw(sd->am_pm_obj);
 }
 
-static Evas_Object*
-_focus_part_get(Evas_Object *part, const char *part_name)
-{
-   Evas_Object *po, *adapter;
-
-   edje_object_freeze(part);
-   po = (Evas_Object *)edje_object_part_object_get
-          (part, part_name);
-   edje_object_thaw(part);
-
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     po = evas_object_data_get(po, "_part_access_obj");
-
-   adapter = evas_object_data_get(po, "_focus_adapter_object");
-
-   if (!adapter)
-     {
-        adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, po);
-        efl_ui_focus_composition_adapter_canvas_object_set(adapter, part);
-        evas_object_data_set(po, "_focus_adapter_object", adapter);
-     }
-
-   return adapter;
-}
-
-static void
-_flush_clock_composite_elements(Evas_Object *obj, Elm_Clock_Data *sd)
-{
-   Eina_List *items = NULL;
-   int i;
-
-   if (sd->edit)
-     {
-        for (i = 0; i < 6; i++)
-          {
-             if ((!sd->seconds) && (i >= 4)) break;
-             if (sd->digedit & (1 << i))
-               {
-                  items = eina_list_append(items, _focus_part_get(sd->digit[i], "access.t"));
-                  items = eina_list_append(items, _focus_part_get(sd->digit[i], "access.b"));
-               }
-          }
-
-        if (sd->am_pm)
-          {
-             items = eina_list_append(items, _focus_part_get(sd->am_pm_obj, "access.t"));
-             items = eina_list_append(items, _focus_part_get(sd->am_pm_obj, "access.b"));
-          }
-     }
-
-   efl_ui_focus_composition_elements_set(obj, items);
-}
-
 static void
 _time_update(Evas_Object *obj, Eina_Bool theme_update)
 {
@@ -534,7 +478,6 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
         sd->cur.am_pm = sd->am_pm;
         sd->cur.edit = sd->edit;
         sd->cur.digedit = sd->digedit;
-        _flush_clock_composite_elements(obj, sd);
      }
    if (sd->hrs != sd->cur.hrs)
      {
@@ -808,7 +751,6 @@ _elm_clock_efl_object_constructor(Eo *obj, Elm_Clock_Data *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TEXT);
-   legacy_child_focus_handle(obj);
 
    return obj;
 }

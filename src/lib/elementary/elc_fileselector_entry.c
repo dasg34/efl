@@ -272,8 +272,6 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT);
 #undef SIG_FWD
 
-   efl_event_callback_forwarder_add(priv->entry, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, obj);
-
    if (!elm_layout_theme_set
        (obj, "fileselector_entry", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
@@ -282,6 +280,8 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
         elm_layout_content_set(obj, "elm.swallow.button", priv->button);
         elm_layout_content_set(obj, "elm.swallow.entry", priv->entry);
      }
+
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
 }
@@ -308,7 +308,6 @@ _elm_fileselector_entry_efl_object_constructor(Eo *obj, Elm_Fileselector_Entry_D
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_GROUPING);
-   legacy_child_focus_handle(obj);
 
    return obj;
 }

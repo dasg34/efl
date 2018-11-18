@@ -56,7 +56,7 @@
  *    // define this virtual function to handle it (e.g. to emit a
  *    // signal to an edje object)
  *
- *    if (efl_ui_focus_object_focus_get(obj))
+ *    if (elm_widget_focus_get(obj))
  *      {
  *         edje_object_signal_emit(sd->sub, "elm,action,focus", "elm");
  *         evas_object_focus_set(sd->sub, EINA_TRUE);
@@ -390,6 +390,12 @@ typedef struct _Elm_Widget_Smart_Data
    Evas_Object                  *bg;
    Eina_List                    *tooltips, *cursors;
 
+   Evas_Object                  *focus_previous, *focus_next;
+   Evas_Object                  *focus_up, *focus_down, *focus_right, *focus_left;
+   Elm_Object_Item              *item_focus_previous, *item_focus_next;
+   Elm_Object_Item              *item_focus_up, *item_focus_down, *item_focus_right, *item_focus_left;
+
+
    /* "show region" coordinates. all widgets got those because this
     * info may be set and queried recursively through the widget
     * parenting tree */
@@ -428,21 +434,6 @@ typedef struct _Elm_Widget_Smart_Data
    Elm_Focus_Move_Policy         focus_move_policy;
    Elm_Focus_Region_Show_Mode    focus_region_show_mode;
 
-   Efl_Ui_Widget_Focus_State focus;
-   struct {
-      int child_count;
-      Efl_Ui_Focus_Object *parent;
-   } logical;
-   struct {
-      Efl_Ui_Focus_Manager *manager;
-      Efl_Ui_Focus_Object *provider;
-   } manager;
-   struct {
-     Eina_Bool listen_to_manager;
-     Eina_List *custom_chain;
-     Evas_Object *prev, *next, *up, *down, *right, *left;
-     Elm_Object_Item *item_prev, *item_next, *item_up, *item_down, *item_right, *item_left;
-   } legacy_focus;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 
@@ -675,12 +666,16 @@ EAPI Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, con
 EAPI const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
+EAPI Eina_Bool        elm_widget_focus_get(const Eo *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
 EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
 EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 Evas_Object          *_elm_widget_focus_highlight_object_get(const Evas_Object *obj);
 EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
+
+
+double                _elm_widget_focus_direction_weight_get(const Evas_Object *obj1, const Evas_Object *obj2, double degree);
 
 /**
  * @internal

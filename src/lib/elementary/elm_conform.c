@@ -664,7 +664,7 @@ _show_region_job(void *data)
 
    ELM_CONFORMANT_DATA_GET(data, sd);
 
-   focus_obj = elm_object_focused_object_get(data);
+   focus_obj = efl_ui_widget_focused_object_get(data);
    if (focus_obj)
      {
         Eina_Rect r = elm_widget_focus_region_get(focus_obj);
@@ -714,7 +714,7 @@ _autoscroll_objects_update(void *data)
 
    ELM_CONFORMANT_DATA_GET(data, sd);
 
-   sub = elm_object_focused_object_get(data);
+   sub = efl_ui_widget_focused_object_get(data);
    //Look up for top most scroller in the focus object hierarchy
    //inside Conformant.
 

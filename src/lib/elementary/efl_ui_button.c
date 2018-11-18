@@ -347,6 +347,18 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(const Eo *obj EINA_U
    return sd->ar_gap_timeout;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_button_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_button_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 EOLIAN const Efl_Access_Action_Data *
 _efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {
@@ -417,7 +429,6 @@ EOLIAN static Eo *
 _efl_ui_button_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS));
-   legacy_object_focus_handle(obj);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    return obj;
 }

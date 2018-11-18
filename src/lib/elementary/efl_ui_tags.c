@@ -20,12 +20,14 @@ static const char PART_NAME_NUMBER[] = "number";
 static Eina_Bool _efl_ui_tags_smart_focus_direction_enable = EINA_TRUE;
 
 static void _entry_changed_cb(void *data, const Efl_Event *event);
-static void _entry_focus_changed_cb(void *data, const Efl_Event *event);
+static void _entry_focus_in_cb(void *data, const Efl_Event *event);
+static void _entry_focus_out_cb(void *data, const Efl_Event *event);
 static void _entry_clicked_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_tags_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
-   { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
+   { EFL_UI_WIDGET_EVENT_FOCUSED, _entry_focus_in_cb },
+   { EFL_UI_WIDGET_EVENT_UNFOCUSED, _entry_focus_out_cb },
    { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
 );
 
@@ -254,7 +256,7 @@ _item_select(Evas_Object *obj, Evas_Object *it)
      {
         _current_item_change(obj, it);
 
-        if (efl_ui_focus_object_focus_get(obj))
+        if (elm_widget_focus_get(obj))
           {
              elm_object_focus_set(sd->entry, EINA_FALSE);
              elm_object_focus_set(it, EINA_TRUE);
@@ -264,7 +266,7 @@ _item_select(Evas_Object *obj, Evas_Object *it)
      {
         _current_item_state_change
            (obj, TAGS_IT_STATE_DEFAULT);
-        if (efl_ui_focus_object_focus_get(obj) && sd->editable)
+        if (elm_widget_focus_get(obj) && sd->editable)
           elm_object_focus_set(sd->entry, EINA_TRUE);
      }
 }
@@ -458,7 +460,7 @@ _item_new(Efl_Ui_Tags_Data *sd,
           elm_box_pack_end(sd->box, layout);
      }
 
-   if (!efl_ui_focus_object_focus_get(obj) && sd->view_state == TAGS_VIEW_SHRINK && sd->w_box)
+   if (!elm_widget_focus_get(obj) && sd->view_state == TAGS_VIEW_SHRINK && sd->w_box)
      _shrink_mode_set(obj, EINA_TRUE);
 
    if (!sd->item_setting)
@@ -564,7 +566,7 @@ _entry_resize_cb(void *data,
 {
    Efl_Ui_Tags_Data *sd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
 
-   if (efl_ui_focus_object_focus_get(sd->parent))
+   if (elm_widget_focus_get(sd->parent))
      elm_widget_show_region_set(sd->entry, efl_gfx_entity_geometry_get(sd->entry), EINA_TRUE);
 }
 
@@ -579,29 +581,28 @@ _entry_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_entry_focus_changed_cb(void *data, const Efl_Event *event)
+_entry_focus_in_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
+   Eo *item = NULL;
    Efl_Ui_Tags_Data *sd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
 
-   if (efl_ui_focus_object_focus_get(event->object))
+   if (sd->selected_it)
      {
-        Eo *item;
-
-        if (sd->selected_it)
-          {
-             item = sd->selected_it;
-             elm_object_focus_set(sd->entry, EINA_FALSE);
-             elm_object_focus_set(item, EINA_TRUE);
-          }
+        item = sd->selected_it;
+        elm_object_focus_set(sd->entry, EINA_FALSE);
+        elm_object_focus_set(item, EINA_TRUE);
      }
-   else
-     {
-        const char *str;
+}
 
-        str = efl_text_get(sd->entry);
-        if (str && str[0])
-          _item_new(sd, str);
-     }
+static void
+_entry_focus_out_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Tags_Data *sd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
+   const char *str;
+
+   str = elm_object_text_get(sd->entry);
+   if (str && str[0])
+     _item_new(sd, str);
 }
 
 static void
@@ -961,43 +962,6 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
      }
 }
 
-static void
-_legacy_focused(void *data, const Efl_Event *ev)
-{
-   Efl_Ui_Focus_Object *new_focus;
-   Eina_Bool meaningful_focus_in = EINA_FALSE, meaningful_focus_out = EINA_FALSE;
-   Efl_Ui_Tags_Data *pd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
-
-   new_focus = efl_ui_focus_manager_focus_get(ev->object);
-
-   if (efl_isa(ev->info, EFL_UI_WIDGET_CLASS) && elm_widget_parent_get(ev->info) == pd->box)
-     {
-        meaningful_focus_out = EINA_TRUE;
-     }
-
-   if (efl_isa(new_focus, EFL_UI_WIDGET_CLASS) && elm_widget_parent_get(new_focus) == pd->box)
-     {
-        meaningful_focus_in = EINA_TRUE;
-     }
-
-   if (meaningful_focus_in && !meaningful_focus_out)
-     {
-        evas_object_smart_callback_call(data, "focused", NULL);
-     }
-
-   if (!meaningful_focus_in && meaningful_focus_out)
-     {
-        evas_object_smart_callback_call(data, "unfocused", NULL);
-     }
-}
-
-static void
-_legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _legacy_focused, ev->object);
-   efl_event_callback_add(efl_ui_focus_object_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _legacy_focused, ev->object);
-}
-
 EOLIAN static Eo *
 _efl_ui_tags_efl_object_constructor(Eo *obj, Efl_Ui_Tags_Data *sd)
 {
@@ -1025,9 +989,6 @@ _efl_ui_tags_efl_object_constructor(Eo *obj, Efl_Ui_Tags_Data *sd)
 
    _view_init(obj, sd);
    _callbacks_register(obj);
-
-   //listen to manager changes here
-   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
 
    return obj;
 }

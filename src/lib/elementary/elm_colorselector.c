@@ -5,8 +5,6 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
-#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -194,28 +192,6 @@ static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
    {NULL, NULL}
 };
-
-static void
-_flush_color_children(Eo *obj, Elm_Colorselector_Data *pd)
-{
-   Eina_List *items = NULL;
-
-   if (pd->mode == ELM_COLORSELECTOR_ALL) {
-      items = eina_list_append(items, pd->picker);
-      items = eina_list_merge(items, eina_list_clone(pd->items));
-      items = eina_list_append(items, pd->col_bars_area);
-   } else if (pd->mode == ELM_COLORSELECTOR_BOTH) {
-      items = eina_list_merge(items, eina_list_clone(pd->items));
-      items = eina_list_append(items, pd->col_bars_area);
-   } else if (pd->mode == ELM_COLORSELECTOR_COMPONENTS) {
-      items = eina_list_append(items, pd->col_bars_area);
-   } else if (pd->mode == ELM_COLORSELECTOR_PALETTE) {
-      items = eina_list_merge(items, eina_list_clone(pd->items));
-   } else if (pd->mode == ELM_COLORSELECTOR_PICKER) {
-      items = eina_list_append(items, pd->picker);
-   }
-   efl_ui_focus_composition_elements_set(obj, items);
-}
 
 enum Palette_Box_Direction
 {
@@ -1771,7 +1747,7 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
 
    Evas_Object *obj;
    obj = efl_parent_get(eo_item);
-   WIDGET(item) = obj;
+
    VIEW_SET(item, elm_layout_add(obj));
    if (!elm_layout_theme_set
        (VIEW(item), "colorselector", "item", elm_widget_style_get(obj)))
@@ -1781,8 +1757,6 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
    evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add
      (VIEW(item), EVAS_CALLBACK_RESIZE, _item_resize, NULL);
-   _efl_ui_focus_event_redirector(VIEW(item), obj);
-
 
    item->color_obj = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set
@@ -1986,8 +1960,6 @@ _elm_colorselector_efl_canvas_group_group_add(Eo *obj, Elm_Colorselector_Data *p
    priv->grab.in = EINA_TRUE;
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
-
-   _flush_color_children(obj, priv);
 }
 
 EOLIAN static void
@@ -2284,7 +2256,6 @@ _elm_colorselector_efl_object_constructor(Eo *obj, Elm_Colorselector_Data *_pd E
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_COLOR_CHOOSER);
-   legacy_child_focus_handle(obj);
 
    return obj;
 }
@@ -2381,7 +2352,6 @@ _elm_colorselector_mode_set(Eo *obj, Elm_Colorselector_Data *sd, Elm_Colorselect
 
    _colors_set(obj, sd->r, sd->g, sd->b, sd->a, EINA_TRUE);
    elm_layout_sizing_eval(obj);
-   _flush_color_children(obj, sd);
 }
 
 EOLIAN static Elm_Colorselector_Mode
@@ -2656,7 +2626,7 @@ _elm_color_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Color_Item_Data *i
      }
    else
      {
-        if (!efl_ui_focus_object_focus_get(obj))
+        if (!elm_widget_focus_get(obj))
           return;
         sd->focused_item = NULL;
      }
@@ -2711,33 +2681,6 @@ _elm_color_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Color_Item_
    free(accessible_name);
    return it->base->accessible_name;
 }
-
-EOLIAN static Eina_Rect
-_elm_color_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
-{
-   return efl_gfx_entity_geometry_get(pd->color_obj);
-}
-
-EOLIAN static void
-_elm_color_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Color_Item_Data *pd, Eina_Bool focus)
-{
-   efl_ui_focus_object_focus_set(efl_super(obj, ELM_COLOR_ITEM_CLASS), focus);
-   evas_object_focus_set(pd->color_obj, focus);
-   elm_object_item_focus_set(obj, focus);
-}
-
-EOLIAN static Efl_Ui_Focus_Object*
-_elm_color_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
-{
-   return WIDGET(pd);
-}
-
-EOLIAN static Efl_Ui_Focus_Manager*
-_elm_color_item_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
-{
-   return efl_ui_focus_object_focus_manager_get(WIDGET(pd));
-}
-
 
 /* Standard widget overrides */
 

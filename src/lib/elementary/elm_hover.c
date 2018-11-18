@@ -696,7 +696,6 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
-   legacy_child_focus_handle(obj);
 
    return obj;
 }
@@ -828,6 +827,18 @@ _elm_hover_dismiss(Eo *obj, Elm_Hover_Data *_pd EINA_UNUSED)
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_layout_signal_emit(obj, "elm,action,dismiss", ""); // XXX: for compat
    elm_layout_signal_emit(obj, "elm,action,dismiss", "elm");
+}
+
+EOLIAN static Eina_Bool
+_elm_hover_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_hover_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Hover_Data *_pd EINA_UNUSED)
+{
+   return EINA_TRUE;
 }
 
 EOLIAN static void

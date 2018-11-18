@@ -9,7 +9,7 @@ enum Elm.Gengrid.Reorder_Type
    swap    [[Swap reorder type]]
 }
 
-class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
+class Elm.Gengrid (Efl.Ui.Layout, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Efl.Access.Widget.Action,
                    Efl.Access.Selection, Efl.Ui.Legacy)
 {
@@ -501,12 +501,16 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Object.provider_find;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.focus_next_manager_is;
+      Efl.Ui.Widget.focus_direction_manager_is;
+      Efl.Ui.Widget.focus_next;
+      Efl.Ui.Widget.focus_direction;
       Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
@@ -525,9 +529,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.access_selection_clear;
-      Efl.Ui.Focus.Composition.prepare;
-      Efl.Ui.Widget.focus_state_apply;
-      Efl.Ui.Focus.Manager.setup_on_first_touch;
    }
    events {
       realized: Efl.Object; [[Called when gengrid realized]]

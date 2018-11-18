@@ -149,20 +149,8 @@ EAPI extern Elm_Version *elm_version;
 
 #if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
 
-//define focus manager earlier since focus object and manager is circular
-typedef Eo Efl_Ui_Focus_Manager;
-#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
-
-# include <efl_ui_focus_object.eo.h>
-# include <efl_ui_focus_manager.eo.h>
-# include <efl_ui_focus_manager_window_root.eo.h>
-# include <efl_ui_focus_manager_calc.eo.h>
-# include <efl_ui_focus_manager_sub.eo.h>
-# include <efl_ui_focus_manager_root_focus.eo.h>
-# include <efl_ui_focus_util.eo.h>
+# include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
-# include <efl_ui_focus_composition.eo.h>
-# include <efl_ui_focus_layer.eo.h>
 # include <elm_interface_scrollable.h>
 # include <elm_interface_scrollable.eo.h>
 # include <elm_spinner.eo.h>

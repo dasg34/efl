@@ -23,7 +23,7 @@ struct Elm.Toolbar_Item_State
    data: const(void_ptr); [[Item data]]
 }
 
-class Elm.Toolbar_Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
+class Elm.Toolbar_Item(Elm.Widget.Item, Efl.Ui.Legacy)
 {
       [[Elementary toolbar item class]]
       legacy_prefix: elm_toolbar_item;
@@ -314,15 +314,11 @@ class Elm.Toolbar_Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
            Efl.Object.constructor;
            Efl.Object.invalidate;
            Elm.Widget.Item.disable;
-           Elm.Widget.Item.disabled { set; }
            Elm.Widget.Item.item_focus { get; set; }
            Elm.Widget.Item.signal_emit;
            Elm.Widget.Item.part_text { get; set; }
            Elm.Widget.Item.part_content { get; set; }
            Elm.Widget.Item.part_content_unset;
-           Efl.Ui.Focus.Object.focus_geometry { get; }
-           Efl.Ui.Focus.Object.focus { set; }
-           Efl.Ui.Focus.Object.focus_parent { get; }
            Efl.Access.Object.i18n_name { get; }
            Efl.Access.Object.state_set { get; }
       }

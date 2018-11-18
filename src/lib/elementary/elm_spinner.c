@@ -5,7 +5,6 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include <ctype.h>
@@ -55,7 +54,9 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event);
 static void
 _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
 static void
-_entry_focus_change(void *data, const Efl_Event *event);
+_text_button_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void
+_entry_unfocused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 
@@ -417,8 +418,8 @@ _entry_value_apply(Evas_Object *obj)
 
    if (!sd->entry_visible) return;
 
-   efl_event_callback_del
-    (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
+   evas_object_smart_callback_del_full(sd->ent, "unfocused",
+                                       _entry_unfocused_cb, obj);
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
@@ -649,25 +650,13 @@ _toggle_entry(Evas_Object *obj)
              elm_layout_signal_emit(obj, "elm,state,active", "elm");
              _entry_show(sd);
              elm_entry_select_all(sd->ent);
+             elm_widget_focus_set(sd->ent, EINA_TRUE);
              sd->entry_visible = EINA_TRUE;
           }
-
-        efl_event_callback_add
-           (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
+        evas_object_smart_callback_add(sd->ent, "focused", _entry_unfocused_cb, obj);
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
         evas_object_show(sd->ent);
-        {
-           Eina_List *items = NULL;
-
-           items = eina_list_append(items, sd->dec_button);
-           items = eina_list_append(items, sd->text_button);
-           items = eina_list_append(items, sd->ent);
-           items = eina_list_append(items, sd->inc_button);
-
-           efl_ui_focus_composition_elements_set(obj, items);
-        }
-        efl_ui_focus_manager_focus_set(efl_ui_focus_object_focus_manager_get(obj), sd->ent);
      }
 }
 
@@ -881,23 +870,21 @@ _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_text_button_focus_change(void *data, const Efl_Event *event)
-{
-   if (efl_ui_focus_object_focus_get(event->object))
-     _toggle_entry(data);
-}
-
-static void
 _entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    _toggle_entry(data);
 }
 
 static void
-_entry_focus_change(void *data, const Efl_Event *event)
+_text_button_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if (!efl_ui_focus_object_focus_get(event->object))
-     _toggle_entry(data);
+   _toggle_entry(data);
+}
+
+static void
+_entry_unfocused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _toggle_entry(data);
 }
 
 static void
@@ -937,14 +924,14 @@ _elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_widget_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
+   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (!efl_ui_focus_object_focus_get(obj))
+   if (!elm_widget_focus_get(obj))
      {
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
@@ -1225,8 +1212,8 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
         efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
 
-        efl_event_callback_add
-          (priv->text_button, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _text_button_focus_change, obj);
+        evas_object_smart_callback_add(priv->text_button, "focused",
+                                       _text_button_focused_cb, obj);
 
         elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
         elm_widget_sub_object_add(obj, priv->text_button);
@@ -1238,16 +1225,6 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
 
         elm_layout_content_set(obj, "elm.swallow.dec_button", priv->dec_button);
         elm_widget_sub_object_add(obj, priv->dec_button);
-
-        {
-           Eina_List *items = NULL;
-
-           items = eina_list_append(items, priv->dec_button);
-           items = eina_list_append(items, priv->text_button);
-           items = eina_list_append(items, priv->inc_button);
-
-           efl_ui_focus_composition_elements_set(obj, items);
-        }
      }
    else
      {
@@ -1356,6 +1333,90 @@ _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
 
+
+EOLIAN static Eina_Bool
+_elm_spinner_efl_ui_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return _elm_spinner_smart_focus_next_enable | sd->button_layout;
+}
+
+EOLIAN static Eina_Bool
+_elm_spinner_efl_ui_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (sd->button_layout) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_spinner_efl_ui_widget_focus_direction(Eo *obj, Elm_Spinner_Data *_pd, const Evas_Object *base, double degree, Evas_Object **direction, Elm_Object_Item **direction_item, double *weight)
+{
+   Eina_Bool ret;
+   Eina_List *items = NULL;
+   void *(*list_data_get)(const Eina_List *list);
+
+   ELM_SPINNER_CHECK(obj) EINA_FALSE;
+
+   if (!_pd)
+     return EINA_FALSE;
+
+   list_data_get = eina_list_data_get;
+
+   items = eina_list_append(items, _pd->inc_button);
+   items = eina_list_append(items, _pd->text_button);
+   items = eina_list_append(items, _pd->dec_button);
+
+   ret = efl_ui_widget_focus_list_direction_get
+      (obj, base, items, list_data_get, degree, direction, direction_item, weight);
+   eina_list_free(items);
+
+   return ret;
+}
+
+static Evas_Object *
+_access_object_get(const Evas_Object *obj, const char* part)
+{
+   Evas_Object *eo, *po, *ao;
+
+   eo = elm_layout_edje_get(obj);
+
+   po = (Evas_Object *)edje_object_part_object_get(eo, part);
+   ao = evas_object_data_get(po, "_part_access_obj");
+
+   return ao;
+}
+
+EOLIAN static Eina_Bool
+_elm_spinner_efl_ui_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Direction dir, Evas_Object **next, Elm_Object_Item **next_item)
+{
+   Evas_Object *ao;
+   Eina_List *items = NULL;
+   int ret;
+
+   ELM_SPINNER_CHECK(obj) EINA_FALSE;
+
+   if (_elm_config->access_mode)
+     {
+        ao = _access_object_get(obj, "access");
+        items = eina_list_append(items, ao);
+     }
+   if (!elm_widget_disabled_get(obj))
+     {
+        items = eina_list_append(items, _pd->dec_button);
+        items = eina_list_append(items, _pd->text_button);
+        items = eina_list_append(items, _pd->inc_button);
+     }
+
+   ret = efl_ui_widget_focus_list_next_get
+      (obj, items, eina_list_data_get, dir, next, next_item);
+   eina_list_free(items);
+
+   return ret;
+}
+
 EOLIAN static void
 _elm_spinner_efl_ui_widget_on_access_update(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
@@ -1410,7 +1471,6 @@ EOLIAN static Eo *
 _elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   legacy_child_focus_handle(obj);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);

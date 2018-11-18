@@ -13,7 +13,6 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_FILESELECTOR_BETA
 #define EFL_PART_PROTECTED
-#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include "Eio_Eo.h"
@@ -99,29 +98,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(monitoring_callbacks,
                           { EFL_MODEL_EVENT_CHILD_ADDED, _resource_created },
                           { EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted });
 
-
-static void
-_focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
-{
-   Eina_List *tmp = NULL;
-
-#define A(p) if (p) tmp = eina_list_append(tmp, p);
-
-   A(pd->up_button)
-   A(pd->home_button)
-   A(pd->search_entry)
-   A(pd->files_view)
-   A(pd->path_entry)
-   A(pd->name_entry)
-   A(pd->filter_hoversel)
-   A(pd->ok_button)
-   A(pd->cancel_button)
-
-
-#undef A
-
-   efl_ui_focus_composition_elements_set(obj, tmp);
-}
 
 void
 _event_to_legacy_call(Eo *obj, const Efl_Event_Description *evt_desc, void *event_info)
@@ -1517,19 +1493,19 @@ _anchors_undo(void *data)
 }
 
 static void
-_on_text_focus_changed(void *data, const Efl_Event *event)
+_on_text_focused(void *data, const Efl_Event *event EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
-   if (efl_ui_focus_object_focus_get(event->object))
-     {
-        if (!sd->path_entry_idler)
-          sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
-     }
-   else
-     {
-        _anchors_do(data, sd->path);
-     }
+   if (!sd->path_entry_idler)
+       sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
+}
+
+static void
+_on_text_unfocused(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   ELM_FILESELECTOR_DATA_GET(data, sd);
+   _anchors_do(data, sd->path);
 }
 
 static void
@@ -1862,8 +1838,10 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
 
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj);
+    efl_event_callback_add
+     (en, EFL_UI_WIDGET_EVENT_FOCUSED, _on_text_focused, obj);
    efl_event_callback_add
-   (en, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _on_text_focus_changed, obj);
+     (en, EFL_UI_WIDGET_EVENT_UNFOCUSED, _on_text_unfocused, obj);
    efl_event_callback_add
      (en, ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj);
 
@@ -1892,8 +1870,6 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    elm_object_part_content_set(obj, "elm.swallow.files", priv->files_view);
 
    elm_layout_sizing_eval(obj);
-
-   _focus_chain_update(obj, priv);
 }
 
 EOLIAN static void
@@ -1940,7 +1916,6 @@ EOLIAN static Eo *
 _elm_fileselector_efl_object_constructor(Eo *obj, Elm_Fileselector_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   legacy_child_focus_handle(obj);
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -2037,8 +2012,6 @@ _elm_fileselector_elm_interface_fileselector_is_save_set(Eo *obj, Elm_Fileselect
 
    if (is_save) elm_layout_signal_emit(obj, "elm,state,save,on", "elm");
    else elm_layout_signal_emit(obj, "elm,state,save,off", "elm");
-
-   _focus_chain_update(obj, sd);
 }
 
 EAPI Eina_Bool
@@ -2123,8 +2096,6 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
         ELM_SAFE_FREE(sd->cancel_button, evas_object_del);
         ELM_SAFE_FREE(sd->ok_button, evas_object_del);
      }
-
-   _focus_chain_update(obj, sd);
 }
 
 EOLIAN static Eina_Bool

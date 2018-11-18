@@ -147,20 +147,8 @@ extern EAPI double _efl_startup_time;
 #include "efl_ui.eot.h"
 #include "efl_selection_types.eot.h"
 
-//define focus manager earlier since focus object and manager is circular
-typedef Eo Efl_Ui_Focus_Manager;
-#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
-
-# include <efl_ui_focus_object.eo.h>
-# include <efl_ui_focus_manager.eo.h>
-# include <efl_ui_focus_manager_calc.eo.h>
-# include <efl_ui_focus_manager_sub.eo.h>
-# include <efl_ui_focus_manager_root_focus.eo.h>
-# include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
-# include <efl_ui_focus_composition.eo.h>
-# include <efl_ui_focus_layer.eo.h>
 # include <efl_access_object.h>
 # include <efl_access_text.h>
 # include <efl_access_window.h>
