@@ -266,6 +266,8 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_web.h>
 #include <elm_win.h>
 
+#include <elm_relative_container.h>
+
 /* include deprecated calls last of all */
 #include <elm_deprecated.h>
 

@@ -355,7 +355,7 @@ _child_calc(Efl_Ui_Relative_Container_Child *child, Eina_Bool axis)
                         - calc->margin[END] - calc->space[axis].position;
      }
 
-   if (calc->fill[axis] && (calc->weight[axis] > 0))
+   if (calc->fill[axis])
      calc->want[axis].length = calc->space[axis].length;
 
    if (!calc->aspect[0] && !calc->aspect[1])
@@ -491,7 +491,17 @@ _hash_child_init_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key E
 
    efl_gfx_hint_weight_get(child->obj, &calc->weight[0], &calc->weight[1]);
    efl_gfx_hint_align_get(child->obj, &calc->align[0], &calc->align[1]);
-   efl_gfx_hint_fill_get(child->obj, &calc->fill[0], &calc->fill[1]);
+   if (calc->align[0] == EVAS_HINT_FILL)
+     {
+        calc->align[0] = 0.5;
+        calc->fill[0] = EINA_TRUE;
+     }
+   if (calc->align[1] == EVAS_HINT_FILL)
+     {
+        calc->align[1] = 0.5;
+        calc->fill[1] = EINA_TRUE;
+     }
+   //efl_gfx_hint_fill_get(child->obj, &calc->fill[0], &calc->fill[1]);
    efl_gfx_hint_aspect_get(child->obj, &calc->aspect_type, &aspect);
    calc->aspect[0] = aspect.w;
    calc->aspect[1] = aspect.h;
@@ -759,3 +769,4 @@ EFL_UI_RELATIVE_CONTAINER_RELATION_SET_GET(bottom, BOTTOM);
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_relative_container)
 
 #include "efl_ui_relative_container.eo.c"
+#include "elm_relative_container.c"

@@ -705,6 +705,7 @@ elementary_pub_headers = [
   'elm_widget_item_container_eo.legacy.h',
   'elm_widget_item_eo.legacy.h',
   'elm_widget_item_static_focus_eo.legacy.h',
+  'elm_relative_container.h',
 ]
 
 elementary_header_src = [
